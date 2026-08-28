@@ -1,0 +1,188 @@
+name: daily-send
+# 雲端只負責「寄出」：程式碼取自 master、每日紀錄取自獨立的 state 分支，
+# 寄完只把紀錄推回 state 分支（master 永遠不被每日紀錄碰）。產生課程（claude）仍在本機。
+on:
+  # 觸發交給 Cloudflare Worker（digest-cron）準點 dispatch：
+  # 台北 08:00 主班、12:00 補寄班、14:00 最後一班（slot=last）。
+  # GitHub 自家 schedule 已移除——延遲 1~4 小時且會整班靜默消失，留著只添亂。
+  workflow_dispatch:
+    inputs:
+      test_send:
+        description: '只寄一封測試信驗證雲端 SMTP（不動進度/outbox/marker）'
+        type: boolean
+        default: false
+      force_weekly:
+        description: '不分平日假日，立刻寄出已備妥的週報來測試（不打 marker）'
+        type: boolean
+        default: false
+      slot:
+        description: '外部排程帶入的班次身分；last=當天最後一班，沒稿時才寄警示信'
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-send
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Taipei
+      GMAIL_USER: ${{ secrets.GMAIL_USER }}
+      MAIL_TO: ${{ secrets.MAIL_TO }}
+      GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+      NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      NOTION_PARENT_PAGE_ID: ${{ secrets.NOTION_PARENT_PAGE_ID }}
+    steps:
+      - uses: actions/checkout@v5          # 程式碼（master）→ 工作目錄
+      - uses: actions/checkout@v5          # 每日紀錄（state 分支）→ _state/
+        with:
+          ref: state
+          path: _state
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: 接上 state 分支資料（symlink，讓程式照常讀 state/ 與 lessons/）
+        run: |
+          ln -sfn _state/state state
+          ln -sfn _state/lessons lessons
+
+      - name: 雲端 SMTP 測試信（手動觸發且勾選 test_send 時）
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.test_send }}
+        run: |
+          set -euo pipefail
+          printf '<div style="font-family:-apple-system,sans-serif"><h3>雲端寄信測試 ✅</h3><p>這封信由 GitHub Actions（免費雲端）寄出，證明 SMTP 路徑正常。不影響任何進度或課程。</p></div>' \
+            | python3 send_email.py "雲端寄信測試"
+          echo "測試信已寄出。"
+
+      - name: 寄出今天備妥的課（若有）
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.test_send) }}
+        run: |
+          set -euo pipefail
+          MARKER="state/daily-$(date +%F)"
+          if [ -f "$MARKER" ]; then echo "今日已寄過（$MARKER），略過。"; exit 0; fi
+          if ! python3 apply_result.py --outbox-ready; then
+            # 沒稿就安靜跳過——這種情況昨天 14:00 的體檢就已經警示過了
+            # （昨天備的就是今天要寄的，昨天下午發現沒備妥時就通知了）。
+            # 今天再警示一次是重複，只留一行 Actions 註解方便回查。
+            echo "::warning::outbox 尚未備妥：昨天的備稿未成功，今天的每日信寄不出去。"
+            exit 0
+          fi
+          TODAY="$(date +%F)"
+          python3 apply_result.py --outbox-html | python3 send_email.py "每日 DSA"
+          python3 apply_result.py --commit-outbox
+          date '+%Y-%m-%d %H:%M:%S' > "$MARKER"
+          echo "已寄出並標記 $MARKER"
+          python3 sync_notion.py --md "lessons/$TODAY.md" --date "$TODAY" \
+            || echo "::warning::Notion 同步失敗（信已寄出、進度已推）。本機手動補：python3 sync_notion.py --md lessons/$TODAY.md --date $TODAY"
+
+      - name: 週六寄出本週回顧（若本機已備稿）
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.test_send) }}
+        run: |
+          set -euo pipefail
+          FORCE="${{ github.event_name == 'workflow_dispatch' && inputs.force_weekly }}"
+          DW="$(cat state/weekly_outbox.week 2>/dev/null || true)"
+          if [ -z "$DW" ] || [ ! -f state/weekly_outbox.html ]; then echo "週報尚未備妥，略過。"; exit 0; fi
+          WMARK="state/weekly-$DW"
+          if [ "$FORCE" != "true" ] && [ -f "$WMARK" ]; then echo "本週週報已寄（$WMARK），略過。"; exit 0; fi
+          if [ "$FORCE" != "true" ]; then
+            TW="$(date +%G-W%V)"; DOW="$(date +%u)"
+            if [ "$DW" = "$TW" ] && [ "$DOW" -lt 6 ]; then echo "未到週六，略過週報。"; exit 0; fi
+          fi
+          cat state/weekly_outbox.html | python3 send_email.py "每週 DSA 回顧"
+          if [ "$FORCE" = "true" ]; then echo "force 測試寄出完成，不打 marker。"; exit 0; fi
+          date '+%Y-%m-%d %H:%M:%S' > "$WMARK"
+          echo "已寄出週報並標記 $WMARK"
+
+      - name: 缺稿體檢與警示信（當天最後一班）
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.test_send) }}
+        env:
+          # 最後一班 = Cloudflare 觸發帶 slot=last；另保留「已過台北 15:00」的兜底（手動補救時也適用）。
+          IS_LAST: ${{ github.event_name == 'workflow_dispatch' && inputs.slot == 'last' }}
+        run: |
+          set -euo pipefail
+          if [ "$IS_LAST" != "true" ] && [ "$(date +%H)" -lt 15 ]; then
+            echo "非最後一班（且未過 15:00），本機備稿可能還在跑，先不體檢。"; exit 0
+          fi
+          TODAY="$(date +%F)"
+          MISSING=""
+
+          # ① 明天的課備好了嗎？
+          # outbox 存的是「下一篇」——早上寄完會清空，當天 12:00/13:00 再填進明天的。
+          # 所以這個時間點 outbox 是空的，就等於明天早上 08:00 會沒信。
+          # 這是整套設計裡唯一能在「還來得及補」的時候發現問題的檢查點：
+          # 等到明天早上沒收到信才通知，已經是事發 25 小時後、那天的課也補不回來了。
+          if ! python3 apply_result.py --outbox-ready 2>/dev/null; then
+            if [ -f "state/alert-prepare-$TODAY" ]; then
+              echo "[每日] 本機已寄過警示信，不重複。"
+            else
+              MISSING="$MISSING<li><b>明天的每日課</b>——本機今天沒有備成，明天早上 08:00 會收不到信</li>"
+            fi
+          fi
+
+          # ② 週六該寄的週報寄了嗎？（原本這裡沒稿只印一行 log 就結束，完全靜默）
+          if [ "$(date +%u)" = "6" ]; then
+            WMARK="state/weekly-$(date +%G-W%V)"
+            if [ ! -f "$WMARK" ]; then
+              if [ -f "state/alert-prepare-weekly-$TODAY" ]; then
+                echo "[週報] 本機已寄過警示信，不重複。"
+              else
+                MISSING="$MISSING<li><b>本週週報</b>——週五的備稿沒成功，今天早上的週報沒寄出</li>"
+              fi
+            fi
+          fi
+
+          if [ -z "$MISSING" ]; then echo "體檢通過，該備的都備了。"; exit 0; fi
+
+          # 本機每個備稿時段都會留一行 RESULT，出事那天才會把它推上 state 分支。
+          # 檔案不在 = 本機一次都沒能連上 GitHub，這本身就是答案，不能寫成「查無資料」。
+          # 但別把原因寫死成「沒開機」——機器醒著卻沒網路也會長一樣，
+          # 兩者要靠本機 run.log 有沒有當天的「開始」那幾行才分得出來。
+          ATT="state/attempts-$TODAY.log"
+          if [ -s "$ATT" ]; then
+            DETAIL="<p><b>本機今天各備稿時段：</b></p><pre style=\"background:#f6f7f9;padding:10px;border-radius:6px;font-size:12px\">$(cat "$ATT")</pre>"
+          else
+            DETAIL="<p><b>本機今天沒有留下任何時段紀錄</b>——備稿程式一次都沒能連上 GitHub。兩種可能：</p>
+          <ul>
+            <li><b>筆電整天沒醒</b>：闔蓋加電池時 launchd 只會把機器叫進 DarkWake，那個狀態下沒有網路。</li>
+            <li><b>醒著但沒有可用網路</b>：WiFi 沒開、不在範圍內，或連上了卻連不出去。</li>
+          </ul>
+          <p>開電腦跑 <code>grep '$TODAY' run.log | head</code> 就能分辨：有「開始」那幾行代表機器是醒的、缺的是網路；完全沒有才是沒醒。</p>"
+          fi
+
+          NOW="$(date '+%Y-%m-%d %H:%M')"
+          BODY="<div style=\"font-family:-apple-system,sans-serif\">
+          <h3>⚠️ 學習信有缺口</h3>
+          <p>雲端於 $NOW 體檢，發現：</p>
+          <ul>$MISSING</ul>
+          $DETAIL
+          <p>現在補跑還來得及：<code>cd ~/Workspace/dsa-learn-digest &amp;&amp; ./run_slot.sh</code></p>
+          </div>"
+
+          if printf '%s' "$BODY" | python3 send_email.py "⚠️ 學習信有缺口"; then
+            date '+%Y-%m-%d %H:%M:%S' > "state/alert-prepare-$TODAY"
+            if [ "$(date +%u)" = "6" ]; then
+              date '+%Y-%m-%d %H:%M:%S' > "state/alert-prepare-weekly-$TODAY"
+            fi
+            echo "已寄出體檢警示信。"
+          else
+            echo "::warning::警示信寄送失敗，下一班次會再試。"
+          fi
+
+      - name: 把進度/marker/課程檔推回 state 分支
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.test_send) }}
+        run: |
+          set -euo pipefail
+          cd _state                       # 這裡停在 state 分支
+          git config user.name "dsa-learn-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "無變更可推。"; exit 0; fi
+          git commit -m "chore(state): 雲端寄出並更新進度 $(date +%F)"
+          git pull --rebase --autostash
+          git push                        # 推回 state 分支，master 不受影響
