@@ -1,0 +1,10 @@
+2026-08-29 08:02:37 RESULT prepare SKIP outbox 已備妥
+2026-08-29 08:02:40 RESULT prepare-weekly SKIP 週報已備妥（2026-W35）
+2026-08-29 08:16:50 RESULT prepare SKIP 庫存已備妥且已同步（git pull 失敗，暫不產新稿）
+2026-08-29 08:48:08 RESULT prepare-weekly SKIP 週報已備妥（2026-W35）
+2026-08-29 09:06:30 RESULT prepare OK 備稿完成（明天要寄的課）
+2026-08-29 09:06:33 RESULT prepare-weekly SKIP 週報已備妥（2026-W35）
+2026-08-29 11:20:03 RESULT prepare SKIP 庫存已備妥且已同步（git pull 失敗，暫不產新稿）
+2026-08-29 11:29:54 RESULT prepare-weekly SKIP 週報已備妥（2026-W35）
+2026-08-29 17:20:24 RESULT prepare FAIL 網路未就緒
+2026-08-29 22:49:14 RESULT prepare-weekly FAIL 網路未就緒
