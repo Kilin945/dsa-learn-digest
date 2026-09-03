@@ -3,3 +3,4 @@
 {"date": "2026-08-31", "topic": "Big-O 複雜度：怎麼估一段程式的快慢", "step": 3, "summary": "今天學了 Time-Space Tradeoff（時間空間互換）：把 Two Sum 從暴力雙迴圈 O(n²) 優化成用 HashMap 邊掃邊記的 O(n) 時間，代價是多花 O(n) 空間存已看過的數字，並認識了 HashMap 平均 O(1) 查詢的特性。"}
 {"date": "2026-09-01", "topic": "Big-O 複雜度：怎麼估一段程式的快慢", "step": 4, "summary": "今天學了 Big-O 化簡規則：循序執行的迴圈時間要相加（O(n)+O(n)=O(n)，丟掉常數），巢狀迴圈時間要相乘（O(n)×O(n)=O(n²)），並學會丟掉低階項只留下成長最快的主導項。"}
 {"date": "2026-09-02", "topic": "Big-O 複雜度：怎麼估一段程式的快慢", "step": 5, "summary": "今天學了 O(log n)（對數時間）：以 Binary Search 二分搜尋為例，說明資料排序好之後每次對半砍掉搜尋範圍，操作次數約等於 log₂(n)，並總結 Big-O 常見複雜度家族排序 O(1) < O(log n) < O(n) < O(n log n) < O(n²)，完成 Big-O 這個主題。"}
+{"date": "2026-09-03", "topic": "陣列 Array 與動態陣列 ArrayList：連續記憶體的代價與好處", "step": 1, "summary": "Array 陣列在記憶體中是連續配置（contiguous memory），因此可以用「起始位址 + index × 每格大小」直接算出任何一格的位置，讓隨機存取（random access）達成 O(1) 常數時間，跟資料量無關。"}

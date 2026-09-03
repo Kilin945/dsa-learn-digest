@@ -1,7 +1,9 @@
 {
   "current_index": 1,
-  "step": 1,
-  "covered": [],
+  "step": 2,
+  "covered": [
+    "Array 陣列在記憶體中是連續配置（contiguous memory），因此可以用「起始位址 + index × 每格大小」直接算出任何一格的位置，讓隨機存取（random access）達成 O(1) 常數時間，跟資料量無關。"
+  ],
   "completed_topics": [
     {
       "topic": "Big-O 複雜度：怎麼估一段程式的快慢",
