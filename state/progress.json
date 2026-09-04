@@ -1,8 +1,9 @@
 {
   "current_index": 1,
-  "step": 2,
+  "step": 3,
   "covered": [
-    "Array 陣列在記憶體中是連續配置（contiguous memory），因此可以用「起始位址 + index × 每格大小」直接算出任何一格的位置，讓隨機存取（random access）達成 O(1) 常數時間，跟資料量無關。"
+    "Array 陣列在記憶體中是連續配置（contiguous memory），因此可以用「起始位址 + index × 每格大小」直接算出任何一格的位置，讓隨機存取（random access）達成 O(1) 常數時間，跟資料量無關。",
+    "陣列因為連續記憶體，插入或刪除中間元素時後面所有元素都要搬移（shifting），所以是 O(n)，這是隨機存取快（O(1)）的代價；只有插在陣列最後面且有空間時才是 O(1)。"
   ],
   "completed_topics": [
     {
