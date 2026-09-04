@@ -1,36 +1,71 @@
-<div style="max-width:680px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background-color:#eef4ff;padding:24px;border-radius:12px;">
-  <div style="border-left:6px solid #5b8def;padding:16px 20px;background-color:#ffffff;border-radius:8px 8px 0 0;">
-    <span style="font-size:20px;font-weight:700;color:#3b6cf6;">📗 每週回顧 · DSA · 2026-08-28</span>
+<div style="max-width:680px;margin:0 auto;font-family:'Helvetica Neue',Arial,'PingFang TC','Microsoft JhengHei',sans-serif;background:#e8f4fb;padding:24px;border-radius:12px;">
+
+  <div style="border-left:6px solid #3f97c9;padding:10px 16px;margin-bottom:20px;background:#ffffff;border-radius:6px;">
+    <span style="font-size:18px;font-weight:700;color:#2b7fb0;">📗 每週回顧 · DSA · 2026-09-04</span>
   </div>
 
-  <div style="background-color:#ffffff;padding:24px 20px;border-radius:0 0:8px 8px;border-radius:0 0 8px 8px;">
-    <p style="font-size:16px;line-height:1.6;color:#333333;margin-top:0;">
-      嗨！這週目前還沒有上課紀錄（本週尚無紀錄），所以今天先不出回想題，改用一封短短的打氣信。
-    </p>
-
-    <p style="font-size:16px;line-height:1.6;color:#333333;">
-      你的目標是：以 Java 後端工程師的基礎，系統性補齊 <strong>DSA（Data Structures &amp; Algorithms）</strong>，
-      最終能穩穩應付外商技術面試和 LeetCode 中等（Medium）題。這是一條扎實但完全可行的路，
-      有 Java 底子代表語法和物件導向思維都不是問題，接下來要練的是「用正確的資料結構思考問題」的直覺。
-    </p>
-
-    <div style="background-color:#eef4ff;border-radius:8px;padding:16px 18px;margin:20px 0;">
-      <p style="font-size:15px;line-height:1.6;color:#3b6cf6;margin:0;font-weight:600;">
-        明天開始第一課 🚀
-      </p>
-      <p style="font-size:15px;line-height:1.6;color:#333333;margin:8px 0 0 0;">
-        通常我們會從 <strong>Array / String</strong> 加上 <strong>Two Pointers</strong>、<strong>Hashing（HashMap）</strong>
-        這類基礎但高頻的主題開場，因為它們在 LeetCode Easy~Medium 題目裡出現機率最高，
-        也最容易用 Java 熟悉的 <code>ArrayList</code>、<code>HashMap</code> 直接對應上手感。
-      </p>
-    </div>
-
-    <p style="font-size:16px;line-height:1.6;color:#333333;">
-      不用有壓力，每天累積一點點題型直覺，幾週後回頭看就會發現進步很明顯。明天見！
-    </p>
-
-    <p style="font-size:15px;line-height:1.6;color:#888888;margin-bottom:0;">
-      — 你的 DSA 家教
+  <div style="background:#ffffff;border-radius:10px;padding:20px 24px;margin-bottom:16px;">
+    <p style="font-size:14px;color:#2b7fb0;line-height:1.7;margin:0 0 12px;">
+      這週從 Big-O 的基本觀念一路走到 Array 的記憶體結構，中間串了 Two Sum 當主線案例。以下 8 題混合本週各天主題，由淺入深，先自己想過一輪再往下看解答。
     </p>
   </div>
+
+  <div style="background:#ffffff;border-radius:10px;padding:20px 24px;margin-bottom:16px;">
+    <p style="font-size:15px;font-weight:700;color:#2b7fb0;margin:0 0 14px;">🧠 回想題</p>
+
+    <p style="font-size:14px;color:#333;line-height:1.7;margin:0 0 10px;">
+      <b>Q1.</b> 陣列 <code>arr[5]</code> 的存取是 O(1) 還是 O(n)？為什麼跟資料量無關？
+    </p>
+    <p style="font-size:14px;color:#333;line-height:1.7;margin:0 0 10px;">
+      <b>Q2.</b> 用單層迴圈找陣列最大值，這是哪個複雜度等級？操作次數跟 n 是什麼關係？
+    </p>
+    <p style="font-size:14px;color:#333;line-height:1.7;margin:0 0 10px;">
+      <b>Q3.</b> Two Sum 的暴力解（兩層迴圈找兩數之和）是 O(n²)，這個 n² 是怎麼跑出來的？
+    </p>
+    <p style="font-size:14px;color:#333;line-height:1.7;margin:0 0 10px;">
+      <b>Q4.</b> 把 Two Sum 優化成 HashMap 邊掃邊記的版本後，時間複雜度變成什麼？付出的代價（tradeoff）是什麼？
+    </p>
+    <p style="font-size:14px;color:#333;line-height:1.7;margin:0 0 10px;">
+      <b>Q5.</b> 如果一段程式先跑一個 O(n) 迴圈，接著跑一個 O(n²) 的巢狀迴圈，整體複雜度是多少？用到哪一條化簡規則？
+    </p>
+    <p style="font-size:14px;color:#333;line-height:1.7;margin:0 0 10px;">
+      <b>Q6.</b> Binary Search 為什麼是 O(log n)？它有什麼前提條件才能用？
+    </p>
+    <p style="font-size:14px;color:#333;line-height:1.7;margin:0 0 10px;">
+      <b>Q7.</b> 在陣列中間插入一筆資料是 O(n)，但接在陣列最後面插入卻是 O(1)，這兩者差在哪裡？
+    </p>
+    <p style="font-size:14px;color:#333;line-height:1.7;margin:0;">
+      <b>Q8（綜合）.</b> 把 O(n²)、O(1)、O(log n)、O(n log n)、O(n) 由快到慢排序。接著：如果要在陣列「最前面」逐一插入 1000 筆資料，總複雜度會是多少？
+    </p>
+  </div>
+
+  <div style="background:#ffffff;border-radius:10px;padding:20px 24px;">
+    <p style="font-size:15px;font-weight:700;color:#2b7fb0;margin:0 0 14px;">—— 解答 ——</p>
+
+    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0 0 10px;">
+      <b>A1.</b> O(1)。因為陣列是連續記憶體（contiguous memory），可以用「起始位址 + index × 每格大小」直接算出位置，不用一格格找，跟 n 大小無關。
+    </p>
+    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0 0 10px;">
+      <b>A2.</b> O(n)，線性時間（linear time）。掃過整個陣列一次，操作次數跟 n 成正比。
+    </p>
+    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0 0 10px;">
+      <b>A3.</b> 外層迴圈跑 n 次，內層迴圈每次都要掃完剩下的整個 n，兩層相乘變成 n × n = n²，這就是巢狀迴圈時間要相乘的化簡規則。
+    </p>
+    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0 0 10px;">
+      <b>A4.</b> O(n) 時間。代價是多花 O(n) 空間去存已經看過的數字（用 HashMap），這就是 Time-Space Tradeoff：用空間換時間。
+    </p>
+    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0 0 10px;">
+      <b>A5.</b> 整體是 O(n²)。循序執行的部分要相加：O(n) + O(n²)，但化簡時只留成長最快的主導項（dominant term），低階的 O(n) 直接丟掉。
+    </p>
+    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0 0 10px;">
+      <b>A6.</b> 因為每次都能把搜尋範圍對半砍掉，操作次數約等於 log₂(n)。前提是資料必須先排序好（sorted），否則沒辦法判斷該往哪一半找。
+    </p>
+    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0 0 10px;">
+      <b>A7.</b> 插在中間之後，後面所有元素都要往後搬移（shifting）才能維持連續記憶體的排列，所以是 O(n)；插在最後面如果還有空間，不需要搬動任何東西，直接放上去就是 O(1)。這就是陣列「隨機存取快」的代價。
+    </p>
+    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0;">
+      <b>A8.</b> 排序：O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n²)。在最前面逐一插入 1000 筆，每次插入都要搬移當時已有的所有元素，等於是 1000 次 O(n) 等級的操作相加，整體是 O(n²)（n 這裡代表最終陣列的大小）。
+    </p>
+  </div>
+
 </div>
