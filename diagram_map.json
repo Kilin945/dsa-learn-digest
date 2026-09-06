@@ -1,0 +1,137 @@
+{
+  "Big-O 複雜度：怎麼估一段程式的快慢": [
+    "chapter_computational_complexity/time_complexity.assets"
+  ],
+  "陣列 Array 與動態陣列 ArrayList：連續記憶體的代價與好處": [
+    "chapter_array_and_linkedlist/array.assets",
+    "chapter_array_and_linkedlist/ram_and_cache.assets"
+  ],
+  "空間複雜度：記憶體也要算，遞迴呼叫堆疊的隱藏成本": [
+    "chapter_computational_complexity/space_complexity.assets"
+  ],
+  "迭代與遞迴：兩種重複的形式、呼叫堆疊與尾遞迴": [
+    "chapter_computational_complexity/iteration_and_recursion.assets"
+  ],
+  "陣列上的掃描技巧：雙指標、滑動視窗、前綴和": [],
+  "字串 String：不可變性、StringBuilder 與字元陣列的關係": [],
+  "Linked List 基礎：節點、指標與 dummy head 技巧": [
+    "chapter_array_and_linkedlist/linked_list.assets"
+  ],
+  "鏈結串列的指標技巧：快慢指標找中點與判環、反轉串列": [],
+  "Stack 堆疊：後進先出、括號配對與單調堆疊": [
+    "chapter_stack_and_queue/stack.assets"
+  ],
+  "Queue 佇列與 Deque：先進先出、環形佇列與雙端佇列": [
+    "chapter_stack_and_queue/queue.assets",
+    "chapter_stack_and_queue/deque.assets"
+  ],
+  "HashMap / HashSet：O(1) 查找的原理與代價": [
+    "chapter_hashing/hash_map.assets"
+  ],
+  "雜湊函式與負載因子：hashCode、擴容與 rehash": [
+    "chapter_hashing/hash_algorithm.assets"
+  ],
+  "雜湊衝突：鏈結法 chaining 與開放定址 open addressing": [
+    "chapter_hashing/hash_collision.assets"
+  ],
+  "Binary Tree 基礎：節點、深度與陣列表示法": [
+    "chapter_tree/binary_tree.assets",
+    "chapter_tree/array_representation_of_tree.assets"
+  ],
+  "二元樹走訪：前序/中序/後序 DFS 與 BFS 層序": [
+    "chapter_tree/binary_tree_traversal.assets"
+  ],
+  "Binary Search Tree：中序走訪的有序性與插入刪除": [
+    "chapter_tree/binary_search_tree.assets"
+  ],
+  "平衡樹 AVL：BST 為什麼會退化、旋轉怎麼救回來": [
+    "chapter_tree/avl_tree.assets"
+  ],
+  "樹的經典題型：深度、直徑、最近共同祖先 LCA": [],
+  "Heap / PriorityQueue：完全二元樹、上浮下沉與 Top-K": [
+    "chapter_heap/heap.assets",
+    "chapter_heap/build_heap.assets",
+    "chapter_heap/top_k.assets"
+  ],
+  "圖的表示法：鄰接矩陣與鄰接表的取捨": [
+    "chapter_graph/graph.assets",
+    "chapter_graph/graph_operations.assets"
+  ],
+  "圖的走訪：DFS / BFS、連通塊與島嶼問題": [
+    "chapter_graph/graph_traversal.assets"
+  ],
+  "拓撲排序 Topological Sort：有依賴關係的排程": [],
+  "最短路徑入門：BFS 解無權圖、Dijkstra 概念": [],
+  "Binary Search 基礎：邊界條件寫對的固定套路": [
+    "chapter_searching/binary_search.assets"
+  ],
+  "二分搜尋變形：找左界/右界、插入點、旋轉陣列": [
+    "chapter_searching/binary_search_edge.assets",
+    "chapter_searching/binary_search_insertion.assets"
+  ],
+  "答案空間二分：對「答案」而不是「索引」二分": [],
+  "搜尋演算法總覽：線性、二分、雜湊、樹搜尋怎麼選": [
+    "chapter_searching/searching_algorithm_revisited.assets",
+    "chapter_searching/replace_linear_by_hashing.assets"
+  ],
+  "排序的評價標準：穩定性、原地性、自適應性": [
+    "chapter_sorting/sorting_algorithm.assets",
+    "chapter_sorting/summary.assets"
+  ],
+  "基礎排序：選擇、氣泡、插入排序與它們的 O(n²)": [
+    "chapter_sorting/selection_sort.assets",
+    "chapter_sorting/bubble_sort.assets",
+    "chapter_sorting/insertion_sort.assets"
+  ],
+  "快速排序 Quick Sort：分割 partition 與最壞情況": [
+    "chapter_sorting/quick_sort.assets"
+  ],
+  "合併排序 Merge Sort：分治的代表作與穩定性": [
+    "chapter_sorting/merge_sort.assets"
+  ],
+  "堆積排序 Heap Sort：用堆積把排序做到原地 O(n log n)": [
+    "chapter_sorting/heap_sort.assets"
+  ],
+  "線性時間排序：計數、桶、基數排序的適用條件": [
+    "chapter_sorting/counting_sort.assets",
+    "chapter_sorting/bucket_sort.assets",
+    "chapter_sorting/radix_sort.assets"
+  ],
+  "排序的應用：合併區間、會議室與自訂 Comparator": [],
+  "分治 Divide and Conquer：把問題切小再合併": [
+    "chapter_divide_and_conquer/divide_and_conquer.assets",
+    "chapter_divide_and_conquer/hanota_problem.assets",
+    "chapter_divide_and_conquer/build_binary_tree_problem.assets"
+  ],
+  "回溯 Backtracking：排列、組合、子集的模板": [
+    "chapter_backtracking/backtracking_algorithm.assets",
+    "chapter_backtracking/permutations_problem.assets",
+    "chapter_backtracking/subset_sum_problem.assets"
+  ],
+  "回溯經典題：N 皇后與剪枝": [
+    "chapter_backtracking/n_queens_problem.assets"
+  ],
+  "DP 入門：從暴力遞迴到記憶化再到列表格": [
+    "chapter_dynamic_programming/intro_to_dynamic_programming.assets",
+    "chapter_dynamic_programming/dp_solution_pipeline.assets"
+  ],
+  "DP 問題的特徵：最優子結構與無後效性": [
+    "chapter_dynamic_programming/dp_problem_features.assets"
+  ],
+  "一維 DP：爬樓梯、打家劫舍套路": [
+    "chapter_dynamic_programming/intro_to_dynamic_programming.assets"
+  ],
+  "背包問題：0-1 背包與完全背包": [
+    "chapter_dynamic_programming/knapsack_problem.assets",
+    "chapter_dynamic_programming/unbounded_knapsack_problem.assets"
+  ],
+  "字串 DP：LCS 與編輯距離": [
+    "chapter_dynamic_programming/edit_distance_problem.assets"
+  ],
+  "Greedy 貪心：什麼時候可以貪、怎麼證明": [
+    "chapter_greedy/greedy_algorithm.assets",
+    "chapter_greedy/fractional_knapsack_problem.assets",
+    "chapter_greedy/max_capacity_problem.assets"
+  ],
+  "面試解題流程總整理：從讀題到說出複雜度": []
+}
