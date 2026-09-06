@@ -9,8 +9,15 @@
 - 程式碼跨天遞進：例如「暴力解」→ 隔天「最佳化解」。程式碼用 Java、精簡、可讀，關鍵行加註解。
 - 講到複雜度一定同時給 Big-O 與「為什麼」（例如：迴圈裡再掃一次整個陣列，所以是 O(n²)）。
 - 英文為主、中文輔助：概念標題用英文，解說用中文。
-- 篇幅以 5 分鐘讀完為準。
-- 今日小步講完後，推薦 1 題最能練到今天概念的 LeetCode 題（附題號、題名、難度與連結 https://leetcode.com/problems/<slug>/），一句話說明「為什麼是這題」。放在術語表之前，用同樣的卡片風格。
+- 篇幅：該長才長，不要湊字數，也不要為了短而砍掉必要的解說。
+- 今日小步講完後，出 1 題最能練到今天概念的 LeetCode 題，並把解法完整寫出來。放在術語表之前。依序寫：
+  1) 題號、題名、難度、連結 https://leetcode.com/problems/<slug>/
+  2) 「題目在說什麼」——白話翻譯一次，讓人不點進去也知道在幹嘛
+  3) 「怎麼用今天學的東西解」——條列步驟，把今日概念跟這題的關聯講明
+  4) 複雜度——時間與空間，各附一句「為什麼」
+  5) 完整 Java 解答，關鍵行加註解
+  有多種解法時只寫最容易理解的那一種，不要列舉全部。不要試圖隱藏答案（信件無法摺疊）——
+  看得到答案照著抄一遍，勝過看不到答案就不動手。
 - 若 COVERED_SO_FAR 顯示主題已大致講完，這一步做收尾總結，並把 topic_complete 設為 true；否則 false。
 
 【輸出 JSON 格式】
@@ -38,8 +45,14 @@
   </div>
 
   <div style="background:#fbfcf8;border:1px solid #e2e6da;border-radius:10px;padding:13px 16px;margin-bottom:14px;">
-    <div style="font-size:13px;font-weight:800;color:TXT;margin-bottom:6px;">🎯 今日練習 · LeetCode</div>
-    <div style="font-size:13px;color:#2c3340;line-height:1.65;"><a href="題目連結" style="color:#3b6cf6;text-decoration:none;font-weight:700;">#題號 題名</a>（難度）— 一句話說明為什麼這題最能練到今天的概念。</div>
+    <div style="font-size:13px;font-weight:800;color:TXT;margin-bottom:8px;">🎯 動手寫 · LeetCode</div>
+    <div style="font-size:13.5px;margin-bottom:10px;"><a href="題目連結" style="color:#3b6cf6;text-decoration:none;font-weight:700;">#題號 題名</a> <span style="color:#8a909c;font-size:12px;">（難度）</span></div>
+    <div style="font-size:12.5px;color:#3b424f;line-height:1.65;margin-bottom:10px;"><b style="color:TXT;">題目在說什麼</b><br>白話翻譯一次。</div>
+    <div style="font-size:12.5px;color:#3b424f;line-height:1.65;margin-bottom:10px;"><b style="color:TXT;">怎麼用今天學的東西解</b>
+      <ol style="margin:6px 0 0;padding-left:20px;line-height:1.7;"><li>步驟</li></ol>
+    </div>
+    <div style="font-size:12.5px;color:#3b424f;line-height:1.65;margin-bottom:10px;"><b style="color:TXT;">複雜度</b>　時間 O(?) — 為什麼；空間 O(?) — 為什麼。</div>
+    <div style="background:#1f2430;border-radius:8px;padding:12px 14px;overflow-x:auto;"><pre style="margin:0;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:12.5px;line-height:1.6;color:#e6e6e6;">完整 Java 解答</pre></div>
   </div>
 
   <div style="background:#fbfcf8;border:1px solid #e2e6da;border-radius:10px;padding:13px 16px;margin-bottom:14px;">
