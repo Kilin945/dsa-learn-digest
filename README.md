@@ -1,6 +1,6 @@
 # DSA Learn Digest 📗
 
-每天早上自動寄一封 5 分鐘可讀完的資料結構與演算法（DSA）學習信：依 `syllabus.txt` 課綱「一個主題拆成數小步、一天走一步」循序漸進，每天附一題對應的 LeetCode 練習，並用昨日複習做主動回想。沿用 macOS launchd 排程 → `claude -p` 依進度寫課 → Gmail SMTP 寄信。與 [java-learn-digest](https://github.com/Kilin945/java-learn-digest) 同一套「本機備稿、雲端寄出」架構。
+每天早上自動寄一封資料結構與演算法（DSA）學習信，寫給兩位讀者：一位是有 Java 基礎、演算法幾乎從零開始的後端工程師，另一位是沒有工程背景的產品端同事。目標是把 DSA 學懂、用在工作上，不是準備面試：依 `syllabus.txt` 課綱「一個主題拆成數小步、一天走一步」循序漸進，配圖會有一段文字帶讀者看懂圖在講什麼，並附一題 LeetCode 練習、完整寫出解法與 Java 程式碼，再用昨日複習做主動回想。沿用 macOS launchd 排程 → `claude -p` 依進度寫課 → Gmail SMTP 寄信。與 [java-learn-digest](https://github.com/Kilin945/java-learn-digest) 同一套「本機備稿、雲端寄出」架構。
 
 ## 運作
 產生（prepare）在本機、寄出（send）在雲端，用 git 當同步通道，寄信不再靠筆電醒著。
@@ -118,10 +118,13 @@ replay 出「全部寄完後會走到哪」，寫成一份暫存 state 給 `buil
 | `syllabus.txt` | 課綱 |
 | `build_lesson.py` | 依進度組 claude 的輸入 |
 | `apply_result.py` | 解析結果、寄成功才更新進度與存檔 |
+| `diagrams.py` | 候選配圖清單、驗證 claude 選圖結果、剝除失敗的 `<img>` |
+| `diagram_map.json` | 課綱主題 → 配圖目錄的對照表，須與課綱同步 |
 | `send_email.py` | Gmail SMTP 寄信 |
 | `sync_notion.py` | 把 `lessons/<date>.md` 同步成 Notion 子頁面（REST API、去重） |
 | `run_learn.sh` | 主流程 |
 | `prompt_daily.txt` / `prompt_weekly.txt` | claude 指令 |
+| `assets/` | vendored 的 hello-algo 圖庫，**CC BY-NC-SA 4.0**，署名照 `prompt_daily.txt` 既有格式、原圖不裁切不加工 |
 | `state/` | 進度、歷史、marker |
 | `lessons/` | 每課 markdown 存檔 |
 
