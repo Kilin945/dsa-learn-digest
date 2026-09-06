@@ -4,10 +4,10 @@
 
 每天寄一封 DSA 學習信，本機備稿 → git → 雲端寄出。架構與時刻表看 README，這裡只寫容易改壞的事。
 
-## 課綱前兩行是禁區
+## 課綱凍結前綴是禁區
 
-`progress.json` 的 `current_index` 索引的是 `syllabus.txt` 裡非註解行的序號。改前兩行文字、
-或在它們之前插入非註解行，會讓進度指向錯誤主題——**整串庫存都寄不出去**。第 3 行起隨意。
+`progress.json` 的 `current_index` 是凍結線：索引 <= current_index 的每一行都不能動文字、
+前面也不能插新的非註解行——這條線隨 current_index 定期前進，不是釘死在某個行數。
 <!-- @assert:cmd python3 -m pytest tests/test_syllabus.py -q -->
 
 ## 課綱與 diagram_map.json 必須同步
@@ -20,6 +20,7 @@
 `diagrams` 是選用欄位，不在 `apply_result.REQUIRED` 裡，任何圖片失敗都要降級成純文字信。
 `run_learn.sh`（zsh，本機）與 `.github/workflows/daily-send.yml`（雲端）各自呼叫
 `apply_result.py --outbox-images` 轉給 `send_email.py`；改一處介面沒改另一處，隔天早上才爆。
+`run_learn.sh` 只 push `state` worktree、從不 push `master`；本機合併卻忘了 push master，雲端會拿舊程式碼寄新版 outbox，圖照樣悄悄消失。
 
 ## 圖片：授權與私有
 
@@ -29,9 +30,8 @@
 
 ## `x or 預設值` 在這裡炸過三次
 
-`x or fallback` 只擋 falsy 值，型別錯但值是 truthy（如錯形狀的非空 dict）會直接穿透，
-炸在下一行。已修好兩處（`diagrams.sanitize`、`apply_result.py` 的 `--outbox-images` 分支）
-改用 `isinstance`；`apply_result.py:174` 的 `_replay_queue` 還留著舊寫法，刻意不動。
+`x or fallback` 只擋 falsy 值，型別錯但值是 truthy（如錯形狀的非空 dict）會直接穿透，炸在下一行——已修好 `diagrams.sanitize`、`apply_result.py --outbox-images` 分支，改用 `isinstance`；
+`apply_result.py:174` 的 `_replay_queue` 還留著舊寫法，刻意不動。
 
 ## 兩位讀者、不是準備面試
 
