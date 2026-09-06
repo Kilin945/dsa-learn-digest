@@ -17,7 +17,7 @@ import state_store as ss
 from palette import daily_color
 import diagrams as dg
 
-DEFAULT_GOAL = "有 Java 基礎的後端工程師，想系統性學會資料結構與演算法（DSA），目標是能應對外商技術面試與 LeetCode 中等題"
+DEFAULT_GOAL = "DSA Learn Digest 的目標：讓讀者確實理解資料結構與演算法（DSA），並能實際用在工作上——寫程式的人做出更好的選擇，跟工程師共事的人聽得懂、問得對"
 
 
 def format_daily_context(goal, topic, step, covered, yesterday, color, today, available=""):
