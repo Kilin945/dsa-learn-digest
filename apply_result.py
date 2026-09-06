@@ -24,6 +24,7 @@ import argparse
 from datetime import date, timedelta
 
 import state_store as ss
+import diagrams as dg
 
 REQUIRED = ("html", "topic_complete", "today_summary", "archive_markdown")
 
@@ -410,6 +411,11 @@ def main(argv=None):
     except ValueError as e:
         print(f"ERROR: {e}", file=sys.stderr)
         sys.exit(2)
+
+    # 圖是加分項：選錯檔、對不上 cid 一律整批剝掉，信照常走，絕不因為圖而擋信。
+    res, kept = dg.sanitize(res)
+    if not kept:
+        print("WARN: diagrams 驗證未過，已剝除圖片，信件以純文字寄出。", file=sys.stderr)
 
     if args.to_outbox or args.append_outbox:
         progress = ss.load_progress(args.progress)

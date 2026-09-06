@@ -1,3 +1,4 @@
+import io
 import json
 import pytest
 import apply_result as ar
@@ -205,3 +206,62 @@ def test_queue_head_ready_checks_first_item_only(tmp_path):
     # 反過來：頭部對不上就是未備妥，即使後面有對得上的
     assert ar.outbox_ready(ar.queue_head([_item(9, 9), _item(3, 2)]), progress) is False
     assert ar.queue_head([]) is None
+
+
+def test_to_outbox_keeps_valid_diagrams(tmp_path, monkeypatch, capsys):
+    import diagrams as dg
+    assets = tmp_path / "assets"
+    (assets / "c/x.assets").mkdir(parents=True)
+    (assets / "c/x.assets/a.png").write_bytes(b"\x89PNG")
+    monkeypatch.setattr(dg, "ASSETS_ROOT", str(assets))
+
+    payload = json.dumps({
+        "html": '<div><img src="cid:d1"></div>',
+        "topic_complete": False,
+        "today_summary": "s",
+        "archive_markdown": "m",
+        "diagrams": [{"cid": "d1", "path": "c/x.assets/a.png", "caption": "圖說"}],
+    })
+    prog = tmp_path / "progress.json"
+    prog.write_text('{"current_index": 0, "step": 1, "covered": [], "completed_topics": []}',
+                    encoding="utf-8")
+    ob = tmp_path / "outbox.json"
+    monkeypatch.setattr("sys.stdin", io.StringIO(payload))
+    ar.main(["--to-outbox", "--progress", str(prog), "--outbox", str(ob)])
+
+    saved = json.loads(ob.read_text(encoding="utf-8"))[0]["result"]
+    assert saved["diagrams"][0]["cid"] == "d1"
+
+
+def test_to_outbox_strips_diagrams_when_file_missing(tmp_path, monkeypatch):
+    import diagrams as dg
+    assets = tmp_path / "assets"
+    assets.mkdir()
+    monkeypatch.setattr(dg, "ASSETS_ROOT", str(assets))
+
+    payload = json.dumps({
+        "html": '<div><img src="cid:d1"><p>內文</p></div>',
+        "topic_complete": False,
+        "today_summary": "s",
+        "archive_markdown": "m",
+        "diagrams": [{"cid": "d1", "path": "nope/missing.png", "caption": "c"}],
+    })
+    prog = tmp_path / "progress.json"
+    prog.write_text('{"current_index": 0, "step": 1, "covered": [], "completed_topics": []}',
+                    encoding="utf-8")
+    ob = tmp_path / "outbox.json"
+    monkeypatch.setattr("sys.stdin", io.StringIO(payload))
+    ar.main(["--to-outbox", "--progress", str(prog), "--outbox", str(ob)])
+
+    saved = json.loads(ob.read_text(encoding="utf-8"))[0]["result"]
+    assert "diagrams" not in saved          # 圖被剝掉
+    assert "<img" not in saved["html"]      # 標籤也移除
+    assert "<p>內文</p>" in saved["html"]   # 但信本身照常存進 outbox
+
+
+def test_diagrams_is_not_required():
+    # 舊格式（沒有 diagrams 欄位）必須照常解析成功，否則庫存那篇會寄不出去。
+    payload = json.dumps({"html": "<p>x</p>", "topic_complete": False,
+                          "today_summary": "s", "archive_markdown": "m"})
+    assert ar.parse_result(payload)["html"] == "<p>x</p>"
+    assert "diagrams" not in ar.REQUIRED

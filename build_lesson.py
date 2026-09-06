@@ -90,7 +90,7 @@ def main(argv=None):
             yesterday=ss.last_summary(history),
             color=color, today=today_s,
             # 沒有對應圖的主題會拿到「（無）」，那天的信就是純文字。
-            available=dg.format_available(dg.candidates_for(topic, assets_root=dg.ASSETS_ROOT)),
+            available=dg.format_available(dg.candidates_for(topic)),
         ))
     else:
         history = ss.load_history(args.history)
