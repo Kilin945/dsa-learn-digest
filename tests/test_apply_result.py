@@ -265,3 +265,54 @@ def test_diagrams_is_not_required():
                           "today_summary": "s", "archive_markdown": "m"})
     assert ar.parse_result(payload)["html"] == "<p>x</p>"
     assert "diagrams" not in ar.REQUIRED
+
+
+def _queue_with(tmp_path, result):
+    ob = tmp_path / "outbox.json"
+    ob.write_text(json.dumps([{"kind": "lesson", "index": 0, "step": 1, "result": result}]),
+                  encoding="utf-8")
+    return ob
+
+
+def test_outbox_images_prints_cid_and_path(tmp_path, monkeypatch, capsys):
+    import diagrams as dg
+    monkeypatch.setattr(dg, "ASSETS_ROOT", "/fake/assets")
+    ob = _queue_with(tmp_path, {
+        "html": '<img src="cid:d1">', "topic_complete": False,
+        "today_summary": "s", "archive_markdown": "m",
+        "diagrams": [{"cid": "d1", "path": "c/x.assets/a.png", "caption": "圖說"}],
+    })
+    ar.main(["--outbox-images", "--outbox", str(ob)])
+    out = capsys.readouterr().out
+    assert out == "d1\t/fake/assets/c/x.assets/a.png\n"
+
+
+def test_outbox_images_empty_when_no_diagrams(tmp_path, capsys):
+    ob = _queue_with(tmp_path, {"html": "<p>x</p>", "topic_complete": False,
+                                "today_summary": "s", "archive_markdown": "m"})
+    ar.main(["--outbox-images", "--outbox", str(ob)])
+    assert capsys.readouterr().out == ""
+
+
+def test_outbox_images_empty_when_no_outbox(tmp_path, capsys):
+    # 寄信端會無條件呼叫這個指令，outbox 不存在時必須安靜地什麼都不輸出、不報錯。
+    ar.main(["--outbox-images", "--outbox", str(tmp_path / "nope.json")])
+    assert capsys.readouterr().out == ""
+
+
+def test_outbox_images_empty_when_result_is_not_dict(tmp_path, capsys):
+    # 毀損的 outbox：result 是字串而非物件，必須安靜地降級為「無圖」，不拋例外。
+    ob = tmp_path / "outbox.json"
+    ob.write_text(json.dumps([{"kind": "lesson", "index": 0, "step": 1, "result": "not-a-dict"}]),
+                  encoding="utf-8")
+    ar.main(["--outbox-images", "--outbox", str(ob)])
+    assert capsys.readouterr().out == ""
+
+
+def test_outbox_images_empty_when_diagrams_is_not_list(tmp_path, capsys):
+    # 毀損的 diagrams：字串而非陣列，必須安靜地降級為「無圖」，不拋例外。
+    ob = _queue_with(tmp_path, {"html": "<p>x</p>", "topic_complete": False,
+                                "today_summary": "s", "archive_markdown": "m",
+                                "diagrams": "not-a-list"})
+    ar.main(["--outbox-images", "--outbox", str(ob)])
+    assert capsys.readouterr().out == ""

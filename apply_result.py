@@ -12,6 +12,7 @@
 不讀 stdin 的查詢/動作：
   --outbox-ready  ：outbox 是否已備妥且與目前進度相符 → 相符 exit 0，否則 exit 1。
   --outbox-html   ：把 outbox 裡的 html 印到 stdout（給寄信用）。
+  --outbox-images ：印出 outbox 的圖清單（每行「cid<TAB>絕對路徑」），無圖則無輸出。
   --commit-outbox ：寄信成功後呼叫 → 用 outbox 內容推進度、寫 lessons/<date>.md、清空 outbox。
 
 解析/驗證失敗 → 印錯誤到 stderr 並以非 0 結束。
@@ -328,6 +329,8 @@ def main(argv=None):
                    help="把「庫存全寄完後的進度／歷史」寫進 DIR（批次備稿組 context 用）")
     g.add_argument("--outbox-ready", action="store_true", help="outbox 備妥且相符則 exit 0")
     g.add_argument("--outbox-html", action="store_true", help="印出 outbox 的 html")
+    g.add_argument("--outbox-images", action="store_true",
+                   help="印出 outbox 的圖清單，每行「cid<TAB>絕對路徑」")
     g.add_argument("--commit-outbox", action="store_true", help="用 outbox 推進度並清空")
     g.add_argument("--commit", action="store_true", help="（舊）解析 stdin 並直接推進度")
     g.add_argument("--status", action="store_true", help="今天的狀態總覽（不動任何東西）")
@@ -392,6 +395,18 @@ def main(argv=None):
             sys.exit(2)
         sys.stdout.write(restamp_send_date(head["result"]["html"],
                                            date.today().isoformat()))
+        return
+
+    if args.outbox_images:
+        # 寄信端無條件呼叫這支：沒 outbox、沒圖都輸出空、exit 0，讓呼叫端不必先判斷。
+        # 毀損 outbox（result 非物件或 diagrams 非陣列）也安靜降級為無圖。
+        head = queue_head(load_queue(args.outbox))
+        result = head.get("result") if isinstance(head, dict) else None
+        diagrams = result.get("diagrams") if isinstance(result, dict) else None
+        if not isinstance(diagrams, list):
+            diagrams = None
+        for cid, path in dg.abs_paths(diagrams):
+            print(f"{cid}\t{path}")
         return
 
     if args.commit_outbox:
