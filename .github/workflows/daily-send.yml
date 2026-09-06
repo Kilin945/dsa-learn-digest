@@ -74,7 +74,13 @@ jobs:
             exit 0
           fi
           TODAY="$(date +%F)"
-          python3 apply_result.py --outbox-html | python3 send_email.py "每日 DSA"
+          # 圖跟著 repo 一起被 checkout，outbox 只記路徑；沒圖時 IMGS 是空陣列。
+          IMGS=()
+          while IFS=$'\t' read -r cid path; do
+            [ -n "$cid" ] && IMGS+=(--image "$cid=$path")
+          done < <(python3 apply_result.py --outbox-images)
+          python3 apply_result.py --outbox-html \
+            | python3 send_email.py "每日 DSA" "${IMGS[@]+"${IMGS[@]}"}"
           python3 apply_result.py --commit-outbox
           date '+%Y-%m-%d %H:%M:%S' > "$MARKER"
           echo "已寄出並標記 $MARKER"
