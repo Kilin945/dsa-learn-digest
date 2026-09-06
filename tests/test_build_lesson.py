@@ -44,3 +44,45 @@ def test_weekly_context_lists_week_rows():
     assert "2026-06-02 [IoC #1] s1" in ctx
     assert "2026-06-03 [IoC #2] s2" in ctx
     assert "DATE: 2026-06-07" in ctx
+
+
+def test_daily_context_includes_available_diagrams():
+    out = bl.format_daily_context(
+        goal="G", topic="T", step=1, covered=[], yesterday=None,
+        color=("#bg", "#bar", "#txt"), today="2026-09-06",
+        available="AVAILABLE_DIAGRAMS:\n- chapter_a/x.assets/a.png",
+    )
+    assert "AVAILABLE_DIAGRAMS:" in out
+    assert "- chapter_a/x.assets/a.png" in out
+    # 既有欄位不能被擠掉
+    assert "TOPIC: T" in out
+    assert "COLOR_TXT: #txt" in out
+
+
+def test_daily_context_without_diagrams_is_unchanged():
+    kwargs = dict(goal="G", topic="T", step=1, covered=[], yesterday=None,
+                  color=("#bg", "#bar", "#txt"), today="2026-09-06")
+    assert bl.format_daily_context(**kwargs) == bl.format_daily_context(**kwargs, available="")
+    assert "AVAILABLE_DIAGRAMS" not in bl.format_daily_context(**kwargs)
+
+
+def test_daily_main_emits_available_diagrams(tmp_path, capsys, monkeypatch):
+    import diagrams as dg
+    syl = tmp_path / "syllabus.txt"
+    syl.write_text("主題甲\n", encoding="utf-8")
+    prog = tmp_path / "progress.json"
+    prog.write_text('{"current_index": 0, "step": 1, "covered": [], "completed_topics": []}',
+                    encoding="utf-8")
+    hist = tmp_path / "history.jsonl"
+    hist.write_text("", encoding="utf-8")
+
+    assets = tmp_path / "assets"
+    (assets / "chapter_a/x.assets").mkdir(parents=True)
+    (assets / "chapter_a/x.assets/a.png").write_bytes(b"\x89PNG")
+    monkeypatch.setattr(dg, "ASSETS_ROOT", str(assets))
+    monkeypatch.setattr(dg, "load_map", lambda path=None: {"主題甲": ["chapter_a/x.assets"]})
+
+    bl.main(["daily", "--syllabus", str(syl), "--progress", str(prog), "--history", str(hist)])
+    out = capsys.readouterr().out
+    assert "AVAILABLE_DIAGRAMS:" in out
+    assert "chapter_a/x.assets/a.png" in out

@@ -15,15 +15,16 @@ from datetime import date, timedelta
 
 import state_store as ss
 from palette import daily_color
+import diagrams as dg
 
 DEFAULT_GOAL = "有 Java 基礎的後端工程師，想系統性學會資料結構與演算法（DSA），目標是能應對外商技術面試與 LeetCode 中等題"
 
 
-def format_daily_context(goal, topic, step, covered, yesterday, color, today):
+def format_daily_context(goal, topic, step, covered, yesterday, color, today, available=""):
     bg, bar, txt = color
     covered_block = "\n".join(f"- {c}" for c in covered) if covered else "（尚無，這是這個主題的第一步）"
     yest = yesterday if yesterday else "（無，這是第一課）"
-    return (
+    body = (
         f"GOAL: {goal}\n"
         f"DATE: {today}\n"
         f"TOPIC: {topic}\n"
@@ -34,6 +35,7 @@ def format_daily_context(goal, topic, step, covered, yesterday, color, today):
         f"COLOR_BAR: {bar}\n"
         f"COLOR_TXT: {txt}"
     )
+    return f"{body}\n{available}" if available else body
 
 
 def format_finished():
@@ -87,6 +89,8 @@ def main(argv=None):
             covered=progress.get("covered", []),
             yesterday=ss.last_summary(history),
             color=color, today=today_s,
+            # 沒有對應圖的主題會拿到「（無）」，那天的信就是純文字。
+            available=dg.format_available(dg.candidates_for(topic, assets_root=dg.ASSETS_ROOT)),
         ))
     else:
         history = ss.load_history(args.history)
