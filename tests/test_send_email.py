@@ -77,6 +77,19 @@ def test_build_message_gif_subtype(tmp_path):
     assert msg.get_payload()[1].get_content_type() == "image/gif"
 
 
+def test_build_message_strips_cid_tags_when_no_images_passed():
+    # 最終審查抓到的案例：零張圖（沒選圖、或雲端跑舊版程式碼對上新版 outbox）
+    # 不能只因為「沒有 --image」就整段跳過剝除，否則 cid: <img> 會原封不動寄出去，
+    # 收件匣看到一張破圖。無論 images=[] 還是 images=None 都要剝乾淨。
+    for images in ([], None):
+        msg = se.build_message('<p>x</p><img src="cid:d1">', "主旨",
+                               "a@gmail.com", "b@gmail.com", images)
+        assert msg.get_content_type() == "text/html"
+        body = msg.get_payload(decode=True).decode("utf-8")
+        assert "<img" not in body
+        assert "<p>x</p>" in body
+
+
 def test_parse_image_args():
     assert se.parse_image_args(["d1=/tmp/a.png", "d2=/tmp/b.png"]) == [
         ("d1", "/tmp/a.png"), ("d2", "/tmp/b.png")]

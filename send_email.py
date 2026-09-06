@@ -110,8 +110,12 @@ def build_message(html_body, subject, from_user, to_addr, images=None):
             img.add_header("Content-Disposition", "inline", filename=f"{cid}.{subtype}")
             msg.attach(img)
     else:
-        if images:
-            html_body = dg.strip_img_tags(html_body)
+        # 無條件剝——不能只在「有帶 --image」時才剝：零張圖（沒選圖、或雲端跑的是
+        # 舊版程式碼而 outbox 已經是新版寫的）跟「圖讀不到而放棄」是同一種局面，
+        # html 裡殘留的 cid: <img> 都必須清掉，否則收件匣會看到一張破圖。
+        # strip_img_tags 只動 cid: 的 <img>，週報／警示信這類本來就沒有圖的信
+        # 找不到東西可剝，等同 no-op。
+        html_body = dg.strip_img_tags(html_body)
         msg = MIMEText(html_body, "html", "utf-8")
 
     msg["Subject"] = subject
