@@ -17,8 +17,39 @@ MAX_DIAGRAMS = 2
 
 _IMAGE_EXTS = (".png", ".gif", ".jpg")
 
-# 只認 <img src="cid:xxx">。外部 URL 的 img 不歸這裡管（也不該出現在信裡）。
-_IMG_CID = re.compile(r'<img\b[^>]*?\bsrc\s*=\s*["\']cid:([A-Za-z0-9_-]+)["\'][^>]*>', re.I)
+# 只認 <img src=cid:xxx>。外部 URL 的 img 不歸這裡管（也不該出現在信裡）。
+# src 的值可以加引號也可以不加（兩者在 HTML 裡都合法）；(?P<q>["\']?) 配 (?P=q) backreference
+# 確保「有加引號就一定要用同一種引號收尾」，不會讓 src="cid:d1" 因為引號比對太鬆
+# 而吃到後面別的屬性裡的引號。
+_IMG_CID = re.compile(
+    r'<img\b[^>]*?\bsrc\s*=\s*(?P<q>["\']?)cid:(?P<cid>[A-Za-z0-9_-]+)(?P=q)[^>]*>',
+    re.I,
+)
+
+# data-fig="cid" 標記的是整個圖說 wrapper（圖＋圖說＋署名）；裡面還有巢狀的 <div>，
+# 一般 regex 配不出巢狀的收尾 </div>，所以用計數的方式手動找配對。
+_DIV_TAG = re.compile(r'<(/?)div\b[^>]*>', re.I)
+
+
+def _marked_block_span(html, cid):
+    """找 <div ... data-fig="cid" ...>…</div> 的區間（含頭尾），找不到回傳 None。
+
+    只有這個 wrapper 本身巢狀，不是任意巢狀 HTML，所以用簡單的開合計數就夠，
+    不需要真的解析 HTML。
+    """
+    marker = re.compile(r'<div\b[^>]*\bdata-fig=(["\'])%s\1[^>]*>' % re.escape(cid), re.I)
+    m = marker.search(html)
+    if not m:
+        return None
+    depth = 1
+    for tm in _DIV_TAG.finditer(html, m.end()):
+        if tm.group(1):          # </div>
+            depth -= 1
+            if depth == 0:
+                return m.start(), tm.end()
+        else:                    # 巢狀的 <div ...>
+            depth += 1
+    return None                  # 沒配對到收尾，當作沒找到，交給舊的剝法
 
 
 def load_map(path=None):
@@ -59,21 +90,44 @@ def format_available(paths):
 
 def cid_refs(html):
     """html 裡引用到的 cid，依出現順序。"""
-    return _IMG_CID.findall(html or "")
+    return [m.group("cid") for m in _IMG_CID.finditer(html or "")]
 
 
 def strip_img_tags(html):
-    """移除所有 <img src="cid:...">，其餘內容原封不動。"""
-    return _IMG_CID.sub("", html or "")
+    """把每張 cid 圖從 html 拿掉，其餘內容原封不動。
+
+    優先整塊拿掉 `data-fig="cid"` 標記的 wrapper（連圖、圖說解說、CC BY-NC-SA
+    署名一起清掉）——不然只拔 <img> 會留下一段指著空氣的圖說文字。
+    找不到標記（沒有 data-fig 屬性的舊格式 outbox／舊信）就退回原本的做法，
+    只拿掉 <img> 本身，其餘文字不動——這樣改動前產生的信不會被這支新邏輯弄壞。
+    """
+    html = html or ""
+    for cid in cid_refs(html):
+        span = _marked_block_span(html, cid)
+        if span:
+            start, end = span
+            html = html[:start] + html[end:]
+        else:
+            html = re.compile(
+                r'<img\b[^>]*?\bsrc\s*=\s*(?P<q>["\']?)cid:%s(?P=q)[^>]*>' % re.escape(cid),
+                re.I,
+            ).sub("", html, count=1)
+    return html
 
 
 def _is_inside(rel, assets_root):
-    """rel 必須落在 assets_root 底下且檔案存在（擋掉 ../ 逃逸與絕對路徑）。
+    """rel 必須落在 assets_root 底下、是圖片副檔名、且檔案存在（擋掉 ../ 逃逸與絕對路徑）。
 
     rel 來自模型輸出，內容不可信——embedded null、過長路徑等都可能讓
     os.path.realpath / os.path.isfile 直接炸掉。這裡一律當「不合格」，
     而不是讓例外往上炸穿整個 sanitize（進而炸穿整個 apply_result 呼叫）。
+
+    副檔名也要檢查：assets_root 底下不是只有圖（例如 LICENSE），單靠
+    「檔案存在」會讓模型選到非圖片檔在 prepare 階段就悄悄過關，等雲端
+    send_email 真的去讀才炸——這裡先擋掉，失敗要在備稿當下就看得到。
     """
+    if not rel.lower().endswith(_IMAGE_EXTS):
+        return False
     try:
         root = os.path.realpath(assets_root)
         full = os.path.realpath(os.path.join(root, rel))
@@ -127,11 +181,22 @@ def sanitize(res, assets_root=None):
 
     if seen != set(refs):                     # html 與 diagrams 必須完全對得上
         return drop()
+
+    # 沒有人在寄出前看信——署名有沒有留著完全靠模型照抄模板，這裡當成硬性條件。
+    # 只認短字串 "CC BY-NC-SA"，不比對整句署名文字：整句比對會讓文案上無傷大雅的
+    # 措辭差異（例如連結文字、標點）就白白讓一封信沒了圖，比它想防的問題還糟。
+    if "CC BY-NC-SA" not in html:
+        return drop()
     return out, True
 
 
 def abs_paths(diagrams_list, assets_root=None):
-    """[(cid, 絕對路徑)]，給寄信端組 --image 參數用。"""
+    """[(cid, 絕對路徑)]，給寄信端組 --image 參數用。
+
+    前提：diagrams_list 必須是已經過 sanitize() 驗證的清單——這裡不再驗證
+    每筆元素的形狀，只負責組路徑；沒過 sanitize 就餵進來，缺 key 時用 .get()
+    回傳 None 而不是讓 KeyError 往上炸穿整個呼叫鏈。
+    """
     assets_root = ASSETS_ROOT if assets_root is None else assets_root
-    return [(d["cid"], os.path.join(assets_root, d["path"]))
+    return [(d.get("cid"), os.path.join(assets_root, d.get("path", "")))
             for d in (diagrams_list or [])]

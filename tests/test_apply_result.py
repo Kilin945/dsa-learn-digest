@@ -216,7 +216,7 @@ def test_to_outbox_keeps_valid_diagrams(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(dg, "ASSETS_ROOT", str(assets))
 
     payload = json.dumps({
-        "html": '<div><img src="cid:d1"></div>',
+        "html": '<div><img src="cid:d1">圖：Hello 算法 · CC BY-NC-SA 4.0</div>',
         "topic_complete": False,
         "today_summary": "s",
         "archive_markdown": "m",

@@ -99,7 +99,7 @@ def test_strip_img_tags_removes_only_cid_imgs():
 
 
 def test_sanitize_keeps_valid_diagrams(one_image):
-    res = _res('<img src="cid:d1">',
+    res = _res('<img src="cid:d1"> CC BY-NC-SA 4.0',
                [{"cid": "d1", "path": "chapter_a/x.assets/a.png", "caption": "圖說"}])
     out, ok = dg.sanitize(res, one_image)
     assert ok is True
@@ -212,3 +212,127 @@ def test_sanitize_non_string_html_with_no_diagrams_is_left_untouched(bad_html):
     assert ok is True
     assert "diagrams" not in out
     assert out["html"] == bad_html
+
+
+# ── fix 1: <img src=cid:d1> without quotes is valid HTML and must still be caught ──
+
+def test_cid_refs_finds_unquoted_src():
+    assert dg.cid_refs("<img src=cid:d1>") == ["d1"]
+
+
+def test_strip_img_tags_removes_unquoted_cid_img():
+    html = '<p>a</p><img src=cid:d1><p>b</p>'
+    out = dg.strip_img_tags(html)
+    assert "cid:d1" not in out
+    assert "<p>a</p>" in out and "<p>b</p>" in out
+
+
+def test_strip_img_tags_removes_single_quoted_cid_img():
+    html = "<p>a</p><img src='cid:d1'><p>b</p>"
+    out = dg.strip_img_tags(html)
+    assert "cid:d1" not in out
+    assert "<p>a</p>" in out and "<p>b</p>" in out
+
+
+def test_strip_img_tags_removes_double_quoted_cid_img():
+    html = '<p>a</p><img src="cid:d1"><p>b</p>'
+    out = dg.strip_img_tags(html)
+    assert "cid:d1" not in out
+    assert "<p>a</p>" in out and "<p>b</p>" in out
+
+
+def test_strip_img_tags_leaves_non_cid_img_alone():
+    html = '<p>a</p><img src="https://x/y.png" alt="z"><p>b</p>'
+    out = dg.strip_img_tags(html)
+    assert out == html
+
+
+def test_sanitize_drops_and_strips_unquoted_img_leaving_no_broken_tag(one_image):
+    # 這是最終審查抓到的具體案例：sanitize 判定要剝圖時，strip_img_tags 必須真的
+    # 把沒加引號的 <img src=cid:d1> 拿掉，不能因為 regex 只認引號而留下破圖標籤。
+    res = _res("<p>x</p><img src=cid:d1>",
+               [{"cid": "d1", "path": "chapter_a/x.assets/nope.png", "caption": "c"}])
+    out, ok = dg.sanitize(res, one_image)
+    assert ok is False
+    assert "<img" not in out["html"]
+    assert "<p>x</p>" in out["html"]
+
+
+# ── fix 3: strip 必須連同 data-fig 標記的整個圖說區塊一起拿掉 ──
+
+_MARKED_BLOCK = (
+    '<div style="margin:12px 0;" data-fig="d1">'
+    '<img src="cid:d1" alt="圖說">'
+    '<div style="font-size:12.5px;">針對這張圖的解說文字。</div>'
+    '<div style="font-size:10.5px;">圖：Hello 算法 · CC BY-NC-SA 4.0</div>'
+    '</div>'
+)
+
+
+def test_strip_img_tags_removes_whole_marked_block():
+    html = f'<p>before</p>{_MARKED_BLOCK}<p>after</p>'
+    out = dg.strip_img_tags(html)
+    assert out == '<p>before</p><p>after</p>'
+    assert "先看圖" not in out and "解說文字" not in out
+    assert "CC BY-NC-SA" not in out
+
+
+def test_strip_img_tags_without_marker_falls_back_to_bare_img_only():
+    # 舊格式的 outbox／舊信沒有 data-fig 屬性：只能拔掉 <img> 本身，
+    # 周圍的圖說文字與署名原樣留著——這是改動前信件的既有行為，不能被這次改動弄壞。
+    html = ('<div style="margin:12px 0;">'
+            '<img src="cid:d1" alt="圖說">'
+            '<div>針對這張圖的解說文字。</div>'
+            '<div>圖：Hello 算法 · CC BY-NC-SA 4.0</div>'
+            '</div>')
+    out = dg.strip_img_tags(html)
+    assert "<img" not in out
+    assert "解說文字" in out           # 舊格式沒有標記可用，文字留著
+    assert "CC BY-NC-SA" in out
+
+
+def test_sanitize_drop_removes_whole_marked_block(one_image):
+    html = f'<p>before</p>{_MARKED_BLOCK}<p>after</p>'
+    res = _res(html, [{"cid": "d1", "path": "chapter_a/x.assets/nope.png", "caption": "c"}])
+    out, ok = dg.sanitize(res, one_image)
+    assert ok is False
+    assert out["html"] == '<p>before</p><p>after</p>'
+
+
+# ── fix 4: 沒有留下署名子字串 CC BY-NC-SA，diagrams 就要被剝掉 ──
+
+def test_sanitize_drops_when_attribution_missing(one_image):
+    res = _res('<img src="cid:d1">（沒有署名）',
+               [{"cid": "d1", "path": "chapter_a/x.assets/a.png", "caption": "c"}])
+    out, ok = dg.sanitize(res, one_image)
+    assert ok is False
+    assert "diagrams" not in out
+
+
+def test_sanitize_tolerates_attribution_wording_variation(one_image):
+    # 只認短字串 "CC BY-NC-SA"：署名整句的措辭／連結文字有變化也不該讓圖被剝掉，
+    # 否則文案上無傷大雅的差異就會白白讓信少了圖，比它想防的問題還糟。
+    html = '<img src="cid:d1">圖片來源：Hello 算法，授權 CC BY-NC-SA 4.0 國際版'
+    res = _res(html, [{"cid": "d1", "path": "chapter_a/x.assets/a.png", "caption": "c"}])
+    out, ok = dg.sanitize(res, one_image)
+    assert ok is True
+    assert out["diagrams"][0]["cid"] == "d1"
+
+
+# ── fix 9: 副檔名不在 _IMAGE_EXTS 就不合格（例如選到 LICENSE） ──
+
+def test_sanitize_rejects_non_image_extension(tmp_path):
+    root = tmp_path / "assets"
+    root.mkdir()
+    (root / "LICENSE").write_text("MIT-ish licence text", encoding="utf-8")
+    res = _res('<img src="cid:d1"> CC BY-NC-SA 4.0',
+               [{"cid": "d1", "path": "LICENSE", "caption": "c"}])
+    out, ok = dg.sanitize(res, str(root))
+    assert ok is False
+    assert "diagrams" not in out
+
+
+def test_abs_paths_uses_get_not_bracket_indexing():
+    # 缺 key 時要回傳 None／組出帶空字串的路徑，而不是 KeyError 往上炸穿。
+    got = dg.abs_paths([{"cid": "d1"}], "/assets")
+    assert got == [("d1", "/assets/")]

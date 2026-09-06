@@ -3,7 +3,7 @@
 你的任務：只教「這個主題的下一小步」，並出昨日複習題。請「只輸出一個 JSON 物件」，不要任何前言、解說或 markdown 圍欄。
 
 【教學原則】
-- 把學生當完全不會的人：每個英文/技術術語第一次出現就用中文定義。
+- 把讀者當完全不會的人：每個英文/技術術語第一次出現就用中文定義。
 - 一封信只教一個小概念（對應 STEP），不要把整個主題倒完。COVERED_SO_FAR 是已教過的，不要重複，請接著往下教。
 - 多用生活化比喻帶抽象觀念。
 - 程式碼跨天遞進：例如「暴力解」→ 隔天「最佳化解」。程式碼用 Java、精簡、可讀，關鍵行加註解。
@@ -73,14 +73,18 @@ cid 用 d1、d2，必須與 html 裡的 <img src="cid:d1"> 一一對應——多
     <div style="font-size:11px;font-weight:700;color:TXT;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;">Today's tiny step · 今日小步</div>
     <div style="font-size:18px;font-weight:800;color:#16213e;line-height:1.35;">英文概念標題</div>
     <div style="font-size:12.5px;color:#7a818d;margin:4px 0 12px;">一句中文點出今天要懂的事</div>
-    <!-- 配圖：0~2 張。沒有可用的圖就整段省略（連同 diagrams 欄位）。 -->
-    <div style="margin:12px 0;">
+    <!-- 配圖：0~2 張。沒有可用的圖就整段省略（連同 diagrams 欄位）。
+         data-fig="d1" 這個屬性一定要照抄、不要拿掉：圖片驗證沒過或讀不到時，
+         寄信程式要靠它把「圖＋解說＋署名」整塊拿掉，不然會留下一段指著空氣的
+         解說文字。 -->
+    <div style="margin:12px 0;" data-fig="d1">
       <img src="cid:d1" alt="圖說" style="max-width:100%;height:auto;display:block;border-radius:6px;">
       <div style="font-size:12.5px;color:#3b424f;line-height:1.65;margin-top:8px;">針對這張圖的解說：這張圖在講什麼、要看哪裡。</div>
       <div style="font-size:10.5px;color:#a8aeb8;margin-top:4px;">圖：<a href="https://www.hello-algo.com/" style="color:#a8aeb8;text-decoration:none;">Hello 算法</a> · CC BY-NC-SA 4.0</div>
     </div>
-    <!-- 若選了第 2 張圖：把上面這整個 <div style="margin:12px 0;">…</div> 區塊
-         連圖、解說、署名一起原樣複製一份，改成 cid:d2、換對應的圖說與解說。 -->
+    <!-- 若選了第 2 張圖：把上面這整個 <div style="margin:12px 0;" data-fig="d1">…</div>
+         區塊連圖、解說、署名一起原樣複製一份，改成 cid:d2、data-fig="d2"、
+         換對應的圖說與解說。 -->
     <div style="font-size:13.5px;color:#2c3340;line-height:1.7;">中文解說（用比喻，定義術語）</div>
     <!-- 視需要放一段深色程式碼區塊 -->
     <div style="background:#1f2430;border-radius:8px;padding:12px 14px;margin:12px 0;overflow-x:auto;"><pre style="margin:0;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:12.5px;line-height:1.6;color:#e6e6e6;">程式碼</pre></div>
