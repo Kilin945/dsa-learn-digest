@@ -277,10 +277,10 @@ looks_like_html() {  # 給每週用：像 HTML 且不含錯誤字樣
   return 0
 }
 
-send_html() {  # $1=html $2=主旨前綴 ；回傳寄信 rc
-  local html="$1" subject="$2"
+send_html() {  # $1=html $2=主旨前綴 $3...=原樣轉給 send_email.py（例如 --image cid=path）；回傳寄信 rc
+  local html="$1" subject="$2"; shift 2
   local out rc
-  out="$(echo "$html" | "$PYTHON" "$DIR/send_email.py" "$subject" 2>&1)"; rc=$?
+  out="$(echo "$html" | "$PYTHON" "$DIR/send_email.py" "$subject" "$@" 2>&1)"; rc=$?
   echo "$out" >> "$LOG"
   if [ $rc -ne 0 ]; then
     local reason="$(echo "$out" | grep -iE 'error' | tail -1 | tr -d '"\\' | cut -c1-180)"
@@ -471,7 +471,13 @@ do_send() {
   if "$PYTHON" "$DIR/apply_result.py" --outbox-ready 2>>"$LOG"; then
     local html
     html="$("$PYTHON" "$DIR/apply_result.py" --outbox-html 2>>"$LOG")"
-    if send_html "$html" "$SUBJECT_DAILY"; then
+    # 圖存在 repo 裡，outbox 只記路徑；沒圖時這裡拿到空輸出，imgargs 保持空陣列。
+    local -a imgargs=()
+    local _cid _path
+    while IFS=$'\t' read -r _cid _path; do
+      [ -n "$_cid" ] && imgargs+=(--image "$_cid=$_path")
+    done < <("$PYTHON" "$DIR/apply_result.py" --outbox-images 2>>"$LOG")
+    if send_html "$html" "$SUBJECT_DAILY" "${imgargs[@]}"; then
       "$PYTHON" "$DIR/apply_result.py" --commit-outbox >>"$LOG" 2>&1 \
         || log "WARN: outbox 推進度失敗（信已寄出）。"
       date '+%Y-%m-%d %H:%M:%S' > "$MARKER_DAILY"
