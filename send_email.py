@@ -2,16 +2,21 @@
 # -*- coding: utf-8 -*-
 """學習信寄送：從 stdin 讀 HTML，透過 Gmail SMTP (STARTTLS) 寄出。
 設定優先序：環境變數 > 同目錄 config.env。App Password 從 macOS Keychain 讀。
-用法：echo "<html>" | python3 send_email.py ["主旨前綴"]
+用法：echo "<html>" | python3 send_email.py ["主旨前綴"] [--image CID=PATH ...]
 """
 import os
 import sys
 import ssl
 import smtplib
+import argparse
 import datetime
 import subprocess
 from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
 from email.utils import formataddr
+
+import diagrams as dg
 
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 587
@@ -58,7 +63,70 @@ def get_app_password(gmail_user, service):
         sys.exit(3)
 
 
+_SUBTYPES = {".png": "png", ".gif": "gif", ".jpg": "jpeg", ".jpeg": "jpeg"}
+
+
+def _img_subtype(path):
+    return _SUBTYPES.get(os.path.splitext(path)[1].lower())
+
+
+def parse_image_args(specs):
+    """把 ["d1=/path/a.png"] 拆成 [("d1", "/path/a.png")]，格式不對的整筆略過。"""
+    out = []
+    for spec in specs or []:
+        cid, sep, path = spec.partition("=")
+        if sep and cid and path:
+            out.append((cid, path))
+    return out
+
+
+def build_message(html_body, subject, from_user, to_addr, images=None):
+    """無圖 → text/html；有圖 → multipart/related 以 CID 內嵌。
+
+    Gmail 不吃 data: URI 也不吃 SVG，CID 是唯一能讓圖顯示在信裡的方式。
+    任何一張圖讀不到就整批放棄、剝掉 <img> 改寄純文字 —— 圖是加分項，
+    不能因為它讓信寄不出去，也不該讓收件匣裡出現一排破圖。
+    """
+    images = list(images or [])
+    loaded = []
+    for cid, path in images:
+        try:
+            subtype = _img_subtype(path)
+            if subtype is None:
+                raise OSError("不支援的圖片格式")
+            with open(path, "rb") as f:
+                loaded.append((cid, f.read(), subtype))
+        except OSError as e:
+            print(f"WARN: 圖片讀取失敗，改以純文字寄出：{path} ({e})", file=sys.stderr)
+            loaded = None
+            break
+
+    if loaded:
+        msg = MIMEMultipart("related")
+        msg.attach(MIMEText(html_body, "html", "utf-8"))
+        for cid, data, subtype in loaded:
+            img = MIMEImage(data, _subtype=subtype)
+            img.add_header("Content-ID", f"<{cid}>")
+            img.add_header("Content-Disposition", "inline", filename=f"{cid}.{subtype}")
+            msg.attach(img)
+    else:
+        if images:
+            html_body = dg.strip_img_tags(html_body)
+        msg = MIMEText(html_body, "html", "utf-8")
+
+    msg["Subject"] = subject
+    msg["From"] = formataddr(("DSA Learn Digest", from_user))
+    msg["To"] = to_addr
+    return msg
+
+
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("subject_prefix", nargs="?", default="每日 DSA")
+    ap.add_argument("--image", action="append", default=[], metavar="CID=PATH",
+                    help="以 CID 內嵌一張圖，可重複")
+    args = ap.parse_args()
+
     conf = load_config()
     if not conf["GMAIL_USER"]:
         print("ERROR: 未設定 GMAIL_USER（請建立 config.env，參考 config.env.example）", file=sys.stderr)
@@ -79,15 +147,12 @@ def main():
         sys.exit(2)
 
     today = datetime.date.today().strftime("%Y-%m-%d")
-    subject_prefix = sys.argv[1] if len(sys.argv) > 1 else "每日 DSA"
-    subject = f"{subject_prefix} — {today}"
+    subject = f"{args.subject_prefix} — {today}"
 
     app_password = get_app_password(conf["GMAIL_USER"], conf["KEYCHAIN_SERVICE"])
 
-    msg = MIMEText(html_body, "html", "utf-8")
-    msg["Subject"] = subject
-    msg["From"] = formataddr(("DSA Learn Digest", conf["GMAIL_USER"]))
-    msg["To"] = conf["MAIL_TO"]
+    msg = build_message(html_body, subject, conf["GMAIL_USER"], conf["MAIL_TO"],
+                        parse_image_args(args.image))
 
     try:
         ctx = ssl.create_default_context()
