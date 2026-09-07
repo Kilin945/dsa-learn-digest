@@ -30,7 +30,7 @@
 ## 圖片：授權與私有
 
 `assets/hello-algo/` 是 vendored 的 hello-algo 繁中圖，**CC BY-NC-SA 4.0**：署名照
-`prompt_daily.txt` 既有格式、原圖不裁切不加工。本 repo 與 `dsa-learn-state` 須維持私有。
+`prompt_daily.txt` 既有格式、原圖不裁切不加工。本 repo（含 `../state` worktree）須維持私有。
 <!-- @assert:path assets/hello-algo/LICENSE -->
 
 ## `x or 預設值` 在這裡炸過三次

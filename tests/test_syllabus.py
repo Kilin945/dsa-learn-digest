@@ -22,7 +22,7 @@ PINNED = [
     "空間複雜度：記憶體也要算，遞迴呼叫堆疊的隱藏成本",
 ]
 
-# state/progress.json 是連到 dsa-learn-state 的 symlink，CI checkout 通常看不到它
+# state/progress.json 是連到 ../state worktree 的 symlink，CI checkout 通常看不到它
 # （這裡也只讀不寫）。看不到或壞掉就退回原本寫死的前兩行——那兩個主題已經寄出去
 # 完全教完，不管 current_index 走到哪都永遠凍結；沒有 state 就沒辦法確認再往後
 # 幾行是不是也該凍結，所以保守只守這兩行，而不是猜一個可能太寬或太窄的數字。
