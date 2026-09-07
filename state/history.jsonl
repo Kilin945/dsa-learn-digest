@@ -7,3 +7,4 @@
 {"date": "2026-09-04", "topic": "陣列 Array 與動態陣列 ArrayList：連續記憶體的代價與好處", "step": 2, "summary": "陣列因為連續記憶體，插入或刪除中間元素時後面所有元素都要搬移（shifting），所以是 O(n)，這是隨機存取快（O(1)）的代價；只有插在陣列最後面且有空間時才是 O(1)。"}
 {"date": "2026-09-05", "topic": "陣列 Array 與動態陣列 ArrayList：連續記憶體的代價與好處", "step": 3, "summary": "ArrayList 底層其實是普通陣列，滿了就會配置一個兩倍大的新陣列並把舊資料整個複製過去（resize），單次 resize 是 O(n)，但因為容量每次翻倍、搬家次數只有 log n 次，攤還下來平均每次 add() 是 amortized O(1)。"}
 {"date": "2026-09-06", "topic": "陣列 Array 與動態陣列 ArrayList：連續記憶體的代價與好處", "step": 4, "summary": "ArrayList<Integer> 因為 autoboxing，底層存的其實是指向 Integer 物件的 reference 而非連續的基本型別數值，所以會失去部分連續記憶體帶來的效能優勢（多一次記憶體跳轉、容易 cache miss）；已知大小且是基本型別、追求效能時應優先選 int[] 等純陣列。"}
+{"date": "2026-09-07", "topic": "空間複雜度：記憶體也要算，遞迴呼叫堆疊的隱藏成本", "step": 1, "summary": "空間複雜度只算演算法額外多用的記憶體（不含輸入本身），原地操作是 O(1)、另開等大容器是 O(n)；今天用 LeetCode 26 練了用雙指標把 O(n) 空間解法改寫成 O(1) 空間的原地解法。"}
