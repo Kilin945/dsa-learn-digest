@@ -13,6 +13,7 @@ import json
 _HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS_ROOT = os.path.join(_HERE, "assets", "hello-algo")
 MAP_PATH = os.path.join(_HERE, "diagram_map.json")
+NOTES_PATH = os.path.join(_HERE, "diagram_notes.json")
 MAX_DIAGRAMS = 2
 
 _IMAGE_EXTS = (".png", ".gif", ".jpg")
@@ -65,27 +66,81 @@ def load_map(path=None):
     return data if isinstance(data, dict) else {}
 
 
-def candidates_for(topic, dmap=None, assets_root=None):
-    """該主題可用的圖，回傳相對 assets_root 的路徑清單（排序穩定）。"""
+def load_notes(path=None):
+    """讀 diagram_notes.json；不存在或壞掉都回傳空 dict。
+
+    空 dict 的語意是「沒有原文可用」，candidates_for 會據此**不做過濾**、
+    format_available 也只印路徑——退回這個改動之前的行為。圖是加分項，
+    note 檔案壞掉不該讓整封信沒圖，更不該擋信。
+    """
+    path = NOTES_PATH if path is None else path
+    if not os.path.exists(path):
+        return {}
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, ValueError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def candidates_for(topic, dmap=None, assets_root=None, notes=None):
+    """該主題可用的圖，回傳相對 assets_root 的路徑清單（排序穩定）。
+
+    只回傳「在 diagram_notes.json 裡有原文敘述」的圖：模型看不到圖，沒有
+    原文它只能憑檔名猜圖說，猜出來的圖說會跟圖矛盾（2026-09-07 那封信）。
+    寧可少一張圖，也不要一段沒有依據的圖說。
+
+    例外：notes 整份是空的（檔案不存在或解析失敗）時不過濾，否則一個壞掉的
+    JSON 會讓所有主題都突然沒圖。實際會被排除的只有 assets/covers/ 與
+    index.assets/ 底下的封面插畫與首頁 banner——它們不在 diagram_map.json
+    任何主題底下，本來就撈不到。
+
+    dmap / assets_root / notes 三者要成套傳：它們描述的是同一個圖庫。只換
+    assets_root 而讓 notes 落回全域檔案，等於拿真圖庫的對照表比對另一個圖庫
+    的路徑，一張都對不上、回傳空清單（測試用假圖庫時就會踩到，見
+    tests/test_diagrams.py 的 fake_notes fixture）。
+    """
     dmap = load_map() if dmap is None else dmap
     assets_root = ASSETS_ROOT if assets_root is None else assets_root
+    notes = load_notes() if notes is None else notes
     out = []
     for d in dmap.get(topic) or []:
         full = os.path.join(assets_root, d)
         if not os.path.isdir(full):
             continue  # 上游改名或圖庫沒更新，跳過而不是炸掉
         for name in sorted(os.listdir(full)):
-            if name.lower().endswith(_IMAGE_EXTS):
-                out.append(f"{d}/{name}")
+            if not name.lower().endswith(_IMAGE_EXTS):
+                continue
+            rel = f"{d}/{name}"
+            if notes and rel not in notes:
+                continue
+            out.append(rel)
     return out
 
 
-def format_available(paths):
-    """組出餵給 claude 的 AVAILABLE_DIAGRAMS 段落。"""
+def format_available(paths, notes=None):
+    """組出餵給 claude 的 AVAILABLE_DIAGRAMS 段落，每張圖附上 hello-algo 原文。
+
+    原文是圖說唯一的依據來源（prompt_daily.txt 據此要求圖說不得寫出原文
+    沒支持的斷言）。撈不到原文的圖只印路徑，不編造。
+    """
     if not paths:
         return "AVAILABLE_DIAGRAMS: （無，今天沒有可用的圖，不要輸出 diagrams 欄位）"
-    lines = "\n".join(f"- {p}" for p in paths)
-    return f"AVAILABLE_DIAGRAMS:\n{lines}"
+    notes = load_notes() if notes is None else notes
+    lines = []
+    for p in paths:
+        lines.append(f"- {p}")
+        note = notes.get(p) if isinstance(notes, dict) else None
+        if not isinstance(note, dict):
+            continue
+        alt = note.get("alt")
+        text = note.get("text")
+        if isinstance(alt, str) and alt:
+            lines.append(f"  圖名：{alt}")
+        if isinstance(text, str) and text:
+            lines.append(f"  原文：{text}")
+    return "AVAILABLE_DIAGRAMS:\n" + "\n".join(lines)
 
 
 def cid_refs(html):

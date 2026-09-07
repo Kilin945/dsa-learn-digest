@@ -6,6 +6,22 @@ import diagrams as dg
 
 
 @pytest.fixture
+def fake_notes():
+    """假圖庫的原文對照表。
+
+    candidates_for 只回傳「有原文依據」的圖，所以 assets_root、dmap、notes
+    三者必須成套傳——這是這個模組既有的約定（dmap 一直都是這樣傳的）。
+    只傳 assets_root 而讓 notes 落回全域檔案，等於拿真圖庫的對照表去比對
+    假圖庫的路徑，一張都對不上。
+    """
+    return {
+        "chapter_a/x.assets/a.png": {"alt": "圖 a", "text": "原文 a"},
+        "chapter_a/x.assets/b.png": {"alt": "圖 b", "text": "原文 b"},
+        "chapter_a/y.assets/c.gif": {"alt": "圖 c", "text": "原文 c"},
+    }
+
+
+@pytest.fixture
 def fake_assets(tmp_path):
     """造一個假圖庫：兩個章節目錄，各放幾張圖。"""
     root = tmp_path / "assets"
@@ -20,35 +36,81 @@ def fake_assets(tmp_path):
     return str(root)
 
 
-def test_candidates_are_sorted_and_image_only(fake_assets):
+def test_candidates_are_sorted_and_image_only(fake_assets, fake_notes):
     dmap = {"主題甲": ["chapter_a/x.assets"]}
-    assert dg.candidates_for("主題甲", dmap, fake_assets) == [
+    assert dg.candidates_for("主題甲", dmap, fake_assets, fake_notes) == [
         "chapter_a/x.assets/a.png",
         "chapter_a/x.assets/b.png",
     ]
 
 
-def test_candidates_spans_multiple_dirs(fake_assets):
+def test_candidates_spans_multiple_dirs(fake_assets, fake_notes):
     dmap = {"主題甲": ["chapter_a/x.assets", "chapter_a/y.assets"]}
-    got = dg.candidates_for("主題甲", dmap, fake_assets)
+    got = dg.candidates_for("主題甲", dmap, fake_assets, fake_notes)
     assert "chapter_a/y.assets/c.gif" in got
     assert len(got) == 3
 
 
-def test_topic_not_in_map_returns_empty(fake_assets):
-    assert dg.candidates_for("沒登記的主題", {}, fake_assets) == []
+def test_topic_not_in_map_returns_empty(fake_assets, fake_notes):
+    assert dg.candidates_for("沒登記的主題", {}, fake_assets, fake_notes) == []
 
 
-def test_missing_dir_is_skipped_not_raised(fake_assets):
+def test_missing_dir_is_skipped_not_raised(fake_assets, fake_notes):
     dmap = {"主題甲": ["chapter_a/x.assets", "chapter_zzz/nope.assets"]}
-    got = dg.candidates_for("主題甲", dmap, fake_assets)
+    got = dg.candidates_for("主題甲", dmap, fake_assets, fake_notes)
+    assert got == ["chapter_a/x.assets/a.png", "chapter_a/x.assets/b.png"]
+
+
+def test_candidates_drop_images_without_a_source_note(fake_assets, fake_notes):
+    """沒有原文依據的圖不給模型用——它看不到圖，只能憑檔名瞎猜圖說。"""
+    notes = dict(fake_notes)
+    del notes["chapter_a/x.assets/b.png"]
+    got = dg.candidates_for("主題甲", {"主題甲": ["chapter_a/x.assets"]}, fake_assets, notes)
+    assert got == ["chapter_a/x.assets/a.png"]
+
+
+def test_candidates_do_not_filter_when_notes_are_entirely_missing(fake_assets):
+    """note 檔案壞掉時不過濾，否則一個壞 JSON 會讓所有主題突然全部沒圖。"""
+    got = dg.candidates_for("主題甲", {"主題甲": ["chapter_a/x.assets"]}, fake_assets, {})
     assert got == ["chapter_a/x.assets/a.png", "chapter_a/x.assets/b.png"]
 
 
 def test_format_available_lists_paths():
-    out = dg.format_available(["chapter_a/x.assets/a.png"])
+    out = dg.format_available(["chapter_a/x.assets/a.png"], {})
     assert out.startswith("AVAILABLE_DIAGRAMS:")
     assert "- chapter_a/x.assets/a.png" in out
+
+
+def test_format_available_carries_the_source_note(fake_notes):
+    """原文是圖說唯一的依據，必須真的送到模型手上。"""
+    out = dg.format_available(["chapter_a/x.assets/a.png"], fake_notes)
+    assert "- chapter_a/x.assets/a.png" in out
+    assert "圖名：圖 a" in out
+    assert "原文：原文 a" in out
+
+
+def test_format_available_survives_a_note_of_the_wrong_shape():
+    """note 值不是 dict（手改壞、上游格式變）時只印路徑，不炸也不編造。"""
+    out = dg.format_available(["chapter_a/x.assets/a.png"],
+                              {"chapter_a/x.assets/a.png": "不是 dict"})
+    assert "- chapter_a/x.assets/a.png" in out
+    assert "原文：" not in out
+
+
+def test_load_notes_missing_file_returns_empty(tmp_path):
+    assert dg.load_notes(str(tmp_path / "nope.json")) == {}
+
+
+def test_load_notes_broken_json_returns_empty(tmp_path):
+    p = tmp_path / "notes.json"
+    p.write_text("{壞掉", encoding="utf-8")
+    assert dg.load_notes(str(p)) == {}
+
+
+def test_load_notes_wrong_toplevel_type_returns_empty(tmp_path):
+    p = tmp_path / "notes.json"
+    p.write_text("[1, 2, 3]", encoding="utf-8")
+    assert dg.load_notes(str(p)) == {}
 
 
 def test_format_available_empty_tells_model_not_to_emit():

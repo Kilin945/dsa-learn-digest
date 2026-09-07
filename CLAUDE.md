@@ -43,3 +43,13 @@
 `prompt_daily.txt` / `prompt_weekly.txt` 寫給兩位讀者（工程師＋無工程背景的產品同事），
 目標是理解與應用、不是面試——這兩點都被使用者明確改過，改內容前先確認沒有倒退
 （尤其是抄自 `java-learn-digest` 的舊素材）。
+
+## 圖說必須有原文依據
+
+產稿的模型**看不到圖**，只拿到路徑。所以 `diagram_notes.json`（由
+`build_diagram_notes.py` 從 vendored 的章節 `.md` 抽出）是圖說唯一的事實來源，
+`candidates_for` 只回傳有 note 的圖、`format_available` 把 note 一起餵進 prompt。
+改了 `assets/hello-algo/**/*.md` 或抽取邏輯就要重跑 `build_diagram_notes.py`
+（`--check` 有測試守著）。任何「要求模型描述圖上外觀」的 prompt 規則都是空的——
+它只知道 note 寫了什麼。2026-09-07 憑檔名猜出「空間複雜度只算暫存空間」寄了出去。
+<!-- @assert:cmd python3 build_diagram_notes.py --check -->
