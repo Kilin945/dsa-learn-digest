@@ -13,6 +13,20 @@
   或下面，不准貼在程式碼同一行尾巴（例如 `nums[i] = nums[i] * 2; // 這裡...` 這種
   寫法本身多半就超過 40 字元、還會把同一行後段的程式碼擠出手機螢幕外，一律禁止）。
 - 講到複雜度一定同時給 Big-O 與「為什麼」（例如：迴圈裡再掃一次整個陣列，所以是 O(n²)）。
+- 長文一律分段，每段標一個重點。這條是版型的核心，不是裝飾——內容變長之後，
+  一整塊不斷行的文字讀不下去。做法：
+  * 任何超過約 120 字的說明，拆成 2～4 段。每段前面加一個藍色粗體小標
+    （5～12 字，像小節標題），讓讀者知道這段要講什麼。
+  * **每一段都要有恰好一個螢光筆標記**，標的是「這一段的重點句」，不是術語。
+    術語表已經負責術語了；螢光筆負責的是「只讀黃色的部分，論證要連得起來」。
+    一段標兩個以上就等於沒標；一段都不標，那段的重點就沒被指出來。
+  * 螢光筆只用在散文段落。編號清單（解題步驟、昨日複習的題目與解答）本來就有
+    結構，不要再加黃底，會變成滿版黃色。
+  * 黃底裡面盡量不要再包「」引號——引號本身就是強調，兩種疊在一起很吵。
+- 每個卡片結尾加一行「一句話：」小結（左側細灰條），用一句話收掉那個卡片。
+  術語表與昨日複習不用——它們本身就是條列，沒有需要收的論證。
+- 全信只能有一個「⚠ 最容易搞錯的地方」橘色框，放在最該提醒的那一件事上。
+  放兩個以上，讀者就分不出哪個真的重要。通常放在「今日小步」的解說結尾。
 - 英文為主、中文輔助：概念標題用英文，解說用中文。
 - 配圖：context 尾端的 AVAILABLE_DIAGRAMS 列出今天可用的圖，每張圖底下附「圖名：」與
   「原文：」兩行——那是 hello algo 這本書在這張圖前後自己寫的敘述，是你唯一看得到的
@@ -108,13 +122,28 @@ cid 用 d1、d2，必須與 html 裡的 <img src="cid:d1"> 一一對應——多
          放錯位置會讓寄信程式把整堂課內容當成圖說一起清掉。 -->
     <div style="margin:12px 0;" data-fig="d1">
       <img src="cid:d1" alt="圖說" style="max-width:100%;height:auto;display:block;border-radius:6px;">
-      <div style="font-size:12.5px;color:#3b424f;line-height:1.65;margin-top:8px;">針對這張圖的解說：這張圖在講什麼、要看哪裡。</div>
+      <!-- 圖說也照分段規則：超過 120 字就拆段，每段一個螢光筆標記。 -->
+      <div style="font-size:13.5px;color:#3b424f;line-height:1.8;margin-top:8px;">針對這張圖的解說，其中<span style="background:#ffe58f;padding:1px 4px;border-radius:3px;font-weight:700;color:#5c4409;">重點句</span>標起來。</div>
       <div style="font-size:10.5px;color:#a8aeb8;margin-top:4px;">圖：<a href="https://www.hello-algo.com/" style="color:#a8aeb8;text-decoration:none;">Hello 算法</a> · CC BY-NC-SA 4.0</div>
     </div>
     <!-- 若選了第 2 張圖：把上面這整個 <div style="margin:12px 0;" data-fig="d1">…</div>
          區塊連圖、解說、署名一起原樣複製一份，改成 cid:d2、data-fig="d2"、
          換對應的圖說與解說。 -->
-    <div style="font-size:13.5px;color:#2c3340;line-height:1.7;">中文解說（用比喻，定義術語）</div>
+    <!-- 中文解說：分成 2～4 段，每段一個藍色小標＋恰好一個螢光筆標記。
+         段數與小標文字自己依內容決定，下面是形狀範例。 -->
+    <div style="margin:0 0 14px;">
+      <div style="font-size:13px;font-weight:800;color:#3b6cf6;margin:0 0 5px;">第一段的小標</div>
+      <div style="font-size:15px;color:#2c3340;line-height:1.85;">說明文字，其中<span style="background:#ffe58f;padding:1px 4px;border-radius:3px;font-weight:700;color:#5c4409;">這一段的重點句</span>用螢光筆標起來。</div>
+    </div>
+    <div style="margin:0 0 14px;">
+      <div style="font-size:13px;font-weight:800;color:#3b6cf6;margin:0 0 5px;">第二段的小標</div>
+      <div style="font-size:15px;color:#2c3340;line-height:1.85;">說明文字，同樣標<span style="background:#ffe58f;padding:1px 4px;border-radius:3px;font-weight:700;color:#5c4409;">一個重點</span>。</div>
+    </div>
+    <!-- ⚠ 框：全信只有一個，通常放在這裡（解說最後）。沒有真正容易搞錯的事就省略。 -->
+    <div style="border-left:4px solid #f0a92e;background:#fff8e8;border-radius:0 8px 8px 0;padding:11px 14px;margin:0 0 12px;">
+      <div style="font-size:11px;font-weight:800;color:#a9700d;letter-spacing:.4px;margin-bottom:4px;">⚠ 最容易搞錯的地方</div>
+      <div style="font-size:14px;color:#5c4409;line-height:1.8;">最該被提醒的那一件事。這個框裡面不要再放螢光筆。</div>
+    </div>
     <!-- 視需要放一段深色程式碼區塊 -->
     <div style="background:#1f2430;border-radius:8px;padding:12px 14px;margin:12px 0;overflow-x:auto;"><pre style="margin:0;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:12.5px;line-height:1.6;color:#e6e6e6;">程式碼</pre></div>
     <div style="font-size:12.5px;color:#3b424f;line-height:1.6;background:#fff;border-radius:8px;padding:10px 12px;margin-top:12px;"><b style="color:TXT;">🥡 今日一句話帶走：</b>濃縮重點。</div>
@@ -123,18 +152,29 @@ cid 用 d1、d2，必須與 html 裡的 <img src="cid:d1"> 一一對應——多
 
   <div style="background:#fbfcf8;border:1px solid #e2e6da;border-radius:10px;padding:13px 16px;margin-bottom:14px;">
     <div style="font-size:13px;font-weight:800;color:TXT;margin-bottom:8px;">🔧 這東西用在哪</div>
-    <div style="font-size:12.5px;color:#3b424f;line-height:1.65;margin-bottom:10px;"><b style="color:TXT;">對寫程式的人</b><br>什麼情況下會選這個結構／這個做法、它讓你少寫什麼、用錯會怎樣。</div>
-    <div style="font-size:12.5px;color:#3b424f;line-height:1.65;"><b style="color:TXT;">對產品端的人</b><br>看到什麼樣的功能，可以推測背後大概是這個結構；它決定了這個功能能撐多大、什麼時候會開始變慢（全白話，不談程式碼）。</div>
+    <!-- 兩個角度各自照分段規則寫，每段一個螢光筆標記，最後各一行「一句話：」小結。 -->
+    <div style="font-size:13px;font-weight:800;color:#3b6cf6;margin:0 0 5px;">對寫程式的人</div>
+    <div style="font-size:14px;color:#3b424f;line-height:1.8;margin-bottom:10px;">什麼情況下會選這個結構／這個做法、它讓你少寫什麼、用錯會怎樣，其中<span style="background:#ffe58f;padding:1px 4px;border-radius:3px;font-weight:700;color:#5c4409;">重點句</span>標起來。</div>
+    <div style="border-left:3px solid #b9c2d0;padding-left:10px;margin:0 0 14px;font-size:13px;color:#5a6474;line-height:1.7;"><b style="color:#3b424f;">一句話：</b>收掉這個角度。</div>
+    <div style="font-size:13px;font-weight:800;color:#3b6cf6;margin:0 0 5px;">對產品端的人</div>
+    <div style="font-size:14px;color:#3b424f;line-height:1.8;margin-bottom:10px;">看到什麼樣的功能，可以推測背後大概是這個結構；它決定了這個功能能撐多大、什麼時候會開始變慢（全白話，不談程式碼），其中<span style="background:#ffe58f;padding:1px 4px;border-radius:3px;font-weight:700;color:#5c4409;">重點句</span>標起來。</div>
+    <div style="border-left:3px solid #b9c2d0;padding-left:10px;margin:0;font-size:13px;color:#5a6474;line-height:1.7;"><b style="color:#3b424f;">一句話：</b>給產品端一句可以直接拿去問工程師的話。</div>
   </div>
 
   <div style="background:#fbfcf8;border:1px solid #e2e6da;border-radius:10px;padding:13px 16px;margin-bottom:14px;">
     <div style="font-size:13px;font-weight:800;color:TXT;margin-bottom:8px;">🎯 動手寫 · LeetCode</div>
     <div style="font-size:13.5px;margin-bottom:10px;"><a href="題目連結" style="color:#3b6cf6;text-decoration:none;font-weight:700;">#題號 題名</a> <span style="color:#8a909c;font-size:12px;">（難度）</span></div>
-    <div style="font-size:12.5px;color:#3b424f;line-height:1.65;margin-bottom:10px;"><b style="color:TXT;">題目在說什麼</b><br>白話翻譯一次。</div>
-    <div style="font-size:12.5px;color:#3b424f;line-height:1.65;margin-bottom:10px;"><b style="color:TXT;">怎麼用今天學的東西解</b>
-      <ol style="margin:6px 0 0;padding-left:20px;line-height:1.7;"><li>步驟</li></ol>
+    <div style="font-size:13px;font-weight:800;color:#3b6cf6;margin:0 0 5px;">題目在說什麼</div>
+    <div style="font-size:14px;color:#3b424f;line-height:1.8;margin-bottom:10px;">白話翻譯一次。（短句不必標螢光筆。）</div>
+    <!-- 編號清單：照規則不加螢光筆，但字級與旁邊的段落一致。 -->
+    <div style="font-size:13px;font-weight:800;color:#3b6cf6;margin:0 0 5px;">怎麼用今天學的東西解</div>
+    <div style="font-size:14px;color:#3b424f;line-height:1.8;margin-bottom:10px;">
+      <ol style="margin:0;padding-left:20px;line-height:1.85;"><li>步驟</li></ol>
     </div>
-    <div style="font-size:12.5px;color:#3b424f;line-height:1.65;margin-bottom:10px;"><b style="color:TXT;">複雜度</b>　時間 O(?) — 為什麼；空間 O(?) — 為什麼。</div>
+    <div style="font-size:13px;font-weight:800;color:#3b6cf6;margin:0 0 6px;">複雜度</div>
+    <div style="font-size:14px;color:#3b424f;line-height:1.8;margin-bottom:6px;">時間 O(?) — <span style="background:#ffe58f;padding:1px 4px;border-radius:3px;font-weight:700;color:#5c4409;">為什麼</span>。</div>
+    <div style="font-size:14px;color:#3b424f;line-height:1.8;margin-bottom:10px;">空間 O(?) — <span style="background:#ffe58f;padding:1px 4px;border-radius:3px;font-weight:700;color:#5c4409;">為什麼</span>。</div>
+    <div style="border-left:3px solid #b9c2d0;padding-left:10px;margin:0 0 12px;font-size:13px;color:#5a6474;line-height:1.7;"><b style="color:#3b424f;">一句話：</b>收掉這題的關鍵。</div>
     <div style="background:#1f2430;border-radius:8px;padding:12px 14px;overflow-x:auto;"><pre style="margin:0;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:12.5px;line-height:1.6;color:#e6e6e6;">完整 Java 解答</pre></div>
   </div>
 
