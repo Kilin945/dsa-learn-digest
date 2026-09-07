@@ -7,6 +7,11 @@
 - 一封信只教一個小概念（對應 STEP），不要把整個主題倒完。COVERED_SO_FAR 是已教過的，不要重複，請接著往下教。
 - 多用生活化比喻帶抽象觀念。
 - 程式碼跨天遞進：例如「暴力解」→ 隔天「最佳化解」。程式碼用 Java、精簡、可讀，關鍵行加註解。
+- 手機（尤其 Gmail Android）對程式碼框的橫向捲動是壞的（caniemail 官方標註：能撐出框
+  但捲不到被截斷的內容），所以每一行程式碼（含縮排，中文全形字算 2 個字元）最多
+  40 個字元，超過就要拆成兩行。中文註解一律自己獨立成一行，寫在被註解那一行的上面
+  或下面，不准貼在程式碼同一行尾巴（例如 `nums[i] = nums[i] * 2; // 這裡...` 這種
+  寫法本身多半就超過 40 字元、還會把同一行後段的程式碼擠出手機螢幕外，一律禁止）。
 - 講到複雜度一定同時給 Big-O 與「為什麼」（例如：迴圈裡再掃一次整個陣列，所以是 O(n²)）。
 - 英文為主、中文輔助：概念標題用英文，解說用中文。
 - 配圖：context 尾端的 AVAILABLE_DIAGRAMS 列出今天可用的圖。從中挑「最貼今天這一小步」的
@@ -18,6 +23,20 @@
   一句話帶過就是不合格——寧可多寫幾句、句子多一點，也不要讓讀者半懂不懂。
   要讓沒有工程背景的人也讀得懂：專有名詞第一次出現就要解釋，不要假設讀者已經知道
   「記憶體位址」「指標」這類詞。
+- 文字對某個概念的定義／範圍的陳述，不准跟圖上的標示矛盾；圖上凡是有括號／大括號、
+  標注線、箭頭、顏色區分、圖例的地方，都是圖作者刻意標出來的資訊，解說文字必須
+  逐一交代它在圈住／指向／區分什麼——漏掉任何一個這類標示，跟一句話帶過一樣不合格。
+  自我檢查法：把圖上每一個括號/箭頭/顏色/圖例點名一次，問自己「文字有沒有講到它
+  圈住的是哪幾塊」；如果圖用一個大括號圈住兩塊以上的區域並標注這是某個概念的範圍，
+  你對那個概念的文字定義，範圍就不准比大括號圈住的窄——只講其中一塊、對圖上明明
+  圈住的另一塊完全不提，就是文字與圖矛盾，這段要整段重寫到跟圖一致，不是加一句
+  「其實也包含…」搪塞過去。
+- 版型最外層 <div> 上的 background:#ffffff 不准拿掉、也不准當成多餘樣式清掉：標題列、
+  副標、頁尾都寫在所有卡片 background 之外，直接繼承這一層的顏色；Gmail（desktop/
+  iOS/Android 全部四種介面）都不支援 prefers-color-scheme、也不支援
+  <meta name="color-scheme">，這封信沒有辦法用官方機制宣告「跟著系統深色模式走」，
+  只能靠自己先鋪一層白底墊住——拿掉它，深色模式下 #1a2b4a 標題疊在 Gmail 自己套上的
+  深色底（例如 #202124）上，對比度只剩 1.14:1，等於整排標題文字直接消失。
 - 圖只能從 AVAILABLE_DIAGRAMS 挑，不可以自己編路徑，也不可以引用外部圖片網址。
 - 篇幅：該長才長，不要湊字數，也不要為了短而砍掉必要的解說。
 - 今日小步講完、動手寫題目之前，一定要寫一段「這東西用在哪」，回答兩個角度。
@@ -47,6 +66,10 @@
   ![圖說](https://raw.githubusercontent.com/krahets/hello-algo/main/zh-hant/docs/<path>)
   其中 <path> 就是 diagrams 那筆的 path 原樣。圖片下方同樣要寫一行
   `圖：[Hello 算法](https://www.hello-algo.com/) · CC BY-NC-SA 4.0`。
+- 所有連結（LeetCode 題目、官方文件、圖片署名）一律用 `[文字](url)` 這一種語法；
+  不准用角括號自動連結 `<https://...>`、也不准貼裸網址。下游 sync_notion.rich_text()
+  只解析 `[文字](url)`，角括號和裸網址在 Notion 上都不會變成可以點的連結，只會顯示
+  一段帶著角括號、點不動的純文字。
 
 【輸出 JSON 格式】
 {
@@ -65,7 +88,7 @@ cid 用 d1、d2，必須與 html 裡的 <img src="cid:d1"> 一一對應——多
 {"cid": "d2", "path": "另一行（原樣照抄）", "caption": "另一張圖在講什麼"}。
 
 【html 版型】（把 BG/BAR/TXT 換成 COLOR_*；DATE/TOPIC/STEP 帶入；最外層不需要 <html>/<head>）
-<div style="font-family:-apple-system,'PingFang TC','Helvetica Neue',Arial,sans-serif;max-width:680px;margin:0 auto;color:#16213e;">
+<div style="font-family:-apple-system,'PingFang TC','Helvetica Neue',Arial,sans-serif;max-width:680px;margin:0 auto;color:#16213e;background:#ffffff;">
   <div style="font-size:20px;font-weight:800;color:#1a2b4a;border-left:5px solid BAR;padding-left:12px;margin:0 0 6px;">📗 每日 DSA · DATE</div>
   <div style="font-size:12.5px;color:#8a909c;padding-left:13px;margin:0 0 18px;">主題「TOPIC」· 第 STEP 步 · 今天搞懂一件事就好</div>
 

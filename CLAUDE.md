@@ -1,4 +1,4 @@
-<!-- LAST VERIFIED: 2026-09-06 -->
+<!-- LAST VERIFIED: 2026-09-07 -->
 
 # dsa-learn-digest
 
@@ -10,6 +10,12 @@
 前面也不能插新的非註解行——這條線隨 current_index 定期前進，不是釘死在某個行數。
 <!-- @assert:cmd python3 -m pytest tests/test_syllabus.py -q -->
 
+## html 版型最外層 `<div>` 的白底不能拿掉
+
+`background:#ffffff` 看起來像多餘樣式，容易被「整理版型」順手砍掉。標題／副標／頁尾都在
+卡片外直接繼承這層色；Gmail 四平台皆不支援 dark-mode opt-out，拿掉它＝深色模式下標題消失。
+<!-- @assert:cmd grep -q 'background:#ffffff' prompt_daily.txt -->
+
 ## 課綱與 diagram_map.json 必須同步
 
 `diagram_map.json` 的 key 是課綱主題字串，逐字相同，改課綱就要同步改它。
@@ -18,9 +24,8 @@
 ## 圖不能擋信；送信兩處要一起改
 
 `diagrams` 是選用欄位，不在 `apply_result.REQUIRED` 裡，任何圖片失敗都要降級成純文字信。
-`run_learn.sh`（zsh，本機）與 `.github/workflows/daily-send.yml`（雲端）各自呼叫
-`apply_result.py --outbox-images` 轉給 `send_email.py`；改一處介面沒改另一處，隔天早上才爆。
-`run_learn.sh` 只 push `state` worktree、從不 push `master`；本機合併卻忘了 push master，雲端會拿舊程式碼寄新版 outbox，圖照樣悄悄消失。
+`run_learn.sh`（本機）與 `.github/workflows/daily-send.yml`（雲端）各自呼叫 `apply_result.py
+--outbox-images` 轉給 `send_email.py`；改一處沒改另一處，或忘了 push master，隔天早上就爆。
 
 ## 圖片：授權與私有
 
