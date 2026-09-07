@@ -55,6 +55,57 @@ def test_outbox_save_load_clear_roundtrip(tmp_path):
     ar.clear_outbox(p)  # 再清一次不應出錯
 
 
+# ── code review finding 3：save_outbox 要是原子寫入，不能有截斷風險 ──
+
+def test_save_outbox_overwrite_leaves_no_leftover_temp_file(tmp_path):
+    import os
+    p = str(tmp_path / "state" / "outbox.json")
+    ar.save_outbox(p, {"a": 1})
+    ar.save_outbox(p, {"a": 2})   # 覆寫一次，模擬正常的第二次寫入
+    assert ar.load_outbox(p) == {"a": 2}
+    leftovers = [n for n in os.listdir(tmp_path / "state") if n != "outbox.json"]
+    assert leftovers == [], f"暫存檔沒清乾淨：{leftovers}"
+
+
+def test_save_outbox_failure_midway_does_not_touch_existing_file(tmp_path, monkeypatch):
+    # 模擬「寫到一半被 kill -9」：json.dump 寫到一半丟例外。原子寫法下，
+    # 舊檔案必須原封不動——不能是「內容被腰斬的半份 JSON」，這正是
+    # SLOT_MAX_SECONDS watchdog 落在寫檔中途時，舊版非原子寫法會出的問題。
+    p = str(tmp_path / "state" / "outbox.json")
+    ar.save_outbox(p, {"a": "原本的內容"})
+
+    def boom(*a, **kw):
+        raise RuntimeError("模擬寫到一半被中止")
+
+    monkeypatch.setattr(ar.json, "dump", boom)
+    with pytest.raises(RuntimeError):
+        ar.save_outbox(p, {"a": "新內容寫到一半就死掉"})
+
+    # 舊檔案完好無缺，而且沒有殘留的暫存檔
+    assert ar.load_outbox(p) == {"a": "原本的內容"}
+    import os
+    leftovers = [n for n in os.listdir(tmp_path / "state") if n != "outbox.json"]
+    assert leftovers == [], f"寫入失敗後暫存檔沒清乾淨：{leftovers}"
+
+
+def test_save_outbox_writes_temp_file_in_same_directory(tmp_path, monkeypatch):
+    # os.replace 要在同一個檔案系統內才保證原子，暫存檔必須開在跟目的檔
+    # 同一個目錄，不能圖方便丟到系統 tmp（跨檔案系統 rename 不保證原子，
+    # 甚至可能直接失敗）。
+    import tempfile as _tempfile
+    p = str(tmp_path / "state" / "outbox.json")
+    seen_dirs = []
+    real_mkstemp = _tempfile.mkstemp
+
+    def spy_mkstemp(*a, **kw):
+        seen_dirs.append(kw.get("dir"))
+        return real_mkstemp(*a, **kw)
+
+    monkeypatch.setattr(ar.tempfile, "mkstemp", spy_mkstemp)
+    ar.save_outbox(p, {"a": 1})
+    assert seen_dirs == [str(tmp_path / "state")]
+
+
 def test_outbox_ready_matches_current_progress():
     progress = {"current_index": 0, "step": 2}
     ok = {"kind": "lesson", "index": 0, "step": 2, "result": VALID}

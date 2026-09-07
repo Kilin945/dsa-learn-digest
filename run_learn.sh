@@ -117,6 +117,25 @@ GIT_NET_TIMEOUT="${GIT_NET_TIMEOUT:-60}"
 # 吃掉隔天一整天班次，稿沒備成也沒有任何通知（卡在 pull 裡，走不到 notify）。
 # ServerAlive*：連上後每 10s 探一次，連 3 次沒回應就斷（約 30s），補住 ConnectTimeout 管不到的區間。
 GIT_SSH_OPTS='ssh -o ConnectTimeout=10 -o BatchMode=yes -o ServerAliveInterval=10 -o ServerAliveCountMax=3'
+
+# 共用的「時間到了，把還活著的 pid 連同子進程一起收掉」邏輯，被 git_timeout／
+# git_capture 各自的 watchdog 子殼呼叫。抽成一個函式獨立存在有兩個理由：
+#   1. 兩處原本一字不差地複製貼上，改一處忘了改另一處就會兩邊行為分岔。
+#   2. 這正是曾經出過假 WARN 的那段邏輯，抽出來才能不靠真的等待計時、
+#      直接餵一個「已經死掉的 pid」進來單獨測試「kill 沒生效就不該寫記號」
+#      這件事（見 tests/test_git_timeout_marker_race.sh）。
+# 記號檔只能在真的送出 kill -9 給 $pid 且它還在（kill 回傳成功）之後才寫——
+# 舊版是 kill -0 先「看」一眼、隔了兩個指令才補寫記號，這中間 git 隨時可能
+# 正常結束，跑出「明明是正常結束，log 卻寫著被強制中止」的假 WARN
+#（2026-09-06 抓到的迴歸）。把「確認」跟「動手」黏成同一個判斷式（kill 的
+# 回傳值本身就是「剛剛那一刻它還活著」的證明），就沒有這個空檔可鑽。
+_watchdog_kill_group() {  # $1=pid  $2=逾時要寫的記號檔路徑
+  local pid="$1" mark="$2"
+  # 先收子進程再收自己：git 會生 remote-https / credential 這些孫子，只殺父的話它們會留著。
+  pkill -9 -P "$pid" 2>/dev/null
+  kill -9 "$pid" 2>/dev/null && : > "$mark"
+}
+
 git_timeout() {
   local pid wd rc mark
   mark="$(mktemp -t learngitwd)"; rm -f "$mark"   # 只取路徑，檔案由 watchdog 動手時才建
@@ -124,12 +143,7 @@ git_timeout() {
   GIT_SSH_COMMAND="$GIT_SSH_OPTS" \
     "$@" >>"$LOG" 2>&1 &
   pid=$!
-  # 先收子進程再收自己：git 會生 remote-https / credential 這些孫子，只殺父的話它們會留著。
-  # kill -0 先確認還活著才留記號，避免它剛好同時正常結束造成誤判。
-  ( sleep "$GIT_NET_TIMEOUT"
-    kill -0 "$pid" 2>/dev/null || exit 0
-    : > "$mark"
-    pkill -9 -P "$pid" 2>/dev/null; kill -9 "$pid" 2>/dev/null ) >/dev/null 2>&1 &
+  ( sleep "$GIT_NET_TIMEOUT"; _watchdog_kill_group "$pid" "$mark" ) >/dev/null 2>&1 &
   wd=$!
   wait "$pid"; rc=$?
   kill "$wd" 2>/dev/null
@@ -152,11 +166,8 @@ git_capture() {
   pid=$!
   # 逾時與否用 marker 檔判定，不看 rc>=128：git 自己的 fatal 就是 exit 128，
   # 只看 rc 會把正常的 git 失敗誤報成「被強制中止」，log 和 reason 都會指錯方向。
-  # kill -0 先確認程序真的還活著才標記，避免它剛好同時正常結束造成誤判。
-  ( sleep "$GIT_NET_TIMEOUT"
-    kill -0 "$pid" 2>/dev/null || exit 0
-    : > "$mark"
-    pkill -9 -P "$pid" 2>/dev/null; kill -9 "$pid" 2>/dev/null ) >/dev/null 2>&1 &
+  # 記號檔何時才算數，見 _watchdog_kill_group 的說明。
+  ( sleep "$GIT_NET_TIMEOUT"; _watchdog_kill_group "$pid" "$mark" ) >/dev/null 2>&1 &
   wd=$!
   wait "$pid"; rc=$?
   kill "$wd" 2>/dev/null

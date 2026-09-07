@@ -22,6 +22,7 @@ import re
 import sys
 import json
 import argparse
+import tempfile
 from datetime import date, timedelta
 
 import state_store as ss
@@ -79,10 +80,32 @@ def load_outbox(path):
 
 
 def save_outbox(path, payload):
-    """寫 outbox.json，自動建立巢狀目錄。"""
-    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
+    """寫 outbox.json，自動建立巢狀目錄。
+
+    寫到同目錄下的暫存檔、flush+fsync 落盤後再用 os.replace 原子換名——
+    不能先 open(path, "w") 直接寫：那樣會先把舊內容截斷成空檔，這段期間
+    若被 kill -9（例如 run_slot.sh 的 SLOT_MAX_SECONDS 逾時 watchdog 落在
+    這個節骨眼上）就會留下一個內容被腰斬的 outbox.json——不是「完全沒寫」
+    也不是「寫完整份」，而是半份 JSON，下次讀檔直接壞掉。os.replace 在同一
+    個檔案系統內是原子操作，中途被殺只會留著舊檔或新檔其中一份，不會是
+    半份。暫存檔開在同一個目錄（而不是系統 tmp）是為了確保 os.replace
+    落在同一個檔案系統上——跨檔案系統的 rename 不保證原子，還可能直接失敗。
+    """
+    d = os.path.dirname(os.path.abspath(path))
+    os.makedirs(d, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(prefix=".outbox-", suffix=".tmp", dir=d)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(payload, f, ensure_ascii=False, indent=2)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp, path)
+    except BaseException:
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+        raise
 
 
 def clear_outbox(path):
