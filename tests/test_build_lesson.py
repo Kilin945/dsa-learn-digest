@@ -81,8 +81,12 @@ def test_daily_main_emits_available_diagrams(tmp_path, capsys, monkeypatch):
     (assets / "chapter_a/x.assets/a.png").write_bytes(b"\x89PNG")
     monkeypatch.setattr(dg, "ASSETS_ROOT", str(assets))
     monkeypatch.setattr(dg, "load_map", lambda path=None: {"主題甲": ["chapter_a/x.assets"]})
+    monkeypatch.setattr(dg, "load_notes", lambda path=None: {
+        "chapter_a/x.assets/a.png": {"alt": "圖 a", "text": "原文 a"},
+    })
 
     bl.main(["daily", "--syllabus", str(syl), "--progress", str(prog), "--history", str(hist)])
     out = capsys.readouterr().out
     assert "AVAILABLE_DIAGRAMS:" in out
     assert "chapter_a/x.assets/a.png" in out
+    assert "原文：原文 a" in out          # 原文必須跟著路徑一起餵給模型

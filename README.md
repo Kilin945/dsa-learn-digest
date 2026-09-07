@@ -120,11 +120,13 @@ replay 出「全部寄完後會走到哪」，寫成一份暫存 state 給 `buil
 | `apply_result.py` | 解析結果、寄成功才更新進度與存檔 |
 | `diagrams.py` | 候選配圖清單、驗證 claude 選圖結果、剝除失敗的 `<img>` |
 | `diagram_map.json` | 課綱主題 → 配圖目錄的對照表，須與課綱同步 |
+| `build_diagram_notes.py` | 從 vendored 章節原文抽出每張圖的權威敘述，產出 `diagram_notes.json`（`--check` 驗同步） |
+| `diagram_notes.json` | 圖片路徑 → hello-algo 原文敘述。模型看不到圖，這是圖說唯一的依據 |
 | `send_email.py` | Gmail SMTP 寄信 |
 | `sync_notion.py` | 把 `lessons/<date>.md` 同步成 Notion 子頁面（REST API、去重） |
 | `run_learn.sh` | 主流程 |
 | `prompt_daily.txt` / `prompt_weekly.txt` | claude 指令 |
-| `assets/` | vendored 的 hello-algo 圖庫，**CC BY-NC-SA 4.0**，署名照 `prompt_daily.txt` 既有格式、原圖不裁切不加工 |
+| `assets/` | vendored 的 hello-algo 圖庫與章節原文（`*.md`），**CC BY-NC-SA 4.0**，署名照 `prompt_daily.txt` 既有格式、原圖不裁切不加工 |
 | `state/` | 進度、歷史、marker |
 | `lessons/` | 每課 markdown 存檔 |
 
