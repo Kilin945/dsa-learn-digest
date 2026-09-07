@@ -89,9 +89,14 @@ def _req(method, url, token, payload=None):
         sys.exit(f"ERROR: 連不上 Notion API：{e}")
 
 
-# ── 行內 rich_text：解析 **粗體** 與 `行內碼` ──
+# ── 行內 rich_text：解析 **粗體**、`行內碼`、[文字](連結) ──
+# 新增 [文字](連結) 是因為 prompt_daily.txt 現在會要求模型在 archive_markdown
+# 附一行屬名 `圖：[Hello 算法](https://www.hello-algo.com/) · CC BY-NC-SA 4.0`——
+# 這是授權條款要求的署名，不是裝飾，沒有這個分支只會把整段方括號原樣當純文字
+# 送進 Notion，讀者看到的是一串死的 markdown 語法而不是可點的連結。
 
-_INLINE = re.compile(r"(\*\*.+?\*\*|`[^`]+`)")
+_INLINE = re.compile(r"(\*\*.+?\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\))")
+_LINK = re.compile(r"^\[([^\]]+)\]\(([^)]+)\)$")
 
 
 def rich_text(text):
@@ -103,8 +108,11 @@ def rich_text(text):
         tok = m.group(0)
         if tok.startswith("**"):
             out.append(_rt(tok[2:-2], bold=True))
-        else:
+        elif tok.startswith("`"):
             out.append(_rt(tok[1:-1], code=True))
+        else:
+            lm = _LINK.match(tok)
+            out.append(_rt(lm.group(1), link=lm.group(2)))
         pos = m.end()
     if pos < len(text):
         out.append(_rt(text[pos:]))
@@ -112,9 +120,11 @@ def rich_text(text):
     return out or [_rt(text)]
 
 
-def _rt(content, bold=False, code=False):
+def _rt(content, bold=False, code=False, link=None):
     content = content[:2000]  # Notion 單一 rich_text 上限
     o = {"type": "text", "text": {"content": content}}
+    if link:
+        o["text"]["link"] = {"url": link}
     ann = {}
     if bold:
         ann["bold"] = True
@@ -133,6 +143,10 @@ def _block(btype, **body):
 
 def _split_row(line):
     return [c.strip() for c in line.strip().strip("|").split("|")]
+
+
+# 整行就是一個 markdown 圖片：![圖說](url)，圖說可以是空字串。
+_IMAGE = re.compile(r"^!\[([^\]]*)\]\((\S+)\)$")
 
 
 def md_to_blocks(md):
@@ -207,6 +221,24 @@ def md_to_blocks(md):
         # 分隔線
         if s in ("---", "***", "___"):
             blocks.append(_block("divider"))
+            i += 1
+            continue
+
+        # 圖片：整行就是一個 markdown 圖片 ![圖說](url)。prompt_daily.txt 現在
+        # 要求 archive_markdown 用 hello-algo 的公開 raw URL 附圖，md_to_blocks
+        # 原本沒有這個分支，這種行只會落到下面的一般段落當純文字送出，Notion
+        # 頁面上看到的是一串沒有渲染的 markdown 語法而不是真正的圖。用 Notion
+        # 的 image／external 區塊承接，url 直接掛外部連結，不下載也不佔
+        # asset store。
+        m = _IMAGE.match(s)
+        if m:
+            alt, url = m.group(1), m.group(2)
+            blocks.append(_block(
+                "image",
+                type="external",
+                external={"url": url},
+                **({"caption": rich_text(alt)} if alt else {}),
+            ))
             i += 1
             continue
 
