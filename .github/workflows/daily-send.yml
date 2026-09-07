@@ -145,29 +145,28 @@ jobs:
 
           if [ -z "$MISSING" ]; then echo "體檢通過，該備的都備了。"; exit 0; fi
 
-          # 本機每個備稿時段都會留一行 RESULT，出事那天才會把它推上 state 分支。
-          # 檔案不在 = 本機一次都沒能連上 GitHub，這本身就是答案，不能寫成「查無資料」。
-          # 但別把原因寫死成「沒開機」——機器醒著卻沒網路也會長一樣，
-          # 兩者要靠本機 run.log 有沒有當天的「開始」那幾行才分得出來。
-          ATT="state/attempts-$TODAY.log"
-          if [ -s "$ATT" ]; then
-            DETAIL="<p><b>本機今天各備稿時段：</b></p><pre style=\"background:#f6f7f9;padding:10px;border-radius:6px;font-size:12px\">$(cat "$ATT")</pre>"
-          else
-            DETAIL="<p><b>本機今天沒有留下任何時段紀錄</b>——備稿程式一次都沒能連上 GitHub。兩種可能：</p>
-          <ul>
-            <li><b>筆電整天沒醒</b>：闔蓋加電池時 launchd 只會把機器叫進 DarkWake，那個狀態下沒有網路。</li>
-            <li><b>醒著但沒有可用網路</b>：WiFi 沒開、不在範圍內，或連上了卻連不出去。</li>
-          </ul>
-          <p>開電腦跑 <code>grep '$TODAY' run.log | head</code> 就能分辨：有「開始」那幾行代表機器是醒的、缺的是網路；完全沒有才是沒醒。</p>"
-          fi
-
+          # 這封信只講「缺了什麼」，不講原因、不給指令。
+          #
+          # 收信的人看到之後唯一的動作是開 Claude Code，接著由 agent 去讀
+          # 本機 run.log —— 那裡每次喚醒都有「開始 / RESULT / 結束」三行，
+          # 含失敗原因的原文錯誤訊息，比信裡任何摘要都完整。使用者不會自己
+          # key 指令，所以 `grep …` 與 `./run_slot.sh` 這類步驟寫了也沒人執行。
+          #
+          # 曾經寫過的東西與為什麼移除（java-learn-digest 0399da1）：
+          # 「本機沒推上任何紀錄」在雲端看起來，機器整天沒醒與醒著沒網路完全
+          # 一樣。當時的信直接斷定成「筆電整天沒有真正喚醒」，7/27 那次誤導了
+          # 使用者——機器是開著的，缺的只是網路。修法是並列兩種可能並附上
+          # 分辨方法，但那段診斷的讀者其實是 agent，不是手機前的使用者。
+          # 現在改成完全不提原因，那個誤導風險也就不存在了；診斷留在 log 裡。
+          #
+          # `attempts-$TODAY.log` 仍然由本機在出事那天推上 state 分支（見
+          # run_learn.sh:620），只是不再塞進信裡——它是 run.log 之外的第二份
+          # 備份，筆電那份沒了還讀得到。
           NOW="$(date '+%Y-%m-%d %H:%M')"
           BODY="<div style=\"font-family:-apple-system,sans-serif\">
           <h3>⚠️ 學習信有缺口</h3>
           <p>雲端於 $NOW 體檢，發現：</p>
           <ul>$MISSING</ul>
-          $DETAIL
-          <p>現在補跑還來得及：<code>cd ~/Workspace/dsa-learn-digest &amp;&amp; ./run_slot.sh</code></p>
           </div>"
 
           if printf '%s' "$BODY" | python3 send_email.py "⚠️ 學習信有缺口"; then
