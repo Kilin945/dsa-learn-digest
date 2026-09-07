@@ -97,3 +97,74 @@ def test_unknown_lang_downgrades():
 def test_case_insensitive():
     assert sn._norm_lang("Java") == "java"
     assert sn._norm_lang("YAML") == "yaml"
+
+
+# ── 網址的三種寫法都要變成可點的連結 ──
+# prompt_daily.txt 只要求之後的信寫 [文字](url)，管不到 lessons/ 裡已歸檔的舊課程。
+# 2026-09-07 那頁同步後，LeetCode 連結在 Notion 上顯示成 `\<https://…\>`，點不動。
+
+def _links(rich):
+    """[(顯示文字, link url)]，只取真的有 link 的片段。"""
+    return [(r["text"]["content"], r["text"]["link"]["url"])
+            for r in rich if (r["text"].get("link") or {}).get("url")]
+
+
+def test_angle_bracket_autolink_consumes_the_brackets():
+    """`<url>` 要整段吃掉，角括號不能留成字面文字。
+
+    只驗「有沒有連結」是抓不到迴歸的：裸網址那一支本來就會配到角括號裡面的
+    網址（`>` 不在它的字元集裡），連結照樣成立，但前後留下 `<` 和 `>` 兩個字，
+    Notion 上會轉義顯示成 `\<https://…\>`。所以要驗重組後的完整文字。
+    """
+    url = "https://leetcode.com/problems/remove-duplicates-from-sorted-array/"
+    rich = sn.rich_text(f"<{url}>")
+    assert _links(rich) == [(url, url)]
+    assert "".join(r["text"]["content"] for r in rich) == url
+
+
+def test_bare_url_becomes_a_link():
+    url = "https://leetcode.com/problems/remove-element/"
+    assert _links(sn.rich_text(url)) == [(url, url)]
+
+
+def test_markdown_link_still_wins_over_bare_url():
+    """裸網址那一支若排在前面，會把 `](url)` 裡的網址吃掉、連結文字散掉。
+
+    這是署名行的形狀，CC BY-NC-SA 要求的署名不能壞。
+    """
+    rich = sn.rich_text("圖：[Hello 算法](https://www.hello-algo.com/) · CC BY-NC-SA 4.0")
+    assert _links(rich) == [("Hello 算法", "https://www.hello-algo.com/")]
+    assert "".join(r["text"]["content"] for r in rich) == \
+        "圖：Hello 算法 · CC BY-NC-SA 4.0"
+
+
+def test_mixed_link_forms_in_one_line():
+    rich = sn.rich_text("看 [這裡](https://a.com) 或 https://b.com 都行")
+    assert _links(rich) == [("這裡", "https://a.com"), ("https://b.com", "https://b.com")]
+
+
+def test_bold_and_code_survive_alongside_a_bare_url():
+    rich = sn.rich_text("**粗體** 和 `code` 混排 https://c.com 結尾")
+    assert _links(rich) == [("https://c.com", "https://c.com")]
+    bold = [r["text"]["content"] for r in rich if r.get("annotations", {}).get("bold")]
+    code = [r["text"]["content"] for r in rich if r.get("annotations", {}).get("code")]
+    assert bold == ["粗體"] and code == ["code"]
+
+
+def test_every_archived_lesson_link_resolves():
+    """lessons/ 裡每一行網址，不管哪種寫法，都必須變成可點連結。
+
+    這是「在 Notion 正確顯示」的驗收條件，不是風格偏好。
+    """
+    import glob, os, re
+    here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    unlinked = []
+    for path in sorted(glob.glob(os.path.join(here, "lessons", "*.md"))):
+        for n, line in enumerate(open(path, encoding="utf-8"), 1):
+            if not re.search(r"https?://", line):
+                continue
+            if line.lstrip().startswith("!["):
+                continue          # 圖片行由 md_to_blocks 的 image 分支處理
+            if not _links(sn.rich_text(line.strip())):
+                unlinked.append(f"{os.path.basename(path)}:{n}")
+    assert unlinked == [], f"這些行的網址不會變成連結：{unlinked}"

@@ -53,3 +53,16 @@
 （`--check` 有測試守著）。任何「要求模型描述圖上外觀」的 prompt 規則都是空的——
 它只知道 note 寫了什麼。2026-09-07 憑檔名猜出「空間複雜度只算暫存空間」寄了出去。
 <!-- @assert:cmd python3 build_diagram_notes.py --check -->
+
+## 測試信只寄給 Kilin，不要寄給 Arth
+
+`config.env` 的 `MAIL_TO` 有**兩個收件人**（Kilin ＋ Arth），正式的課程信是要寄給兩個人的。
+但測試信、驗證版型、試寄圖片這類自己要看的東西，一律只寄給 Kilin ——
+`send_email.py` 的 `get()` 讓 `os.environ` 蓋掉 `config.env`（見 `send_email.py:38`），
+所以測試時把收件人用環境變數蓋成只有 Kilin 一個：
+
+    MAIL_TO="kilin0323@gmail.com" python3 send_email.py …
+
+2026-09-07 我沒看 `MAIL_TO` 就試寄，Arth 收到一封莫名的測試信。
+判定失效方式：Arth 收到主旨含「測試」或版型明顯未完成的信。
+<!-- @assert:cmd grep -q '^MAIL_TO=.*,' config.env -->

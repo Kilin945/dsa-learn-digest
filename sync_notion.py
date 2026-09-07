@@ -95,7 +95,21 @@ def _req(method, url, token, payload=None):
 # 這是授權條款要求的署名，不是裝飾，沒有這個分支只會把整段方括號原樣當純文字
 # 送進 Notion，讀者看到的是一串死的 markdown 語法而不是可點的連結。
 
-_INLINE = re.compile(r"(\*\*.+?\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\))")
+# 網址也認 <url> 與裸網址：prompt_daily.txt 要求模型一律寫 [文字](url)，但那條規則
+# 只管得到之後產生的信。lessons/ 裡已經歸檔的舊課程有 `<https://leetcode…>`（角括號
+# 自動連結）與整行裸網址兩種寫法，只認 [文字](url) 的話它們會被當純文字送進 Notion，
+# 角括號還會被轉義成 `\<https://…\>`，讀者看到一串點不動的字。轉換器多認這兩種形式
+# 就一次解決歷史資料，也是模型哪天沒照規則寫時的安全網。
+#
+# 順序有意義：`[文字](url)` 這一支必須排在裸網址前面，否則 `](https://…)` 裡的網址
+# 會先被裸網址那一支吃掉，連結文字就散了。
+_INLINE = re.compile(
+    r"(\*\*.+?\*\*"                        # **粗體**
+    r"|`[^`]+`"                              # `行內碼`
+    r"|\[[^\]]+\]\([^)]+\)"                 # [文字](url)
+    r"|<https?://[^>\s]+>"                   # <url>
+    r"|https?://[^\s<>()\[\]]+)"             # 裸網址
+)
 _LINK = re.compile(r"^\[([^\]]+)\]\(([^)]+)\)$")
 
 
@@ -110,6 +124,11 @@ def rich_text(text):
             out.append(_rt(tok[2:-2], bold=True))
         elif tok.startswith("`"):
             out.append(_rt(tok[1:-1], code=True))
+        elif tok.startswith("<"):
+            url = tok[1:-1]
+            out.append(_rt(url, link=url))       # 顯示文字就是網址本身
+        elif tok.startswith("http"):
+            out.append(_rt(tok, link=tok))
         else:
             lm = _LINK.match(tok)
             out.append(_rt(lm.group(1), link=lm.group(2)))
