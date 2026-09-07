@@ -1,3 +1,8 @@
+import io
+import sys
+
+import pytest
+
 import send_email as se
 
 
@@ -88,6 +93,90 @@ def test_build_message_strips_cid_tags_when_no_images_passed():
         body = msg.get_payload(decode=True).decode("utf-8")
         assert "<img" not in body
         assert "<p>x</p>" in body
+
+
+# ── code review finding 1 self-review: send_email 是兜住「內文不能是空的」
+#    這個不變量的最後一道防線，不管清空的原因是什麼都要擋得住 ──
+
+def test_message_html_body_extracts_plain_text_body():
+    msg = se.build_message("<p>hi</p>", "s", "a@gmail.com", "b@gmail.com")
+    assert se.message_html_body(msg) == "<p>hi</p>"
+
+
+def test_message_html_body_extracts_multipart_html_part(tmp_path):
+    png = tmp_path / "a.png"
+    png.write_bytes(b"\x89PNG\r\n\x1a\n" + b"\x00" * 32)
+    msg = se.build_message('<p>x</p><img src="cid:d1">', "s", "a@gmail.com", "b@gmail.com",
+                           [("d1", str(png))])
+    assert se.message_html_body(msg) == '<p>x</p><img src="cid:d1">'
+
+
+def _write_config(tmp_path):
+    cfg = tmp_path / "config.env"
+    cfg.write_text('GMAIL_USER="a@gmail.com"\nMAIL_TO="b@gmail.com"\n', encoding="utf-8")
+    return cfg
+
+
+def test_main_refuses_to_send_when_built_message_body_is_empty(tmp_path, monkeypatch, capsys):
+    # 逼真的觸發路徑：stdin 收到的原始字串不是空的（過得了開頭那道檢查），
+    # 但整段內容就只有一顆沒有對應 --image 的 cid <img>——build_message
+    # 沒帶圖時會把它剝乾淨，剝完內文變成真的空的。這正是 diagrams
+    # strip_img_tags 剝圖失手（data-fig 標記位置錯誤、或任何未來的剝圖 bug）
+    # 會製造出來的局面：組出來的信件本文是空的。main() 必須在寄出前這裡
+    # 擋下來，不能安靜地把空信寄出去。
+    monkeypatch.setattr(se, "_CONFIG_PATH", str(_write_config(tmp_path)))
+    monkeypatch.setenv("GMAIL_USER", "a@gmail.com")
+    monkeypatch.setenv("MAIL_TO", "b@gmail.com")
+    monkeypatch.setattr(sys, "argv", ["send_email.py"])
+    monkeypatch.setattr(sys, "stdin", io.StringIO('<img src="cid:d1">'))
+
+    def _must_not_be_called(*a, **k):
+        raise AssertionError("內文是空的就不該再往下走到這裡")
+
+    monkeypatch.setattr(se, "get_app_password", _must_not_be_called)
+    monkeypatch.setattr(se.smtplib, "SMTP", _must_not_be_called)
+
+    with pytest.raises(SystemExit) as exc:
+        se.main()
+    assert exc.value.code == 2
+    assert "空" in capsys.readouterr().err
+
+
+def test_main_sends_when_built_message_body_is_non_empty(tmp_path, monkeypatch, capsys):
+    # 對照組：內文正常不是空的，就該一路跑到寄信（這裡把 SMTP 换成假的，
+    # 只驗證流程真的走到寄信那一步，不是被誤擋在空信檢查那裡）。
+    monkeypatch.setattr(se, "_CONFIG_PATH", str(_write_config(tmp_path)))
+    monkeypatch.setenv("GMAIL_USER", "a@gmail.com")
+    monkeypatch.setenv("MAIL_TO", "b@gmail.com")
+    monkeypatch.setattr(sys, "argv", ["send_email.py"])
+    monkeypatch.setattr(sys, "stdin", io.StringIO('<p>正常內文</p>'))
+    monkeypatch.setattr(se, "get_app_password", lambda *a, **k: "fake-app-password")
+
+    sent = []
+
+    class _FakeSMTP:
+        def __init__(self, *a, **k):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+        def starttls(self, context=None):
+            pass
+
+        def login(self, user, pw):
+            pass
+
+        def send_message(self, msg):
+            sent.append(msg)
+
+    monkeypatch.setattr(se.smtplib, "SMTP", _FakeSMTP)
+    se.main()
+    assert len(sent) == 1
+    assert "OK" in capsys.readouterr().out
 
 
 def test_parse_image_args():

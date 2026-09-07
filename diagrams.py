@@ -93,25 +93,74 @@ def cid_refs(html):
     return [m.group("cid") for m in _IMG_CID.finditer(html or "")]
 
 
+def _cid_img_re(cid):
+    """單一 cid 的 <img src=cid:cid> regex（引號可有可無，見 _IMG_CID 的說明）。"""
+    return re.compile(
+        r'<img\b[^>]*?\bsrc\s*=\s*(?P<q>["\']?)cid:%s(?P=q)[^>]*>' % re.escape(cid),
+        re.I,
+    )
+
+
+# 一個真正的圖說 wrapper（圖＋解說＋署名）在整封信裡只占一小塊。如果
+# data-fig 誤點到包住整堂課內容的外層卡片，那一個區塊會占掉信件本文的
+# 絕大部分——用「這個區塊占整封信多少比例」當結構訊號，不看內容文字：
+# 真實案例裡，正確標記的圖說區塊約占整封信 7.9%，誤點到外層卡片則是
+# 90%+，中間留了很大的安全邊際，門檻切在 0.5（50%）不影響判斷結果，
+# 也不會像「span 裡要有 CC BY-NC-SA 署名」那樣，因為模型措辭的無傷大雅
+# 差異而誤判——大小不會因為文字寫法變。超過門檻就不整塊拿掉，退回只清
+# 裡面的裸 <img>，其餘教學內容留著，是遠比整塊清空更小的degradation。
+_MAX_MARKED_BLOCK_FRACTION = 0.5
+
+
 def strip_img_tags(html):
     """把每張 cid 圖從 html 拿掉，其餘內容原封不動。
 
     優先整塊拿掉 `data-fig="cid"` 標記的 wrapper（連圖、圖說解說、CC BY-NC-SA
     署名一起清掉）——不然只拔 <img> 會留下一段指著空氣的圖說文字。
+
+    但標記到的 wrapper 要滿足兩個條件才能整塊拿掉：
+
+    1. 裡面真的有這個 cid 的 <img>——模型可能把 data-fig 點到不含圖的區塊上
+       （圖說被誤刪、破圖卻留著），這種情況下整塊留著不動，只靠下面無條件
+       的裸圖清除把破圖拔掉。
+    2. 這個區塊占整封信的比例沒有超過 _MAX_MARKED_BLOCK_FRACTION——模型也
+       可能把 data-fig 點到包住整堂課內容的外層卡片，那個區塊雖然「裡面
+       有圖」，但占了信件本文的絕大部分（見上方常數的說明）；整塊拿掉會把
+       教學內容也一起清空，比破圖本身嚴重得多。這種情況下一樣整塊留著、
+       只清裡面的裸 <img>。
+
+    這裡刻意不驗證區塊裡的其他內容文字（例如是不是也有署名字串）——多加
+    的內容判斷曾經在這裡引入過一個更糟的迴歸：只要區塊裡的圖說湊巧沒把
+    署名複製進來，整塊就被誤判成「不算數」而留著不刪，於是驗證失敗、理應
+    被剝乾淨的圖說文字反而原封不動地留在信裡。「有沒有圖」與「占多少比例」
+    都是結構訊號、不受模型措辭影響，這才是這支函式能可靠回答的問題。
+
+    這兩關都不是萬無一失：極端情況下（例如整封信本來就只有這一個區塊）
+    這裡仍可能整塊拿掉、甚至把內文清空——send_email.py 在組好信件之後
+    另外有一道「內文不能是空的」的把關，那才是真正兜住「不管什麼原因，
+    寄出去的信不能是空的」這個不變量的最後一道防線，這裡的兩關只是盡量
+    讓內容不要被錯誤地清掉，減少走到那道防線的機會。
+
+    不管有沒有整塊拿掉，最後都無條件再跑一次「裸 <img>」的刪除——這樣
+    wrapper 沒有這個 cid 的圖、或因為占比過大而被保留時，圖本身還是會被
+    清掉（不管它落在哪裡）；wrapper 兩關都過而整塊刪掉時，這裡是沒東西
+    可刪的 no-op。落單在標記範圍外的 <img> 不會漏網。
+
     找不到標記（沒有 data-fig 屬性的舊格式 outbox／舊信）就退回原本的做法，
     只拿掉 <img> 本身，其餘文字不動——這樣改動前產生的信不會被這支新邏輯弄壞。
     """
     html = html or ""
+    total_len = len(html)
     for cid in cid_refs(html):
+        img_re = _cid_img_re(cid)
         span = _marked_block_span(html, cid)
         if span:
             start, end = span
-            html = html[:start] + html[end:]
-        else:
-            html = re.compile(
-                r'<img\b[^>]*?\bsrc\s*=\s*(?P<q>["\']?)cid:%s(?P=q)[^>]*>' % re.escape(cid),
-                re.I,
-            ).sub("", html, count=1)
+            block = html[start:end]
+            fits = total_len == 0 or len(block) <= total_len * _MAX_MARKED_BLOCK_FRACTION
+            if img_re.search(block) and fits:
+                html = html[:start] + html[end:]
+        html = img_re.sub("", html, count=1)
     return html
 
 
@@ -138,6 +187,49 @@ def _is_inside(rel, assets_root):
         return False
 
 
+# archive_markdown 裡的 hello-algo 配圖行長這樣（見 prompt_daily.txt）：
+#   ![圖說](https://raw.githubusercontent.com/krahets/hello-algo/main/zh-hant/docs/<path>)
+#   圖：[Hello 算法](https://www.hello-algo.com/) · CC BY-NC-SA 4.0
+_HELLO_ALGO_RAW_PREFIX = "https://raw.githubusercontent.com/krahets/hello-algo/"
+_MD_HELLO_ALGO_IMAGE = re.compile(
+    r'^!\[[^\]]*\]\(' + re.escape(_HELLO_ALGO_RAW_PREFIX) + r'\S*\)\s*$'
+)
+_MD_HELLO_ALGO_ATTRIBUTION = re.compile(
+    r'^.*\[[^\]]*\]\(https://www\.hello-algo\.com/?\).*CC BY-NC-SA.*$'
+)
+
+
+def strip_hello_algo_images_from_markdown(markdown):
+    """把 archive_markdown 裡指向 hello-algo raw URL 的圖片行、與緊接在後的
+    署名行拿掉。
+
+    用途：sanitize() 因為 diagrams 驗證沒過而剝掉 html 裡的圖時，
+    archive_markdown 原本沒有跟著剝——html 乾乾淨淨變回純文字，但
+    lessons/<date>.md 跟 Notion 上還留著一張 404 的圖跟一行指著空氣的
+    圖說，兩份產出就對不起來了。
+
+    刻意保守：只認「整行就是一個指向 hello-algo raw URL 的 markdown 圖片」
+    這個形狀，而且只在緊接著這一行的下一行同時符合「署名行」的形狀
+    （連結指向 hello-algo.com 且含 CC BY-NC-SA）才一併拿掉——不是任何
+    模型寫的 markdown 圖片或連結都清，只清 diagrams 驗證失敗時真正需要清
+    的那兩行，模型自己寫的其他圖片、連結原封不動。
+    """
+    if not isinstance(markdown, str) or not markdown:
+        return markdown
+    lines = markdown.split("\n")
+    out = []
+    i, n = 0, len(lines)
+    while i < n:
+        if _MD_HELLO_ALGO_IMAGE.match(lines[i].strip()):
+            i += 1
+            if i < n and _MD_HELLO_ALGO_ATTRIBUTION.match(lines[i].strip()):
+                i += 1
+            continue
+        out.append(lines[i])
+        i += 1
+    return "\n".join(out)
+
+
 def sanitize(res, assets_root=None):
     """驗證 res['diagrams']；任一項不合格就整批剝掉並移除 html 裡的 <img>。
 
@@ -162,6 +254,14 @@ def sanitize(res, assets_root=None):
         # html 本來就不是字串就沒東西好剝——原樣留著，不要用空字串覆蓋掉呼叫者的值。
         if isinstance(raw_html, str):
             out["html"] = strip_img_tags(raw_html)
+        # archive_markdown 要跟 html 一致地剝掉圖：這裡剝的是 hello-algo 圖片
+        # 驗證沒過（模型自己編或寫錯 path，正是這個驗證要擋的情況）——html
+        # 已經變回純文字，archive_markdown 不能還留著同一張圖的 markdown
+        # 語法與署名，不然 lessons/<date>.md 跟 Notion 上的歸檔筆記會有一張
+        # 404 的圖、一行指著空氣的圖說，跟當天實際寄出的純文字信對不起來。
+        raw_md = out.get("archive_markdown")
+        if isinstance(raw_md, str):
+            out["archive_markdown"] = strip_hello_algo_images_from_markdown(raw_md)
         out.pop("diagrams", None)
         return out, False
 

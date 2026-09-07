@@ -124,6 +124,24 @@ def build_message(html_body, subject, from_user, to_addr, images=None):
     return msg
 
 
+def message_html_body(msg):
+    """從 build_message() 組好的信件撈出真正的 html 本文文字。
+
+    兩種訊息型態都要能撈到：有圖時是 MIMEMultipart('related')，html 本文
+    是裡面 text/html 的那個 part；沒有圖（或圖讀不到而放棄）時整封信本身
+    就是一個 MIMEText。供 main() 寄出前的最後一道「內文不能是空的」把關用，
+    不管上游是哪條路徑組出這封信，都要能用同一支函式檢查。
+    """
+    if msg.get_content_maintype() == "multipart":
+        for part in msg.get_payload():
+            if part.get_content_type() == "text/html":
+                payload = part.get_payload(decode=True) or b""
+                return payload.decode(part.get_content_charset() or "utf-8", "replace")
+        return ""
+    payload = msg.get_payload(decode=True) or b""
+    return payload.decode(msg.get_content_charset() or "utf-8", "replace")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("subject_prefix", nargs="?", default="每日 DSA")
@@ -153,10 +171,24 @@ def main():
     today = datetime.date.today().strftime("%Y-%m-%d")
     subject = f"{args.subject_prefix} — {today}"
 
-    app_password = get_app_password(conf["GMAIL_USER"], conf["KEYCHAIN_SERVICE"])
-
     msg = build_message(html_body, subject, conf["GMAIL_USER"], conf["MAIL_TO"],
                         parse_image_args(args.image))
+
+    # 最後一道「內文不能是空的」把關，跟開頭那道 stdin 檢查是兩件事：那道
+    # 檢查的是「餵進來的原始字串」，這裡驗的是「組好的信件實際會寄出去的
+    # 內容」。diagrams.strip_img_tags 剝圖時（data-fig 標記位置錯誤、或
+    # 任何未來新的剝圖 bug）有可能把整段本文清空，那道檢查在 build_message
+    # 之前，看不到剝圖之後的結果——真正兜住「寄出去的信不能是空的」這個
+    # 不變量的是這裡，不管清空的原因是什麼都擋得住，而不是靠上游每個
+    # 剝圖邏輯自己保證不出錯。
+    body_text = message_html_body(msg)
+    if not body_text.strip():
+        print("ERROR: 組好的信內文是空的，停止寄送（可能是圖片驗證失敗、"
+              "data-fig 標記位置錯誤，或其他原因把整封信的本文清空了）。",
+              file=sys.stderr)
+        sys.exit(2)
+
+    app_password = get_app_password(conf["GMAIL_USER"], conf["KEYCHAIN_SERVICE"])
 
     try:
         ctx = ssl.create_default_context()

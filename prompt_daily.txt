@@ -76,7 +76,9 @@ cid 用 d1、d2，必須與 html 裡的 <img src="cid:d1"> 一一對應——多
     <!-- 配圖：0~2 張。沒有可用的圖就整段省略（連同 diagrams 欄位）。
          data-fig="d1" 這個屬性一定要照抄、不要拿掉：圖片驗證沒過或讀不到時，
          寄信程式要靠它把「圖＋解說＋署名」整塊拿掉，不然會留下一段指著空氣的
-         解說文字。 -->
+         解說文字。data-fig 只能放在下面這個直接包住 <img> 的小 div 上，
+         絕對不要放到外層的大卡片（例如「今日小步」那個 background 卡片）——
+         放錯位置會讓寄信程式把整堂課內容當成圖說一起清掉。 -->
     <div style="margin:12px 0;" data-fig="d1">
       <img src="cid:d1" alt="圖說" style="max-width:100%;height:auto;display:block;border-radius:6px;">
       <div style="font-size:12.5px;color:#3b424f;line-height:1.65;margin-top:8px;">針對這張圖的解說：這張圖在講什麼、要看哪裡。</div>
