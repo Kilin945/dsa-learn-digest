@@ -1,71 +1,56 @@
-<div style="max-width:680px;margin:0 auto;font-family:'Helvetica Neue',Arial,'PingFang TC','Microsoft JhengHei',sans-serif;background:#e8f4fb;padding:24px;border-radius:12px;">
+<div style="max-width:680px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:#fbf3e3;padding:24px;border-radius:12px;color:#3a2f1d;line-height:1.6;">
 
-  <div style="border-left:6px solid #3f97c9;padding:10px 16px;margin-bottom:20px;background:#ffffff;border-radius:6px;">
-    <span style="font-size:18px;font-weight:700;color:#2b7fb0;">📗 每週回顧 · DSA · 2026-09-04</span>
+  <div style="border-left:6px solid #d99b3f;padding-left:16px;margin-bottom:20px;">
+    <div style="font-size:20px;font-weight:700;color:#b9791f;">📗 每週回顧 · DSA · 2026-09-11</div>
   </div>
 
-  <div style="background:#ffffff;border-radius:10px;padding:20px 24px;margin-bottom:16px;">
-    <p style="font-size:14px;color:#2b7fb0;line-height:1.7;margin:0 0 12px;">
-      這週從 Big-O 的基本觀念一路走到 Array 的記憶體結構，中間串了 Two Sum 當主線案例。以下 8 題混合本週各天主題，由淺入深，先自己想過一輪再往下看解答。
-    </p>
+  <p style="font-size:14px;margin:0 0 20px;">這週從「陣列」走到「空間複雜度」與「遞迴堆疊」。下面 7 題把整週串起來，故意混著出——不管是工程師還是產品端同事，都先自己想過一遍再看解答。標了 <strong>(工程師限定)</strong> 的題目需要一點程式碼細節，產品端同事可以跳過那幾題，其他題目兩位都答得出來。</p>
+
+  <div style="background:#fffaf0;border-radius:8px;padding:14px 18px;margin-bottom:12px;">
+    <strong>1.</strong> ArrayList（Java 內建的「可變長陣列」，可以隨插入自動變大的清單）明明底層還是普通陣列，為什麼加東西進去平均起來還是很快？「resize」（陣列滿了之後重新配置一塊更大空間、把舊資料整個搬過去）明明是 O(n) 的操作，怎麼會說平均每次 add() 只要 O(1)？
   </div>
 
-  <div style="background:#ffffff;border-radius:10px;padding:20px 24px;margin-bottom:16px;">
-    <p style="font-size:15px;font-weight:700;color:#2b7fb0;margin:0 0 14px;">🧠 回想題</p>
-
-    <p style="font-size:14px;color:#333;line-height:1.7;margin:0 0 10px;">
-      <b>Q1.</b> 陣列 <code>arr[5]</code> 的存取是 O(1) 還是 O(n)？為什麼跟資料量無關？
-    </p>
-    <p style="font-size:14px;color:#333;line-height:1.7;margin:0 0 10px;">
-      <b>Q2.</b> 用單層迴圈找陣列最大值，這是哪個複雜度等級？操作次數跟 n 是什麼關係？
-    </p>
-    <p style="font-size:14px;color:#333;line-height:1.7;margin:0 0 10px;">
-      <b>Q3.</b> Two Sum 的暴力解（兩層迴圈找兩數之和）是 O(n²)，這個 n² 是怎麼跑出來的？
-    </p>
-    <p style="font-size:14px;color:#333;line-height:1.7;margin:0 0 10px;">
-      <b>Q4.</b> 把 Two Sum 優化成 HashMap 邊掃邊記的版本後，時間複雜度變成什麼？付出的代價（tradeoff）是什麼？
-    </p>
-    <p style="font-size:14px;color:#333;line-height:1.7;margin:0 0 10px;">
-      <b>Q5.</b> 如果一段程式先跑一個 O(n) 迴圈，接著跑一個 O(n²) 的巢狀迴圈，整體複雜度是多少？用到哪一條化簡規則？
-    </p>
-    <p style="font-size:14px;color:#333;line-height:1.7;margin:0 0 10px;">
-      <b>Q6.</b> Binary Search 為什麼是 O(log n)？它有什麼前提條件才能用？
-    </p>
-    <p style="font-size:14px;color:#333;line-height:1.7;margin:0 0 10px;">
-      <b>Q7.</b> 在陣列中間插入一筆資料是 O(n)，但接在陣列最後面插入卻是 O(1)，這兩者差在哪裡？
-    </p>
-    <p style="font-size:14px;color:#333;line-height:1.7;margin:0;">
-      <b>Q8（綜合）.</b> 把 O(n²)、O(1)、O(log n)、O(n log n)、O(n) 由快到慢排序。接著：如果要在陣列「最前面」逐一插入 1000 筆資料，總複雜度會是多少？
-    </p>
+  <div style="background:#fffaf0;border-radius:8px;padding:14px 18px;margin-bottom:12px;">
+    <strong>2.</strong> 如果你已經知道資料量固定、裡面存的都是數字，為什麼工程師常常寧可選 <code>int[]</code>（存純數值的陣列）也不用 <code>ArrayList&lt;Integer&gt;</code>？用 ArrayList 存數字，會在「記憶體連續」這件事上吃虧在哪裡？
   </div>
 
-  <div style="background:#ffffff;border-radius:10px;padding:20px 24px;">
-    <p style="font-size:15px;font-weight:700;color:#2b7fb0;margin:0 0 14px;">—— 解答 ——</p>
+  <div style="background:#fffaf0;border-radius:8px;padding:14px 18px;margin-bottom:12px;">
+    <strong>3.</strong> 「空間複雜度」到底在算什麼東西的空間？為什麼「輸入的資料」不算進去，但「輸出的結果」卻要算？
+  </div>
 
-    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0 0 10px;">
-      <b>A1.</b> O(1)。因為陣列是連續記憶體（contiguous memory），可以用「起始位址 + index × 每格大小」直接算出位置，不用一格格找，跟 n 大小無關。
-    </p>
-    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0 0 10px;">
-      <b>A2.</b> O(n)，線性時間（linear time）。掃過整個陣列一次，操作次數跟 n 成正比。
-    </p>
-    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0 0 10px;">
-      <b>A3.</b> 外層迴圈跑 n 次，內層迴圈每次都要掃完剩下的整個 n，兩層相乘變成 n × n = n²，這就是巢狀迴圈時間要相乘的化簡規則。
-    </p>
-    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0 0 10px;">
-      <b>A4.</b> O(n) 時間。代價是多花 O(n) 空間去存已經看過的數字（用 HashMap），這就是 Time-Space Tradeoff：用空間換時間。
-    </p>
-    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0 0 10px;">
-      <b>A5.</b> 整體是 O(n²)。循序執行的部分要相加：O(n) + O(n²)，但化簡時只留成長最快的主導項（dominant term），低階的 O(n) 直接丟掉。
-    </p>
-    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0 0 10px;">
-      <b>A6.</b> 因為每次都能把搜尋範圍對半砍掉，操作次數約等於 log₂(n)。前提是資料必須先排序好（sorted），否則沒辦法判斷該往哪一半找。
-    </p>
-    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0 0 10px;">
-      <b>A7.</b> 插在中間之後，後面所有元素都要往後搬移（shifting）才能維持連續記憶體的排列，所以是 O(n)；插在最後面如果還有空間，不需要搬動任何東西，直接放上去就是 O(1)。這就是陣列「隨機存取快」的代價。
-    </p>
-    <p style="font-size:13.5px;color:#555;line-height:1.7;margin:0;">
-      <b>A8.</b> 排序：O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n²)。在最前面逐一插入 1000 筆，每次插入都要搬移當時已有的所有元素，等於是 1000 次 O(n) 等級的操作相加，整體是 O(n²)（n 這裡代表最終陣列的大小）。
-    </p>
+  <div style="background:#fffaf0;border-radius:8px;padding:14px 18px;margin-bottom:12px;">
+    <strong>4.（工程師限定）</strong> LeetCode 26 這題，如果解法是「另外開一個新陣列來裝過濾後的結果」，空間複雜度是 O(n)；但用「雙指標」（two pointers，兩個各自移動、分工不同任務的索引）可以把它改寫成 O(1) 空間的「原地」（in-place，直接在原本的陣列裡面改，不額外開新容器）解法。這兩個指標大致上是怎麼分工的？
+  </div>
+
+  <div style="background:#fffaf0;border-radius:8px;padding:14px 18px;margin-bottom:12px;">
+    <strong>5.</strong> 一個迴圈跑 n 次、跟一個遞迴函式（自己呼叫自己的函式）呼叫自己 n 層，兩者的「時間」都可能是 O(n)，但「空間」的表現卻不一樣。為什麼遞迴會多佔空間，迴圈卻不會？（提示：想想什麼是「呼叫堆疊」——每次呼叫還沒 return 就會先疊在上面等著。）
+  </div>
+
+  <div style="background:#fffaf0;border-radius:8px;padding:14px 18px;margin-bottom:12px;">
+    <strong>6.（工程師限定）</strong> 如果一個遞迴函式，第 n 層額外配置了一個長度 n 的陣列，第 n-1 層配置長度 n-1 的陣列……一路到第 1 層配置長度 1 的陣列，為什麼整體空間複雜度會變成 O(n²)，而不是原本遞迴堆疊本身的 O(n)？
+  </div>
+
+  <div style="background:#fffaf0;border-radius:8px;padding:14px 18px;margin-bottom:12px;">
+    <strong>7.（工程師限定）</strong> 比較三種遞迴：(a) 每次呼叫只把問題規模減 1 的線性遞迴；(b) 每次呼叫都讓問題規模砍半的「分治」（divide and conquer，把問題拆成小塊分別處理再合併）遞迴；(c) 每次呼叫都分裂成兩個子呼叫（例如建一棵滿二元樹）。三者的「呼叫堆疊深度」各是多少？為什麼 (c) 的堆疊深度明明只有 O(n)，但整個呼叫展開後建出來的節點總數卻是指數成長的 O(2ⁿ)？這兩件事為什麼不衝突？
+  </div>
+
+  <div style="margin-top:28px;border-top:2px solid #d99b3f;padding-top:16px;">
+    <div style="font-size:18px;font-weight:700;color:#b9791f;margin-bottom:12px;">—— 解答 ——</div>
+
+    <p style="font-size:14px;margin:0 0 14px;"><strong>1.</strong> 因為 ArrayList 每次「搬家」都不是搬到剛好大 1 格的新陣列，而是搬到「兩倍大」的新陣列。容量每次翻倍，代表要搬家的次數很少（只有 log n 次），而且離上次搬家越久，下次搬家前累積的免費 add() 次數就越多——把這些搬家的成本平均分攤到每一次 add() 上，平均下來每次只要 O(1)，這就叫「攤還」（amortized，把偶爾一次貴的操作成本分攤到很多次操作上算平均）。</p>
+
+    <p style="font-size:14px;margin:0 0 14px;"><strong>2.</strong> ArrayList 存物件時，因為 Java 的「自動裝箱」（autoboxing，把基本型別的數值自動包成物件）機制，ArrayList&lt;Integer&gt; 裡面存的其實不是數字本身，而是一堆指向 Integer 物件的「參照」（reference，指向某塊記憶體位置的指標），這些 Integer 物件本身散落在記憶體各處、不連續。相較之下 int[] 裡的數字是真的一個接一個連續排列。連續記憶體對 CPU 快取比較友善，散落的物件則容易「快取未命中」（cache miss，CPU 要找的資料不在快取裡，得多花時間去別的地方拿），所以多了一層跳轉、速度較慢。已知大小又追求效能時，優先選 int[]。</p>
+
+    <p style="font-size:14px;margin:0 0 14px;"><strong>3.</strong> 空間複雜度算的是「暫存空間」（algorithm 執行過程中額外用掉、跟輸入大小有關的空間，例如另外開的陣列、遞迴堆疊）加上「輸出空間」，但不含「輸入空間」（因為輸入本來就已經存在那裡了，不是這個演算法額外花的成本）。實務上輸出通常很小甚至可以忽略，所以大家講空間複雜度時常常只提暫存空間，但這不代表輸出不算，只是通常不是重點。</p>
+
+    <p style="font-size:14px;margin:0 0 14px;"><strong>4.</strong> 一個指標（可以想成「慢指標」）負責記錄「目前結果應該寫到哪一格」；另一個指標（「快指標」）負責一格一格往前掃描整個陣列。快指標每掃到一個「該留下」的元素，就把它寫到慢指標的位置，然後慢指標才往前移一格；不該留下的元素快指標直接跳過、慢指標不動。掃完之後，慢指標之前的區段就是結果，全程只用原本的陣列，沒有另外開新容器，所以是 O(1) 空間。</p>
+
+    <p style="font-size:14px;margin:0 0 14px;"><strong>5.</strong> 迴圈每跑完一輪就結束了，不會有東西留在記憶體裡等著；但遞迴函式每呼叫自己一次，就會在「呼叫堆疊」（call stack，記錄目前有哪些函式呼叫還沒執行完、等著 return 的一疊資料）上多疊一個「堆疊幀」（stack frame，一次函式呼叫需要記住的區域變數、返回位置等資訊），而且要等到最深那一層先 return，上面的才能一層層跟著結束。深度為 n 的遞迴，堆疊上同時存在 n 個還沒結束的呼叫，所以佔用 O(n) 空間；迴圈沒有這種「疊著等」的結構，用完就釋放，是 O(1)。</p>
+
+    <p style="font-size:14px;margin:0 0 14px;"><strong>6.</strong> 呼叫堆疊本身確實只有 n 層，是 O(n)；但這題多了「每一層還各自佔用一塊隨深度變化的空間」。第 n 層佔 n、第 n-1 層佔 n-1……一路加到第 1 層佔 1，總和是 n + (n-1) + (n-2) + … + 1，這是一個等差數列求和，結果約等於 n²/2，去掉常數之後就是 O(n²)。重點是：堆疊「深度」（有幾層）跟每一層「各自佔多少空間」是兩件事，要把每層的空間都加總起來，才是真正的總空間複雜度。</p>
+
+    <p style="font-size:14px;margin:0 0 14px;"><strong>7.</strong> (a) 線性遞迴每次只減 1，要減 n 次才會到底，堆疊深度是 O(n)。(b) 分治遞迴每次讓問題規模砍半，砍 log n 次就會到底（因為 n 反覆除以 2，除到剩 1 大約要除 log n 次），堆疊深度是 O(log n)。(c) 每次分裂成兩個子呼叫時，「深度」看的是從最上層走到最底層要經過幾層——因為每一層問題規模只是簡單減 1（例如樹的高度一層層往下），所以深度仍然是 O(n)；但因為每一層都分裂成兩支，「總共呼叫了幾次、建了幾個節點」是把每一層的呼叫數翻倍再翻倍地乘起來，這是指數成長，加總後是 O(2ⁿ)。深度是「從根走到葉最長要幾步」，節點總數是「這棵樹總共有幾個點」——一個看的是路徑長度，一個看的是整體規模，兩者本來就是不同的度量方式，所以不衝突。</p>
+
   </div>
 
 </div>
