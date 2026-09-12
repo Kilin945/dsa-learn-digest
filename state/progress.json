@@ -1,7 +1,9 @@
 {
   "current_index": 3,
-  "step": 1,
-  "covered": [],
+  "step": 2,
+  "covered": [
+    "迭代（iteration）是用 for/while 迴圈在滿足條件時反覆執行程式碼、重複次數或結束條件一開始就設定好（例如 for 迴圈實作 1+2+...+n 的加總），不像遞迴那樣每次呼叫都額外消耗一份堆疊空間。"
+  ],
   "completed_topics": [
     {
       "topic": "Big-O 複雜度：怎麼估一段程式的快慢",
