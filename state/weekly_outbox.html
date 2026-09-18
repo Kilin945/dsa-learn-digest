@@ -1,56 +1,72 @@
-<div style="max-width:680px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:#fbf3e3;padding:24px;border-radius:12px;color:#3a2f1d;line-height:1.6;">
-
-  <div style="border-left:6px solid #d99b3f;padding-left:16px;margin-bottom:20px;">
-    <div style="font-size:20px;font-weight:700;color:#b9791f;">📗 每週回顧 · DSA · 2026-09-11</div>
+<div style="max-width:680px;margin:0 auto;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;background:#ecf7ef;padding:24px;border-radius:12px;">
+  <div style="border-left:6px solid #4caf72;padding:8px 16px;margin-bottom:20px;">
+    <span style="font-size:20px;font-weight:700;color:#1e9e57;">📗 每週回顧 · DSA · 2026-09-18</span>
   </div>
 
-  <p style="font-size:14px;margin:0 0 20px;">這週從「陣列」走到「空間複雜度」與「遞迴堆疊」。下面 7 題把整週串起來，故意混著出——不管是工程師還是產品端同事，都先自己想過一遍再看解答。標了 <strong>(工程師限定)</strong> 的題目需要一點程式碼細節，產品端同事可以跳過那幾題，其他題目兩位都答得出來。</p>
-
-  <div style="background:#fffaf0;border-radius:8px;padding:14px 18px;margin-bottom:12px;">
-    <strong>1.</strong> ArrayList（Java 內建的「可變長陣列」，可以隨插入自動變大的清單）明明底層還是普通陣列，為什麼加東西進去平均起來還是很快？「resize」（陣列滿了之後重新配置一塊更大空間、把舊資料整個搬過去）明明是 O(n) 的操作，怎麼會說平均每次 add() 只要 O(1)？
+  <div style="background:#ffffff;border-radius:10px;padding:20px 24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 16px 0;">
+      這週學了兩組主題：週一到週四是「重複執行程式碼的兩種方式」（迴圈 vs 函式自己呼叫自己），週五到週日是「掃描陣列的三種省時間手法」。下面 8 題不用照順序寫，也不用翻信——先憑印象試著回答，答不出來再回去對照當天那封信，這樣記得住的機率比直接看答案高很多。
+    </p>
+    <p style="font-size:13px;color:#1e9e57;margin:0;font-weight:600;">
+      題目分兩種：標「💬 概念題」的只憑讀過的信就答得出來，兩位都可以作答；標「🔧 實作題」的要追蹤程式碼細節或算複雜度，工程師讀者專屬，產品端同事可以跳過這幾題。
+    </p>
   </div>
 
-  <div style="background:#fffaf0;border-radius:8px;padding:14px 18px;margin-bottom:12px;">
-    <strong>2.</strong> 如果你已經知道資料量固定、裡面存的都是數字，為什麼工程師常常寧可選 <code>int[]</code>（存純數值的陣列）也不用 <code>ArrayList&lt;Integer&gt;</code>？用 ArrayList 存數字，會在「記憶體連續」這件事上吃虧在哪裡？
+  <div style="background:#ffffff;border-radius:10px;padding:20px 24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+    <p style="font-size:16px;font-weight:700;color:#1e9e57;margin:0 0 14px 0;">🤔 回想題</p>
+
+    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 14px 0;">
+      <b>1. 💬</b> 迭代（iteration，用迴圈反覆執行程式碼）和遞迴（recursion，函式呼叫自己本身）都能做「重複」這件事。如果同一段邏輯兩種寫法都寫得出來，你會偏好哪一種？講一個具體理由（不用寫程式碼）。
+    </p>
+    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 14px 0;">
+      <b>2. 💬</b> 遞迴呼叫時，每呼叫一層就會在呼叫堆疊（call stack，程式暫存「每一層函式呼叫到哪裡、等一下要接著做什麼」的地方）上多疊一層。如果一個遞迴函式忘記寫終止條件會怎樣？試著用一個生活比喻解釋給完全不寫程式的人聽。
+    </p>
+    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 14px 0;">
+      <b>3. 🔧</b> Java 的 JVM（Java 程式的執行環境）會不會自動幫你把尾遞迴（tail recursion，把計算動作提前搬到遞迴呼叫之前完成的寫法）優化成迴圈省記憶體？如果不會，一個已經改寫成尾遞迴形式的函式，深度很深時還有沒有堆疊溢位（stack overflow，堆疊塞滿記憶體導致當機）的風險？
+    </p>
+    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 14px 0;">
+      <b>4. 💬</b> 雙指標（Two Pointers，兩根指標從陣列頭尾相向移動去逼近答案）這個技巧要成立，陣列必須先滿足一個條件——是什麼？如果拿掉這個條件，直接對一個沒排序的陣列做同樣的頭尾夾逼，會出什麼問題？
+    </p>
+    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 14px 0;">
+      <b>5. 💬</b> 滑動視窗（Sliding Window，兩根指標同方向移動、圈出一段連續子陣列）常被和雙指標搞混。它們兩根指標的移動方式有什麼不一樣？看到題目出現「最長／最短的連續一段」這種字眼，通常是在提示你用哪一種？
+    </p>
+    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 14px 0;">
+      <b>6. 💬</b> 前綴和（Prefix Sum，事先把陣列每個位置之前的累加總和算好存起來）如果一個陣列的某段區間和只會被查詢「一次」，先花時間建前綴和划算嗎？什麼情況下前綴和才真的省時間？
+    </p>
+    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 14px 0;">
+      <b>7. 🔧</b> 陣列是 <code>[1,3,5,7,9]</code>，它的前綴和陣列長什麼樣子？如果要查詢「index 1 到 index 3」（也就是 3、5、7 這段）的區間和，要用前綴和陣列裡的哪兩個值相減？算出來是多少？
+    </p>
+    <p style="font-size:15px;line-height:1.7;color:#333;margin:0;">
+      <b>8. 🔧</b> 假設 <code>sum(n) = n + sum(n-1)</code>，終止條件是 <code>sum(0) = 0</code>。呼叫 <code>sum(4)</code> 時，呼叫堆疊最深會同時疊到幾層？追蹤一下往下呼叫和往回返回的順序，最後算出來的結果是多少？
+    </p>
   </div>
 
-  <div style="background:#fffaf0;border-radius:8px;padding:14px 18px;margin-bottom:12px;">
-    <strong>3.</strong> 「空間複雜度」到底在算什麼東西的空間？為什麼「輸入的資料」不算進去，但「輸出的結果」卻要算？
+  <div style="background:#ffffff;border-radius:10px;padding:20px 24px;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+    <p style="font-size:16px;font-weight:700;color:#1e9e57;margin:0 0 14px 0;">—— 解答 ——</p>
+
+    <p style="font-size:14px;line-height:1.7;color:#333;margin:0 0 12px 0;">
+      <b>1.</b> 迭代通常記憶體用量穩定、不會有堆疊溢位風險；遞迴則在問題本身「一層包一層」的結構很明顯時（例如樹狀結構）比較好懂、好寫。重複次數大或環境對記憶體敏感時，優先選迭代。
+    </p>
+    <p style="font-size:14px;line-height:1.7;color:#333;margin:0 0 12px 0;">
+      <b>2.</b> 沒有終止條件的話，遞迴會一直往下呼叫、堆疊一直往上疊，最後把記憶體塞滿而當機（堆疊溢位）。比喻：像是每通電話都要求你「先幫我辦完另一件事才能掛電話」，那件事又要你先辦別的事，一直往下疊、沒有人真的掛掉電話，直到你手上同時卡住的電話多到再也撐不住。
+    </p>
+    <p style="font-size:14px;line-height:1.7;color:#333;margin:0 0 12px 0;">
+      <b>3.</b> 不會，Java 的 JVM 不會自動做這個優化。所以就算函式已經寫成尾遞迴形式，深度夠深時堆疊還是會一層層往上疊，堆疊溢位的風險依然存在；真的要省記憶體，得自己手動把它改寫成迴圈。
+    </p>
+    <p style="font-size:14px;line-height:1.7;color:#333;margin:0 0 12px 0;">
+      <b>4.</b> 前提是陣列必須先排序過。因為雙指標的移動規則（和太小就左指標右移、太大就右指標左移）只有在陣列有序時，才能保證每次移動都是往正確方向前進；陣列沒排序的話，移動指標並不會讓和單調變大或變小，可能直接跳過正確答案。
+    </p>
+    <p style="font-size:14px;line-height:1.7;color:#333;margin:0 0 12px 0;">
+      <b>5.</b> 雙指標是「相向」移動（一個從頭、一個從尾，往中間靠近）；滑動視窗是「同方向」移動，右指標負責擴大視窗、左指標在條件不滿足時負責收縮視窗，圈出的是一段連續區間。題目問「最長／最短的連續子陣列（或子字串）」通常就是滑動視窗的訊號。
+    </p>
+    <p style="font-size:14px;line-height:1.7;color:#333;margin:0 0 12px 0;">
+      <b>6.</b> 只查一次的話不划算——現場直接加總一次就是 O(n)（意思是花費跟陣列長度成正比），先建前綴和反而多做一次白工。前綴和真正划算的情境是：同一個陣列會被重複查詢很多次不同區間的和，先花一次力氣建好前綴和陣列，之後每次查詢只要兩個值相減，變成幾乎不花時間（O(1)）。
+    </p>
+    <p style="font-size:14px;line-height:1.7;color:#333;margin:0 0 12px 0;">
+      <b>7.</b> 前綴和陣列是 <code>[1,4,9,16,25]</code>（1、1+3=4、4+5=9、9+7=16、16+9=25，依序累加）。查詢 index 1 到 3 的區間和，用「前綴和[3] − 前綴和[0]」＝16 − 1 ＝ <b>15</b>（對照一下：3+5+7 剛好也是 15）。
+    </p>
+    <p style="font-size:14px;line-height:1.7;color:#333;margin:0;">
+      <b>8.</b> 往下呼叫：<code>sum(4)→sum(3)→sum(2)→sum(1)→sum(0)</code>，堆疊最深同時疊了 <b>5 層</b>（sum(4) 到 sum(0) 都還沒返回）。往回收：sum(0)=0 傳給 sum(1)＝1+0=1，傳給 sum(2)＝2+1=3，傳給 sum(3)＝3+3=6，傳給 sum(4)＝4+6＝<b>10</b>。
+    </p>
   </div>
-
-  <div style="background:#fffaf0;border-radius:8px;padding:14px 18px;margin-bottom:12px;">
-    <strong>4.（工程師限定）</strong> LeetCode 26 這題，如果解法是「另外開一個新陣列來裝過濾後的結果」，空間複雜度是 O(n)；但用「雙指標」（two pointers，兩個各自移動、分工不同任務的索引）可以把它改寫成 O(1) 空間的「原地」（in-place，直接在原本的陣列裡面改，不額外開新容器）解法。這兩個指標大致上是怎麼分工的？
-  </div>
-
-  <div style="background:#fffaf0;border-radius:8px;padding:14px 18px;margin-bottom:12px;">
-    <strong>5.</strong> 一個迴圈跑 n 次、跟一個遞迴函式（自己呼叫自己的函式）呼叫自己 n 層，兩者的「時間」都可能是 O(n)，但「空間」的表現卻不一樣。為什麼遞迴會多佔空間，迴圈卻不會？（提示：想想什麼是「呼叫堆疊」——每次呼叫還沒 return 就會先疊在上面等著。）
-  </div>
-
-  <div style="background:#fffaf0;border-radius:8px;padding:14px 18px;margin-bottom:12px;">
-    <strong>6.（工程師限定）</strong> 如果一個遞迴函式，第 n 層額外配置了一個長度 n 的陣列，第 n-1 層配置長度 n-1 的陣列……一路到第 1 層配置長度 1 的陣列，為什麼整體空間複雜度會變成 O(n²)，而不是原本遞迴堆疊本身的 O(n)？
-  </div>
-
-  <div style="background:#fffaf0;border-radius:8px;padding:14px 18px;margin-bottom:12px;">
-    <strong>7.（工程師限定）</strong> 比較三種遞迴：(a) 每次呼叫只把問題規模減 1 的線性遞迴；(b) 每次呼叫都讓問題規模砍半的「分治」（divide and conquer，把問題拆成小塊分別處理再合併）遞迴；(c) 每次呼叫都分裂成兩個子呼叫（例如建一棵滿二元樹）。三者的「呼叫堆疊深度」各是多少？為什麼 (c) 的堆疊深度明明只有 O(n)，但整個呼叫展開後建出來的節點總數卻是指數成長的 O(2ⁿ)？這兩件事為什麼不衝突？
-  </div>
-
-  <div style="margin-top:28px;border-top:2px solid #d99b3f;padding-top:16px;">
-    <div style="font-size:18px;font-weight:700;color:#b9791f;margin-bottom:12px;">—— 解答 ——</div>
-
-    <p style="font-size:14px;margin:0 0 14px;"><strong>1.</strong> 因為 ArrayList 每次「搬家」都不是搬到剛好大 1 格的新陣列，而是搬到「兩倍大」的新陣列。容量每次翻倍，代表要搬家的次數很少（只有 log n 次），而且離上次搬家越久，下次搬家前累積的免費 add() 次數就越多——把這些搬家的成本平均分攤到每一次 add() 上，平均下來每次只要 O(1)，這就叫「攤還」（amortized，把偶爾一次貴的操作成本分攤到很多次操作上算平均）。</p>
-
-    <p style="font-size:14px;margin:0 0 14px;"><strong>2.</strong> ArrayList 存物件時，因為 Java 的「自動裝箱」（autoboxing，把基本型別的數值自動包成物件）機制，ArrayList&lt;Integer&gt; 裡面存的其實不是數字本身，而是一堆指向 Integer 物件的「參照」（reference，指向某塊記憶體位置的指標），這些 Integer 物件本身散落在記憶體各處、不連續。相較之下 int[] 裡的數字是真的一個接一個連續排列。連續記憶體對 CPU 快取比較友善，散落的物件則容易「快取未命中」（cache miss，CPU 要找的資料不在快取裡，得多花時間去別的地方拿），所以多了一層跳轉、速度較慢。已知大小又追求效能時，優先選 int[]。</p>
-
-    <p style="font-size:14px;margin:0 0 14px;"><strong>3.</strong> 空間複雜度算的是「暫存空間」（algorithm 執行過程中額外用掉、跟輸入大小有關的空間，例如另外開的陣列、遞迴堆疊）加上「輸出空間」，但不含「輸入空間」（因為輸入本來就已經存在那裡了，不是這個演算法額外花的成本）。實務上輸出通常很小甚至可以忽略，所以大家講空間複雜度時常常只提暫存空間，但這不代表輸出不算，只是通常不是重點。</p>
-
-    <p style="font-size:14px;margin:0 0 14px;"><strong>4.</strong> 一個指標（可以想成「慢指標」）負責記錄「目前結果應該寫到哪一格」；另一個指標（「快指標」）負責一格一格往前掃描整個陣列。快指標每掃到一個「該留下」的元素，就把它寫到慢指標的位置，然後慢指標才往前移一格；不該留下的元素快指標直接跳過、慢指標不動。掃完之後，慢指標之前的區段就是結果，全程只用原本的陣列，沒有另外開新容器，所以是 O(1) 空間。</p>
-
-    <p style="font-size:14px;margin:0 0 14px;"><strong>5.</strong> 迴圈每跑完一輪就結束了，不會有東西留在記憶體裡等著；但遞迴函式每呼叫自己一次，就會在「呼叫堆疊」（call stack，記錄目前有哪些函式呼叫還沒執行完、等著 return 的一疊資料）上多疊一個「堆疊幀」（stack frame，一次函式呼叫需要記住的區域變數、返回位置等資訊），而且要等到最深那一層先 return，上面的才能一層層跟著結束。深度為 n 的遞迴，堆疊上同時存在 n 個還沒結束的呼叫，所以佔用 O(n) 空間；迴圈沒有這種「疊著等」的結構，用完就釋放，是 O(1)。</p>
-
-    <p style="font-size:14px;margin:0 0 14px;"><strong>6.</strong> 呼叫堆疊本身確實只有 n 層，是 O(n)；但這題多了「每一層還各自佔用一塊隨深度變化的空間」。第 n 層佔 n、第 n-1 層佔 n-1……一路加到第 1 層佔 1，總和是 n + (n-1) + (n-2) + … + 1，這是一個等差數列求和，結果約等於 n²/2，去掉常數之後就是 O(n²)。重點是：堆疊「深度」（有幾層）跟每一層「各自佔多少空間」是兩件事，要把每層的空間都加總起來，才是真正的總空間複雜度。</p>
-
-    <p style="font-size:14px;margin:0 0 14px;"><strong>7.</strong> (a) 線性遞迴每次只減 1，要減 n 次才會到底，堆疊深度是 O(n)。(b) 分治遞迴每次讓問題規模砍半，砍 log n 次就會到底（因為 n 反覆除以 2，除到剩 1 大約要除 log n 次），堆疊深度是 O(log n)。(c) 每次分裂成兩個子呼叫時，「深度」看的是從最上層走到最底層要經過幾層——因為每一層問題規模只是簡單減 1（例如樹的高度一層層往下），所以深度仍然是 O(n)；但因為每一層都分裂成兩支，「總共呼叫了幾次、建了幾個節點」是把每一層的呼叫數翻倍再翻倍地乘起來，這是指數成長，加總後是 O(2ⁿ)。深度是「從根走到葉最長要幾步」，節點總數是「這棵樹總共有幾個點」——一個看的是路徑長度，一個看的是整體規模，兩者本來就是不同的度量方式，所以不衝突。</p>
-
-  </div>
-
 </div>
