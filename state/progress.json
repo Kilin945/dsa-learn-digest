@@ -1,7 +1,9 @@
 {
   "current_index": 5,
-  "step": 1,
-  "covered": [],
+  "step": 2,
+  "covered": [
+    "Java 的 String 建立後就不可變，所有看起來像修改字串的操作（如 concat）其實都是回傳一個新物件、原字串保持不變；需要就地修改文字內容時，要改用 char[]（或之後要教的 StringBuilder）。"
+  ],
   "completed_topics": [
     {
       "topic": "Big-O 複雜度：怎麼估一段程式的快慢",
