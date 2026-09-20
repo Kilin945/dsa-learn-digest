@@ -1,8 +1,9 @@
 {
   "current_index": 5,
-  "step": 2,
+  "step": 3,
   "covered": [
-    "Java 的 String 建立後就不可變，所有看起來像修改字串的操作（如 concat）其實都是回傳一個新物件、原字串保持不變；需要就地修改文字內容時，要改用 char[]（或之後要教的 StringBuilder）。"
+    "Java 的 String 建立後就不可變，所有看起來像修改字串的操作（如 concat）其實都是回傳一個新物件、原字串保持不變；需要就地修改文字內容時，要改用 char[]（或之後要教的 StringBuilder）。",
+    "StringBuilder 內部維護一塊可動態成長的字元緩衝區（概念上是陣列），append() 平攤下來是 O(1)，所以迴圈中組字串整體只要 O(n)；而 String 用 + 號重複串接，因為每次都要複製目前為止的全部內容，會變成 O(n²)。"
   ],
   "completed_topics": [
     {
