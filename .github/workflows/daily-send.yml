@@ -116,7 +116,8 @@ jobs:
             echo "非最後一班（且未過 15:00），本機備稿可能還在跑，先不體檢。"; exit 0
           fi
           TODAY="$(date +%F)"
-          MISSING=""
+          # 標題要指名是哪一封——「有缺口」看了還要再查一次缺的是哪個。
+          MISSING=""; NAMES=""
 
           # ① 明天的課備好了嗎？
           # outbox 存的是「下一篇」——早上寄完會清空，當天 12:00/13:00 再填進明天的。
@@ -128,6 +129,7 @@ jobs:
               echo "[每日] 本機已寄過警示信，不重複。"
             else
               MISSING="$MISSING<li><b>明天的每日課</b>——本機今天沒有備成，明天早上 08:00 會收不到信</li>"
+              NAMES="${NAMES:+${NAMES}、}每日課沒備成"
             fi
           fi
 
@@ -139,6 +141,7 @@ jobs:
                 echo "[週報] 本機已寄過警示信，不重複。"
               else
                 MISSING="$MISSING<li><b>本週週報</b>——週五的備稿沒成功，今天早上的週報沒寄出</li>"
+                NAMES="${NAMES:+${NAMES}、}週報沒寄出"
               fi
             fi
           fi
@@ -164,12 +167,12 @@ jobs:
           # 備份，筆電那份沒了還讀得到。
           NOW="$(date '+%Y-%m-%d %H:%M')"
           BODY="<div style=\"font-family:-apple-system,sans-serif\">
-          <h3>⚠️ 學習信有缺口</h3>
+          <h3>${NAMES}</h3>
           <p>雲端於 $NOW 體檢，發現：</p>
           <ul>$MISSING</ul>
           </div>"
 
-          if printf '%s' "$BODY" | python3 send_email.py "⚠️ 學習信有缺口"; then
+          if printf '%s' "$BODY" | python3 send_email.py "DSA 學習信 ${NAMES}"; then
             date '+%Y-%m-%d %H:%M:%S' > "state/alert-prepare-$TODAY"
             if [ "$(date +%u)" = "6" ]; then
               date '+%Y-%m-%d %H:%M:%S' > "state/alert-prepare-weekly-$TODAY"
