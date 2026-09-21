@@ -21,3 +21,4 @@
 {"date": "2026-09-18", "topic": "陣列上的掃描技巧：雙指標、滑動視窗、前綴和", "step": 3, "summary": "前綴和（Prefix Sum）事先把陣列每個位置之前的累加總和算好存起來，之後查詢任何一段區間的和只需要用兩個前綴和相減，就能把重複查詢區間和的問題從每次 O(n) 降到每次 O(1)。"}
 {"date": "2026-09-19", "topic": "字串 String：不可變性、StringBuilder 與字元陣列的關係", "step": 1, "summary": "Java 的 String 建立後就不可變，所有看起來像修改字串的操作（如 concat）其實都是回傳一個新物件、原字串保持不變；需要就地修改文字內容時，要改用 char[]（或之後要教的 StringBuilder）。"}
 {"date": "2026-09-20", "topic": "字串 String：不可變性、StringBuilder 與字元陣列的關係", "step": 2, "summary": "StringBuilder 內部維護一塊可動態成長的字元緩衝區（概念上是陣列），append() 平攤下來是 O(1)，所以迴圈中組字串整體只要 O(n)；而 String 用 + 號重複串接，因為每次都要複製目前為止的全部內容，會變成 O(n²)。"}
+{"date": "2026-09-21", "topic": "字串 String：不可變性、StringBuilder 與字元陣列的關係", "step": 3, "summary": "String 要直接改某個字元位置時，先用 toCharArray() 轉成 char[]（複製品）改完，再用 new String(陣列) 轉回字串；原本的 String 物件全程沒被動到。"}
