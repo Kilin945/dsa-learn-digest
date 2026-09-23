@@ -23,3 +23,4 @@
 {"date": "2026-09-20", "topic": "字串 String：不可變性、StringBuilder 與字元陣列的關係", "step": 2, "summary": "StringBuilder 內部維護一塊可動態成長的字元緩衝區（概念上是陣列），append() 平攤下來是 O(1)，所以迴圈中組字串整體只要 O(n)；而 String 用 + 號重複串接，因為每次都要複製目前為止的全部內容，會變成 O(n²)。"}
 {"date": "2026-09-21", "topic": "字串 String：不可變性、StringBuilder 與字元陣列的關係", "step": 3, "summary": "String 要直接改某個字元位置時，先用 toCharArray() 轉成 char[]（複製品）改完，再用 new String(陣列) 轉回字串；原本的 String 物件全程沒被動到。"}
 {"date": "2026-09-22", "topic": "Linked List 基礎：節點、指標與 dummy head 技巧", "step": 1, "summary": "Linked List 是靠「引用」把一堆節點（node，裝著值＋指向下一個節點的引用）串起來的結構，不需要像陣列一樣佔用連續記憶體，但也因此不能直接用 index 跳到第 n 個，只能從頭節點開始一步步走，走到第 n 個要 O(n)。"}
+{"date": "2026-09-23", "topic": "Linked List 基礎：節點、指標與 dummy head 技巧", "step": 2, "summary": "Linked List 的每個節點只裝「值」和指向下一個節點的「引用（指標）」，因此插入新節點時只要改兩個引用（先讓新節點指向後面的節點、再讓前面的節點指向新節點），不用搬動任何舊資料，這就是插入是 O(1) 的原因，跟陣列插入要整批搬移的 O(n) 完全不同——但前提是你已經拿著指向目標位置的指標，若還要從頭找過去，找的過程仍是 O(n)。"}
