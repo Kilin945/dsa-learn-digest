@@ -1,7 +1,9 @@
 {
   "current_index": 7,
-  "step": 1,
-  "covered": [],
+  "step": 2,
+  "covered": [
+    "快慢指標讓一根指標(fast)一次走兩步、另一根(slow)一次走一步，兩者同時從頭出發，當fast走到底時slow恰好停在中點，不需要先算出串列長度就能一次遍歷找到中點；迴圈條件的寫法（fast != null && fast.next != null）決定了偶數長度時中點取的是靠後面那一個節點。"
+  ],
   "completed_topics": [
     {
       "topic": "Big-O 複雜度：怎麼估一段程式的快慢",
