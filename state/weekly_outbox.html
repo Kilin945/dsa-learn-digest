@@ -1,72 +1,82 @@
-<div style="max-width:680px;margin:0 auto;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;background:#ecf7ef;padding:24px;border-radius:12px;">
-  <div style="border-left:6px solid #4caf72;padding:8px 16px;margin-bottom:20px;">
-    <span style="font-size:20px;font-weight:700;color:#1e9e57;">📗 每週回顧 · DSA · 2026-09-18</span>
-  </div>
+任務要求「只輸出 HTML 內文」，不需要另外寫檔，我直接把內容貼在回覆裡即可。
 
-  <div style="background:#ffffff;border-radius:10px;padding:20px 24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
-    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 16px 0;">
-      這週學了兩組主題：週一到週四是「重複執行程式碼的兩種方式」（迴圈 vs 函式自己呼叫自己），週五到週日是「掃描陣列的三種省時間手法」。下面 8 題不用照順序寫，也不用翻信——先憑印象試著回答，答不出來再回去對照當天那封信，這樣記得住的機率比直接看答案高很多。
-    </p>
-    <p style="font-size:13px;color:#1e9e57;margin:0;font-weight:600;">
-      題目分兩種：標「💬 概念題」的只憑讀過的信就答得出來，兩位都可以作答；標「🔧 實作題」的要追蹤程式碼細節或算複雜度，工程師讀者專屬，產品端同事可以跳過這幾題。
-    </p>
-  </div>
+<div style="max-width:680px;margin:0 auto;padding:20px;background:#f2f6e8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#333333;font-size:15px;line-height:1.7;">
+  <div style="background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+    <div style="background:#88a83f;color:#ffffff;padding:18px 22px;font-size:19px;font-weight:bold;">
+      📗 每週回顧 · DSA · 2026-09-25
+    </div>
+    <div style="padding:24px 22px;">
 
-  <div style="background:#ffffff;border-radius:10px;padding:20px 24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
-    <p style="font-size:16px;font-weight:700;color:#1e9e57;margin:0 0 14px 0;">🤔 回想題</p>
+      <p style="margin:0 0 18px 0;">
+        這週學了兩塊主題：<strong>字串（String）的不可變性與 StringBuilder</strong>，
+        以及 <strong>Linked List（鏈結串列）的基本結構與指標技巧</strong>。
+        下面是幾題回想題，順序從簡單到深入，兩位都可以先自己想過一遍再往下看解答——
+        不需要查資料，光靠讀過的每日信就答得出來。
+      </p>
 
-    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 14px 0;">
-      <b>1. 💬</b> 迭代（iteration，用迴圈反覆執行程式碼）和遞迴（recursion，函式呼叫自己本身）都能做「重複」這件事。如果同一段邏輯兩種寫法都寫得出來，你會偏好哪一種？講一個具體理由（不用寫程式碼）。
-    </p>
-    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 14px 0;">
-      <b>2. 💬</b> 遞迴呼叫時，每呼叫一層就會在呼叫堆疊（call stack，程式暫存「每一層函式呼叫到哪裡、等一下要接著做什麼」的地方）上多疊一層。如果一個遞迴函式忘記寫終止條件會怎樣？試著用一個生活比喻解釋給完全不寫程式的人聽。
-    </p>
-    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 14px 0;">
-      <b>3. 🔧</b> Java 的 JVM（Java 程式的執行環境）會不會自動幫你把尾遞迴（tail recursion，把計算動作提前搬到遞迴呼叫之前完成的寫法）優化成迴圈省記憶體？如果不會，一個已經改寫成尾遞迴形式的函式，深度很深時還有沒有堆疊溢位（stack overflow，堆疊塞滿記憶體導致當機）的風險？
-    </p>
-    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 14px 0;">
-      <b>4. 💬</b> 雙指標（Two Pointers，兩根指標從陣列頭尾相向移動去逼近答案）這個技巧要成立，陣列必須先滿足一個條件——是什麼？如果拿掉這個條件，直接對一個沒排序的陣列做同樣的頭尾夾逼，會出什麼問題？
-    </p>
-    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 14px 0;">
-      <b>5. 💬</b> 滑動視窗（Sliding Window，兩根指標同方向移動、圈出一段連續子陣列）常被和雙指標搞混。它們兩根指標的移動方式有什麼不一樣？看到題目出現「最長／最短的連續一段」這種字眼，通常是在提示你用哪一種？
-    </p>
-    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 14px 0;">
-      <b>6. 💬</b> 前綴和（Prefix Sum，事先把陣列每個位置之前的累加總和算好存起來）如果一個陣列的某段區間和只會被查詢「一次」，先花時間建前綴和划算嗎？什麼情況下前綴和才真的省時間？
-    </p>
-    <p style="font-size:15px;line-height:1.7;color:#333;margin:0 0 14px 0;">
-      <b>7. 🔧</b> 陣列是 <code>[1,3,5,7,9]</code>，它的前綴和陣列長什麼樣子？如果要查詢「index 1 到 index 3」（也就是 3、5、7 這段）的區間和，要用前綴和陣列裡的哪兩個值相減？算出來是多少？
-    </p>
-    <p style="font-size:15px;line-height:1.7;color:#333;margin:0;">
-      <b>8. 🔧</b> 假設 <code>sum(n) = n + sum(n-1)</code>，終止條件是 <code>sum(0) = 0</code>。呼叫 <code>sum(4)</code> 時，呼叫堆疊最深會同時疊到幾層？追蹤一下往下呼叫和往回返回的順序，最後算出來的結果是多少？
-    </p>
-  </div>
+      <div style="height:1px;background:#e3e9d3;margin:20px 0;"></div>
 
-  <div style="background:#ffffff;border-radius:10px;padding:20px 24px;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
-    <p style="font-size:16px;font-weight:700;color:#1e9e57;margin:0 0 14px 0;">—— 解答 ——</p>
+      <h3 style="color:#6e8c28;margin:0 0 12px 0;font-size:16px;">🧠 回想題</h3>
+      <ol style="margin:0;padding-left:22px;">
+        <li style="margin-bottom:14px;">
+          Java 的 <code>String</code>（字串物件）建立後為什麼說它「不可變（immutable，意思是內容一旦建立就不能被改動）」？
+          當你寫 <code>s = s.concat("test")</code>，這一行實際上發生了什麼事？
+        </li>
+        <li style="margin-bottom:14px;">
+          如果要在一個迴圈裡把很多小字串組成一個很長的字串，為什麼建議用 <code>StringBuilder</code>（一種專門用來拼接字串、內部可重複使用同一塊記憶體的工具類別）而不是一直用 <code>+</code> 號接？
+          如果硬用 <code>+</code> 號接，執行到後面會發生什麼現象？
+        </li>
+        <li style="margin-bottom:14px;">
+          （接續上題，偏程式細節）<code>StringBuilder.append()</code> 為什麼說它是「平攤 O(1)（amortized O(1)，意思是雖然偶爾會比較慢，但平均下來每次操作的成本是常數）」？
+          如果迴圈跑了 n 次 <code>append()</code>，整體的時間複雜度是多少？
+        </li>
+        <li style="margin-bottom:14px;">
+          承上題，如果同一個迴圈改成用 <code>String</code> 的 <code>+</code> 號接 n 次，總複雜度會變成多少？為什麼會跟 StringBuilder 差這麼多？
+        </li>
+        <li style="margin-bottom:14px;">
+          Linked List（鏈結串列，一種用「引用」把一堆節點串起來，而不像陣列佔用連續記憶體的結構）為什麼不能像陣列一樣直接用 index（索引）跳到第 n 個元素？取第 n 個元素要花多少代價？
+        </li>
+        <li style="margin-bottom:14px;">
+          為什麼說在 Linked List 中插入一個新節點是 O(1)（也就是不管串列多長，代價都固定）？這個「O(1)」有一個前提，是什麼情況下才成立？如果不滿足這個前提，插入實際上要花多少？
+        </li>
+        <li style="margin-bottom:14px;">
+          （偏程式細節）dummy head（假頭節點，一個不裝資料、擺在真正頭節點前面的節點）是為了解決什麼問題？如果沒有它，刪除或插入「第一個節點」要另外寫什麼特殊處理？寫完程式後，函式最後應該回傳 <code>dummy</code> 還是 <code>dummy.next</code>？
+        </li>
+        <li style="margin-bottom:0;">
+          （偏程式細節）快慢指標（fast-slow pointers，讓兩根指標從同一個起點出發，一根一次走兩步、一根一次走一步）用來找串列中點時，如果串列長度是偶數（例如 6 個節點），迴圈跑完後 slow 會停在第幾個節點？這跟迴圈條件寫成 <code>fast != null && fast.next != null</code> 有什麼關係？
+        </li>
+      </ol>
 
-    <p style="font-size:14px;line-height:1.7;color:#333;margin:0 0 12px 0;">
-      <b>1.</b> 迭代通常記憶體用量穩定、不會有堆疊溢位風險；遞迴則在問題本身「一層包一層」的結構很明顯時（例如樹狀結構）比較好懂、好寫。重複次數大或環境對記憶體敏感時，優先選迭代。
-    </p>
-    <p style="font-size:14px;line-height:1.7;color:#333;margin:0 0 12px 0;">
-      <b>2.</b> 沒有終止條件的話，遞迴會一直往下呼叫、堆疊一直往上疊，最後把記憶體塞滿而當機（堆疊溢位）。比喻：像是每通電話都要求你「先幫我辦完另一件事才能掛電話」，那件事又要你先辦別的事，一直往下疊、沒有人真的掛掉電話，直到你手上同時卡住的電話多到再也撐不住。
-    </p>
-    <p style="font-size:14px;line-height:1.7;color:#333;margin:0 0 12px 0;">
-      <b>3.</b> 不會，Java 的 JVM 不會自動做這個優化。所以就算函式已經寫成尾遞迴形式，深度夠深時堆疊還是會一層層往上疊，堆疊溢位的風險依然存在；真的要省記憶體，得自己手動把它改寫成迴圈。
-    </p>
-    <p style="font-size:14px;line-height:1.7;color:#333;margin:0 0 12px 0;">
-      <b>4.</b> 前提是陣列必須先排序過。因為雙指標的移動規則（和太小就左指標右移、太大就右指標左移）只有在陣列有序時，才能保證每次移動都是往正確方向前進；陣列沒排序的話，移動指標並不會讓和單調變大或變小，可能直接跳過正確答案。
-    </p>
-    <p style="font-size:14px;line-height:1.7;color:#333;margin:0 0 12px 0;">
-      <b>5.</b> 雙指標是「相向」移動（一個從頭、一個從尾，往中間靠近）；滑動視窗是「同方向」移動，右指標負責擴大視窗、左指標在條件不滿足時負責收縮視窗，圈出的是一段連續區間。題目問「最長／最短的連續子陣列（或子字串）」通常就是滑動視窗的訊號。
-    </p>
-    <p style="font-size:14px;line-height:1.7;color:#333;margin:0 0 12px 0;">
-      <b>6.</b> 只查一次的話不划算——現場直接加總一次就是 O(n)（意思是花費跟陣列長度成正比），先建前綴和反而多做一次白工。前綴和真正划算的情境是：同一個陣列會被重複查詢很多次不同區間的和，先花一次力氣建好前綴和陣列，之後每次查詢只要兩個值相減，變成幾乎不花時間（O(1)）。
-    </p>
-    <p style="font-size:14px;line-height:1.7;color:#333;margin:0 0 12px 0;">
-      <b>7.</b> 前綴和陣列是 <code>[1,4,9,16,25]</code>（1、1+3=4、4+5=9、9+7=16、16+9=25，依序累加）。查詢 index 1 到 3 的區間和，用「前綴和[3] − 前綴和[0]」＝16 − 1 ＝ <b>15</b>（對照一下：3+5+7 剛好也是 15）。
-    </p>
-    <p style="font-size:14px;line-height:1.7;color:#333;margin:0;">
-      <b>8.</b> 往下呼叫：<code>sum(4)→sum(3)→sum(2)→sum(1)→sum(0)</code>，堆疊最深同時疊了 <b>5 層</b>（sum(4) 到 sum(0) 都還沒返回）。往回收：sum(0)=0 傳給 sum(1)＝1+0=1，傳給 sum(2)＝2+1=3，傳給 sum(3)＝3+3=6，傳給 sum(4)＝4+6＝<b>10</b>。
-    </p>
+      <div style="height:1px;background:#e3e9d3;margin:22px 0;"></div>
+
+      <h3 style="color:#6e8c28;margin:0 0 12px 0;font-size:16px;">—— 解答 ——</h3>
+      <ol style="margin:0;padding-left:22px;">
+        <li style="margin-bottom:12px;">
+          <code>String</code> 物件一旦建立，裡面存的字元內容就不會再被改動。<code>concat()</code>（以及任何看起來像「改字串」的方法）其實是拿目前的內容複製一份、加工後回傳一個全新的 <code>String</code> 物件；原本 <code>s</code> 指向的那個物件內容完全沒動，只是變數 <code>s</code> 改成指向新物件。
+        </li>
+        <li style="margin-bottom:12px;">
+          因為 <code>StringBuilder</code> 內部維護一塊「可以動態變大」的字元緩衝區，<code>append()</code> 平攤下來只要 O(1)，整個迴圈跑 n 次總共只要 O(n)。若用 <code>+</code> 號，每次串接都要把「目前為止已經有的全部內容」複製一份到新物件裡，跑到後面內容越長、每次複製越貴，執行速度會明顯變慢（越後面越明顯的卡頓）。
+        </li>
+        <li style="margin-bottom:12px;">
+          <code>StringBuilder</code> 內部緩衝區滿了才需要「整批搬到更大的空間」，這種比較貴的操作次數很少，把它分攤到每一次 <code>append()</code> 上，平均每次還是常數時間，所以叫「平攤 O(1)」。n 次 append 總成本就是 O(n)。
+        </li>
+        <li style="margin-bottom:12px;">
+          O(n²)。因為第 1 次接要複製長度 1 的內容、第 2 次要複製長度 2、…、第 n 次要複製長度 n，加總起來是 1+2+…+n，等於 n(n+1)/2，也就是 O(n²)——這就是為什麼迴圈裡不建議用 <code>+</code> 號接字串。
+        </li>
+        <li style="margin-bottom:12px;">
+          因為 Linked List 的節點是靠「引用」一個個串起來，不是連續記憶體，沒辦法像陣列一樣直接算出第 n 個元素的位置，只能從頭節點開始一步步往後走。取第 n 個元素要 O(n)。
+        </li>
+        <li style="margin-bottom:12px;">
+          因為插入新節點只需要改兩個引用（讓新節點指向後面的節點、再讓前面的節點指向新節點），不用像陣列一樣整批搬動資料。但前提是你已經「拿著指向目標位置的指標」；如果還得從頭節點開始找到那個位置，找的過程本身就要 O(n)，這時插入整體還是 O(n)。
+        </li>
+        <li style="margin-bottom:12px;">
+          一般規則是「刪除／插入某節點，要去改它前一個節點的引用」，但頭節點沒有前一個節點可改，所以第一個節點永遠要另外寫特殊處理。加上 dummy head 後，頭節點前面多了一個假節點，讓「處理第一個節點」也變成跟處理其他節點一樣的一般情況，不用再寫例外分支。函式最後要回傳 <code>dummy.next</code>（真正的頭節點），不是 <code>dummy</code> 本身（那只是輔助用的假節點）。
+        </li>
+        <li style="margin-bottom:0;">
+          6 個節點時，slow 會停在第 4 個節點（偏後面那一個）。因為迴圈條件是「fast 還沒走到底，且 fast 的下一步也還沒走到底」才繼續走；fast 每次走兩步、slow 走一步，fast 走到第 6 個節點（走到底）時迴圈就停了，此時 slow 剛好走了 3 步、停在第 4 個節點。如果節點數是奇數，中點就唯一，沒有這個「取前一個還是後一個」的問題。
+        </li>
+      </ol>
+
+    </div>
   </div>
 </div>
