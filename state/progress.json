@@ -1,8 +1,9 @@
 {
   "current_index": 7,
-  "step": 2,
+  "step": 3,
   "covered": [
-    "快慢指標讓一根指標(fast)一次走兩步、另一根(slow)一次走一步，兩者同時從頭出發，當fast走到底時slow恰好停在中點，不需要先算出串列長度就能一次遍歷找到中點；迴圈條件的寫法（fast != null && fast.next != null）決定了偶數長度時中點取的是靠後面那一個節點。"
+    "快慢指標讓一根指標(fast)一次走兩步、另一根(slow)一次走一步，兩者同時從頭出發，當fast走到底時slow恰好停在中點，不需要先算出串列長度就能一次遍歷找到中點；迴圈條件的寫法（fast != null && fast.next != null）決定了偶數長度時中點取的是靠後面那一個節點。",
+    "用同一組快慢指標，把終止條件從「fast 撞底」換成「slow == fast」，就能判斷鏈結串列有沒有環（Floyd's Cycle Detection），不需要額外的 HashSet 也能做到 O(1) 空間；相遇判斷一定要用 == 比較節點參考，不能比 .val 的數值。"
   ],
   "completed_topics": [
     {
