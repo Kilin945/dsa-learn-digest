@@ -1,7 +1,9 @@
 {
   "current_index": 8,
-  "step": 1,
-  "covered": [],
+  "step": 2,
+  "covered": [
+    "Stack 堆疊是只能從頂端存取的資料結構，遵循後進先出（LIFO）：push 把元素放到堆疊頂，pop 把堆疊頂的元素拿走並回傳；Java 建議用 Deque（實作用 ArrayDeque）而不是舊的 Stack 類別。"
+  ],
   "completed_topics": [
     {
       "topic": "Big-O 複雜度：怎麼估一段程式的快慢",
