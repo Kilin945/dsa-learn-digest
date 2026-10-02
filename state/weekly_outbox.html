@@ -1,82 +1,78 @@
-任務要求「只輸出 HTML 內文」，不需要另外寫檔，我直接把內容貼在回覆裡即可。
+<div style="max-width:680px;margin:0 auto;font-family:-apple-system,'Segoe UI','Noto Sans TC',Arial,sans-serif;color:#333;font-size:15px;line-height:1.7;">
 
-<div style="max-width:680px;margin:0 auto;padding:20px;background:#f2f6e8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#333333;font-size:15px;line-height:1.7;">
-  <div style="background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
-    <div style="background:#88a83f;color:#ffffff;padding:18px 22px;font-size:19px;font-weight:bold;">
-      📗 每週回顧 · DSA · 2026-09-25
-    </div>
-    <div style="padding:24px 22px;">
+<div style="border-left:6px solid #e0738a;padding:6px 12px;margin-bottom:14px;font-size:18px;font-weight:bold;color:#d83a5e;">📗 每週回顧 · DSA · 2026-10-02</div>
 
-      <p style="margin:0 0 18px 0;">
-        這週學了兩塊主題：<strong>字串（String）的不可變性與 StringBuilder</strong>，
-        以及 <strong>Linked List（鏈結串列）的基本結構與指標技巧</strong>。
-        下面是幾題回想題，順序從簡單到深入，兩位都可以先自己想過一遍再往下看解答——
-        不需要查資料，光靠讀過的每日信就答得出來。
-      </p>
+<div style="background:#fdeef0;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+這週學了兩個主題：<b>鏈結串列的指標技巧</b>（9/26–9/27）和 <b>Stack 堆疊</b>（9/28–10/2）。<br>
+下面 8 題先不要翻到解答，自己想一下再對答案。想不起來也沒關係，卡住的地方就是最值得回頭看的地方。<br>
+【概念】題只靠讀過的信就能答，不用寫程式。【實作】題會碰到程式細節，工程師讀者再挑戰就好。
+</div>
 
-      <div style="height:1px;background:#e3e9d3;margin:20px 0;"></div>
+<div style="background:#fdeef0;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+<b style="color:#d83a5e;">Q1【概念】</b> 堆疊（Stack）有一條很重要的規則叫「後進先出」（LIFO，Last In First Out，最後放進去的最先被拿出來）。請用一個生活例子說明這個規則。再說說 push（放進去）和 pop（拿出來）各自做什麼，東西是從哪一端進出的？
+</div>
 
-      <h3 style="color:#6e8c28;margin:0 0 12px 0;font-size:16px;">🧠 回想題</h3>
-      <ol style="margin:0;padding-left:22px;">
-        <li style="margin-bottom:14px;">
-          Java 的 <code>String</code>（字串物件）建立後為什麼說它「不可變（immutable，意思是內容一旦建立就不能被改動）」？
-          當你寫 <code>s = s.concat("test")</code>，這一行實際上發生了什麼事？
-        </li>
-        <li style="margin-bottom:14px;">
-          如果要在一個迴圈裡把很多小字串組成一個很長的字串，為什麼建議用 <code>StringBuilder</code>（一種專門用來拼接字串、內部可重複使用同一塊記憶體的工具類別）而不是一直用 <code>+</code> 號接？
-          如果硬用 <code>+</code> 號接，執行到後面會發生什麼現象？
-        </li>
-        <li style="margin-bottom:14px;">
-          （接續上題，偏程式細節）<code>StringBuilder.append()</code> 為什麼說它是「平攤 O(1)（amortized O(1)，意思是雖然偶爾會比較慢，但平均下來每次操作的成本是常數）」？
-          如果迴圈跑了 n 次 <code>append()</code>，整體的時間複雜度是多少？
-        </li>
-        <li style="margin-bottom:14px;">
-          承上題，如果同一個迴圈改成用 <code>String</code> 的 <code>+</code> 號接 n 次，總複雜度會變成多少？為什麼會跟 StringBuilder 差這麼多？
-        </li>
-        <li style="margin-bottom:14px;">
-          Linked List（鏈結串列，一種用「引用」把一堆節點串起來，而不像陣列佔用連續記憶體的結構）為什麼不能像陣列一樣直接用 index（索引）跳到第 n 個元素？取第 n 個元素要花多少代價？
-        </li>
-        <li style="margin-bottom:14px;">
-          為什麼說在 Linked List 中插入一個新節點是 O(1)（也就是不管串列多長，代價都固定）？這個「O(1)」有一個前提，是什麼情況下才成立？如果不滿足這個前提，插入實際上要花多少？
-        </li>
-        <li style="margin-bottom:14px;">
-          （偏程式細節）dummy head（假頭節點，一個不裝資料、擺在真正頭節點前面的節點）是為了解決什麼問題？如果沒有它，刪除或插入「第一個節點」要另外寫什麼特殊處理？寫完程式後，函式最後應該回傳 <code>dummy</code> 還是 <code>dummy.next</code>？
-        </li>
-        <li style="margin-bottom:0;">
-          （偏程式細節）快慢指標（fast-slow pointers，讓兩根指標從同一個起點出發，一根一次走兩步、一根一次走一步）用來找串列中點時，如果串列長度是偶數（例如 6 個節點），迴圈跑完後 slow 會停在第幾個節點？這跟迴圈條件寫成 <code>fast != null && fast.next != null</code> 有什麼關係？
-        </li>
-      </ol>
+<div style="background:#fdeef0;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+<b style="color:#d83a5e;">Q2【概念】</b> 下面三個情境，哪些適合用堆疊？哪一個不適合，為什麼？<br>
+(a) 文字編輯器的「復原上一步」<br>
+(b) 銀行叫號，先來的人先被服務<br>
+(c) 瀏覽器按「上一頁」回到剛剛看的網頁
+</div>
 
-      <div style="height:1px;background:#e3e9d3;margin:22px 0;"></div>
+<div style="background:#fdeef0;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+<b style="color:#d83a5e;">Q3【概念】</b> 檢查括號有沒有配對好（LeetCode 20），做法是左括號放進堆疊，遇到右括號就拿出頂端比對。請回答：<br>
+(1) 為什麼「最近放進去的左括號」一定要最先被配對？拿 <code>([)]</code> 來說明它為什麼不合法。<br>
+(2) 字串 <code>(()</code> 每一次比對都沒出錯，為什麼最後還是不合法？
+</div>
 
-      <h3 style="color:#6e8c28;margin:0 0 12px 0;font-size:16px;">—— 解答 ——</h3>
-      <ol style="margin:0;padding-left:22px;">
-        <li style="margin-bottom:12px;">
-          <code>String</code> 物件一旦建立，裡面存的字元內容就不會再被改動。<code>concat()</code>（以及任何看起來像「改字串」的方法）其實是拿目前的內容複製一份、加工後回傳一個全新的 <code>String</code> 物件；原本 <code>s</code> 指向的那個物件內容完全沒動，只是變數 <code>s</code> 改成指向新物件。
-        </li>
-        <li style="margin-bottom:12px;">
-          因為 <code>StringBuilder</code> 內部維護一塊「可以動態變大」的字元緩衝區，<code>append()</code> 平攤下來只要 O(1)，整個迴圈跑 n 次總共只要 O(n)。若用 <code>+</code> 號，每次串接都要把「目前為止已經有的全部內容」複製一份到新物件裡，跑到後面內容越長、每次複製越貴，執行速度會明顯變慢（越後面越明顯的卡頓）。
-        </li>
-        <li style="margin-bottom:12px;">
-          <code>StringBuilder</code> 內部緩衝區滿了才需要「整批搬到更大的空間」，這種比較貴的操作次數很少，把它分攤到每一次 <code>append()</code> 上，平均每次還是常數時間，所以叫「平攤 O(1)」。n 次 append 總成本就是 O(n)。
-        </li>
-        <li style="margin-bottom:12px;">
-          O(n²)。因為第 1 次接要複製長度 1 的內容、第 2 次要複製長度 2、…、第 n 次要複製長度 n，加總起來是 1+2+…+n，等於 n(n+1)/2，也就是 O(n²)——這就是為什麼迴圈裡不建議用 <code>+</code> 號接字串。
-        </li>
-        <li style="margin-bottom:12px;">
-          因為 Linked List 的節點是靠「引用」一個個串起來，不是連續記憶體，沒辦法像陣列一樣直接算出第 n 個元素的位置，只能從頭節點開始一步步往後走。取第 n 個元素要 O(n)。
-        </li>
-        <li style="margin-bottom:12px;">
-          因為插入新節點只需要改兩個引用（讓新節點指向後面的節點、再讓前面的節點指向新節點），不用像陣列一樣整批搬動資料。但前提是你已經「拿著指向目標位置的指標」；如果還得從頭節點開始找到那個位置，找的過程本身就要 O(n)，這時插入整體還是 O(n)。
-        </li>
-        <li style="margin-bottom:12px;">
-          一般規則是「刪除／插入某節點，要去改它前一個節點的引用」，但頭節點沒有前一個節點可改，所以第一個節點永遠要另外寫特殊處理。加上 dummy head 後，頭節點前面多了一個假節點，讓「處理第一個節點」也變成跟處理其他節點一樣的一般情況，不用再寫例外分支。函式最後要回傳 <code>dummy.next</code>（真正的頭節點），不是 <code>dummy</code> 本身（那只是輔助用的假節點）。
-        </li>
-        <li style="margin-bottom:0;">
-          6 個節點時，slow 會停在第 4 個節點（偏後面那一個）。因為迴圈條件是「fast 還沒走到底，且 fast 的下一步也還沒走到底」才繼續走；fast 每次走兩步、slow 走一步，fast 走到第 6 個節點（走到底）時迴圈就停了，此時 slow 剛好走了 3 步、停在第 4 個節點。如果節點數是奇數，中點就唯一，沒有這個「取前一個還是後一個」的問題。
-        </li>
-      </ol>
+<div style="background:#fdeef0;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+<b style="color:#d83a5e;">Q4【概念】</b> 鏈結串列是一串「節點」，每個節點記著下一個節點在哪裡。如果最後一個節點又接回前面某個節點，就形成「環」，走到最後會一直繞圈。判斷有沒有環的「快慢指標」（Floyd 判環）是這樣做的：一個標記每次走 1 步，另一個每次走 2 步。<br>
+(1) 用跑步比喻，說明為什麼有環的時候兩個標記一定會碰頭？沒有環的時候會怎樣？<br>
+(2) 另一個做法是用 HashSet（一個能記住「看過誰」的清單）把走過的節點全記下來。跟它比，快慢指標省下了什麼？
+</div>
 
-    </div>
-  </div>
+<div style="background:#fdeef0;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+<b style="color:#d83a5e;">Q5【概念】</b> 「單調堆疊」是讓堆疊內的數字維持由大到小（或由小到大）排列，新數字進來時先把不合格的頂端彈掉。以 LeetCode 739 為例：給一串每日氣溫，要問「每一天要再等幾天才會遇到更熱的一天」。<br>
+(1) 這類「下一個更大的是誰」的問題，最直覺的做法是什麼？資料量變得很大時它為什麼會變慢？<br>
+(2) 單調堆疊的好處是什麼？
+</div>
+
+<div style="background:#fdeef0;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+<b style="color:#d83a5e;">Q6【實作】</b> 單調堆疊的程式是一個 <code>for</code> 迴圈，裡面還有一個 <code>while</code> 迴圈（用來彈掉不合格的頂端）。兩層迴圈看起來像 O(n²)（O(n²) 表示資料量變 10 倍，時間約變 100 倍），但為什麼總時間是 O(n)？請從「每個元素最多做幾次事」來解釋。
+</div>
+
+<div style="background:#fdeef0;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+<b style="color:#d83a5e;">Q7【實作】</b> 反轉鏈結串列用三根指標：<code>prev</code>（前一個）、<code>curr</code>（目前）、<code>next</code>（下一個）。串列是 <code>1→2→3→null</code>。如果迴圈裡把順序寫錯，變成先做 <code>curr.next = prev</code>，再做 <code>next = curr.next</code>，會發生什麼事？正確的四步順序是什麼？
+</div>
+
+<div style="background:#fdeef0;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+<b style="color:#d83a5e;">Q8【實作】</b> 逆波蘭表示法（RPN）是把運算子寫在數字後面，例如 <code>2 1 +</code> 代表 2+1。請追蹤這串輸入，寫出每一步後堆疊的內容與最後答案：<br>
+<code>["4","13","5","/","+"]</code>（除法取整數，只留商，小數捨去）<br>
+提示：遇到運算子要 pop 兩個數字，先 pop 出來的是「右邊」的數字。如果搞反了左右，答案會變多少？
+</div>
+
+<div style="border-top:2px dashed #e0738a;margin:22px 0 12px;text-align:center;color:#d83a5e;font-weight:bold;font-size:16px;padding-top:12px;">—— 解答 ——</div>
+
+<div style="background:#fff;border:1px solid #f3c9d1;border-radius:10px;padding:14px 16px;">
+
+<p style="margin:0 0 10px;"><b style="color:#d83a5e;">A1</b>　像疊盤子：最後疊上去的盤子在最上面，要拿也是先拿最上面那個。push 是把元素放到堆疊頂，pop 是把堆疊頂的元素拿走並回傳。進出只能走頂端這一個口，中間的拿不到。Java 建議用 <code>Deque</code>（實作用 <code>ArrayDeque</code>），不要用舊的 <code>Stack</code> 類別。</p>
+
+<p style="margin:0 0 10px;"><b style="color:#d83a5e;">A2</b>　(a) 和 (c) 適合。「復原」要先撤銷最近做的那一步，「上一頁」要先回到最近看的那一頁，都是後進先出。(b) 不適合，叫號是先來先服務，也就是先進先出，那是另一種結構叫「佇列」（Queue），不是堆疊。</p>
+
+<p style="margin:0 0 10px;"><b style="color:#d83a5e;">A3</b>　(1) 括號是一層包一層，最內層的要先關掉，所以最近開的左括號一定要先被配對，剛好就是後進先出。<code>([)]</code> 遇到 <code>)</code> 時堆疊頂是 <code>[</code>，對不上，所以不合法。(2) 掃完後堆疊裡還剩一個 <code>(</code>，代表有左括號沒被關上。所以「合法」要同時滿足兩件事：每次比對都對，而且掃完堆疊剛好是空的。</p>
+
+<p style="margin:0 0 10px;"><b style="color:#d83a5e;">A4</b>　(1) 像操場跑步，跑得快的人遇到圈就會一直繞，最後從後面追上跑得慢的人，所以有環一定會相遇。沒有環的話，快的那個會先走到盡頭（null），迴圈就結束，判定沒環。(2) 省下額外記憶體：HashSet 要記下所有走過的節點，空間是 O(n)；快慢指標只用兩個標記，空間是 O(1)（O(1) 表示用多少記憶體跟資料量無關）。另外，判斷相遇要比「是不是同一個節點」（用 <code>==</code>），不能比節點裡的數值，因為不同節點的數值可能一樣。</p>
+
+<p style="margin:0 0 10px;"><b style="color:#d83a5e;">A5</b>　(1) 直覺做法是每一天都往後一格一格找，直到遇到更熱的那天。如果氣溫一路下降，每天都要找到底，資料量變 10 倍，工作量約變 100 倍，所以會越來越慢。(2) 單調堆疊只掃一遍就能算出所有答案：堆疊裡放「還在等更熱日子的那些天」，新的一天比頂端熱，就把頂端彈出來結算。這樣每個元素只進出一次，總時間是 O(n)。</p>
+
+<p style="margin:0 0 10px;"><b style="color:#d83a5e;">A6</b>　每個元素最多 push 一次、pop 一次。<code>while</code> 彈掉的總次數不可能超過 push 的總次數，所以整個過程最多約 2n 次操作，是 O(n)。重點是看「全部加起來」做了幾次，不要只看迴圈有幾層。</p>
+
+<p style="margin:0 0 10px;"><b style="color:#d83a5e;">A7</b>　先寫 <code>curr.next = prev</code> 會把 <code>curr.next</code> 蓋掉。第一輪 <code>curr=1</code>，<code>1.next</code> 被改成 null，接著 <code>next = curr.next</code> 拿到的是 null，不是 2。迴圈下一步 <code>curr = next</code> 變成 null，直接結束，節點 2 和 3 就找不到了，結果只剩 <code>1→null</code>。正確順序：① <code>next = curr.next</code>（先存好下一個）② <code>curr.next = prev</code>（反向接）③ <code>prev = curr</code> ④ <code>curr = next</code>。</p>
+
+<p style="margin:0;"><b style="color:#d83a5e;">A8</b>　<code>4</code> → 堆疊 [4]；<code>13</code> → [4, 13]；<code>5</code> → [4, 13, 5]；遇到 <code>/</code>，先 pop 出 5（右），再 pop 出 13（左），算 13÷5 = 2（捨去小數），放回 → [4, 2]；遇到 <code>+</code>，pop 出 2 和 4，算 4+2 = 6 → [6]。<b>答案 6</b>。左右搞反會算成 5÷13 = 0，再加 4 得 4，答案就錯了。減法和除法特別會受影響。</p>
+
+</div>
+
+<div style="margin-top:14px;color:#d83a5e;font-size:14px;">答對幾題都不重要，重點是哪幾題要想很久。那幾題就是下週前最值得再看一次的地方。🌸</div>
+
 </div>
