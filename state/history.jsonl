@@ -33,3 +33,4 @@
 {"date": "2026-09-30", "topic": "Stack 堆疊：後進先出、括號配對與單調堆疊", "step": 3, "summary": "用堆疊解括號配對：左括號 push、右括號 pop 並比對，掃完後堆疊要剛好清空才算合法（LeetCode 20 Valid Parentheses）。"}
 {"date": "2026-10-01", "topic": "Stack 堆疊：後進先出、括號配對與單調堆疊", "step": 4, "summary": "單調堆疊：堆疊內保持遞減（或遞增），新元素進來先彈出不合格的頂端並結算，用來一次掃描解決「下一個更大元素」，每個元素只進出一次所以是 O(n)（LeetCode 739 Daily Temperatures）。"}
 {"date": "2026-10-02", "topic": "Stack 堆疊：後進先出、括號配對與單調堆疊", "step": 5, "summary": "用堆疊算逆波蘭表示法（RPN）：數字 push，遇到運算子 pop 兩個（先 pop 的是右運算元）算完再 push，最後剩下的就是答案（LeetCode 150）。"}
+{"date": "2026-10-03", "topic": "Stack 堆疊：後進先出、括號配對與單調堆疊", "step": 6, "summary": "收尾：堆疊的核心是後進先出，配對型、單調型與「輔助堆疊多帶一份資訊」（Min Stack，O(1) 取最小值）都是同一條規則的變化。"}

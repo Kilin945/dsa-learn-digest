@@ -1,13 +1,7 @@
 {
-  "current_index": 8,
-  "step": 6,
-  "covered": [
-    "Stack 堆疊是只能從頂端存取的資料結構，遵循後進先出（LIFO）：push 把元素放到堆疊頂，pop 把堆疊頂的元素拿走並回傳；Java 建議用 Deque（實作用 ArrayDeque）而不是舊的 Stack 類別。",
-    "陣列版堆疊把堆疊頂放在陣列尾端，push/pop 都只動最後一格，所以是 O(1)（均攤）；鏈結串列版則是把頭節點當堆疊頂，兩者取捨不同。",
-    "用堆疊解括號配對：左括號 push、右括號 pop 並比對，掃完後堆疊要剛好清空才算合法（LeetCode 20 Valid Parentheses）。",
-    "單調堆疊：堆疊內保持遞減（或遞增），新元素進來先彈出不合格的頂端並結算，用來一次掃描解決「下一個更大元素」，每個元素只進出一次所以是 O(n)（LeetCode 739 Daily Temperatures）。",
-    "用堆疊算逆波蘭表示法（RPN）：數字 push，遇到運算子 pop 兩個（先 pop 的是右運算元）算完再 push，最後剩下的就是答案（LeetCode 150）。"
-  ],
+  "current_index": 9,
+  "step": 1,
+  "covered": [],
   "completed_topics": [
     {
       "topic": "Big-O 複雜度：怎麼估一段程式的快慢",
@@ -48,6 +42,11 @@
       "topic": "鏈結串列的指標技巧：快慢指標找中點與判環、反轉串列",
       "finished": "2026-09-27",
       "steps": 3
+    },
+    {
+      "topic": "Stack 堆疊：後進先出、括號配對與單調堆疊",
+      "finished": "2026-10-03",
+      "steps": 6
     }
   ]
 }
