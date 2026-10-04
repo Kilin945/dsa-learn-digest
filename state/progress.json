@@ -1,7 +1,9 @@
 {
   "current_index": 9,
-  "step": 1,
-  "covered": [],
+  "step": 2,
+  "covered": [
+    "佇列（Queue）是先入先出（FIFO）：從佇列尾入列（offer）、從佇列首出列（poll），peek 只看不拿，三個動作都是 O(1)；Java 建議用 ArrayDeque，並留意 poll/peek 遇空回 null、remove/element 遇空丟例外。"
+  ],
   "completed_topics": [
     {
       "topic": "Big-O 複雜度：怎麼估一段程式的快慢",
