@@ -35,3 +35,4 @@
 {"date": "2026-10-02", "topic": "Stack 堆疊：後進先出、括號配對與單調堆疊", "step": 5, "summary": "用堆疊算逆波蘭表示法（RPN）：數字 push，遇到運算子 pop 兩個（先 pop 的是右運算元）算完再 push，最後剩下的就是答案（LeetCode 150）。"}
 {"date": "2026-10-03", "topic": "Stack 堆疊：後進先出、括號配對與單調堆疊", "step": 6, "summary": "收尾：堆疊的核心是後進先出，配對型、單調型與「輔助堆疊多帶一份資訊」（Min Stack，O(1) 取最小值）都是同一條規則的變化。"}
 {"date": "2026-10-04", "topic": "Queue 佇列與 Deque：先進先出、環形佇列與雙端佇列", "step": 1, "summary": "佇列（Queue）是先入先出（FIFO）：從佇列尾入列（offer）、從佇列首出列（poll），peek 只看不拿，三個動作都是 O(1)；Java 建議用 ArrayDeque，並留意 poll/peek 遇空回 null、remove/element 遇空丟例外。"}
+{"date": "2026-10-05", "topic": "Queue 佇列與 Deque：先進先出、環形佇列與雙端佇列", "step": 2, "summary": "用陣列實作佇列時以 front 與 size 記錄狀態、rear = front + size;為避免 front 一路右移浪費空間,用 % capacity 讓 index 繞回開頭成為環形佇列,並用 size 區分空與滿,入列出列皆 O(1)。"}

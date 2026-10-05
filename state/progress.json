@@ -1,8 +1,9 @@
 {
   "current_index": 9,
-  "step": 2,
+  "step": 3,
   "covered": [
-    "佇列（Queue）是先入先出（FIFO）：從佇列尾入列（offer）、從佇列首出列（poll），peek 只看不拿，三個動作都是 O(1)；Java 建議用 ArrayDeque，並留意 poll/peek 遇空回 null、remove/element 遇空丟例外。"
+    "佇列（Queue）是先入先出（FIFO）：從佇列尾入列（offer）、從佇列首出列（poll），peek 只看不拿，三個動作都是 O(1)；Java 建議用 ArrayDeque，並留意 poll/peek 遇空回 null、remove/element 遇空丟例外。",
+    "用陣列實作佇列時以 front 與 size 記錄狀態、rear = front + size;為避免 front 一路右移浪費空間,用 % capacity 讓 index 繞回開頭成為環形佇列,並用 size 區分空與滿,入列出列皆 O(1)。"
   ],
   "completed_topics": [
     {
