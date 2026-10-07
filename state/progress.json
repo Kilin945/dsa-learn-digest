@@ -1,10 +1,11 @@
 {
   "current_index": 9,
-  "step": 4,
+  "step": 5,
   "covered": [
     "佇列（Queue）是先入先出（FIFO）：從佇列尾入列（offer）、從佇列首出列（poll），peek 只看不拿，三個動作都是 O(1)；Java 建議用 ArrayDeque，並留意 poll/peek 遇空回 null、remove/element 遇空丟例外。",
     "用陣列實作佇列時以 front 與 size 記錄狀態、rear = front + size;為避免 front 一路右移浪費空間,用 % capacity 讓 index 繞回開頭成為環形佇列,並用 size 區分空與滿,入列出列皆 O(1)。",
-    "雙端佇列（Deque）頭尾兩端都能新增與刪除，用環形陣列或雙向鏈結串列實作，四個端點操作都是 O(1)；Java 用 ArrayDeque 的 offerFirst/offerLast/pollFirst/pollLast，並留意 push 加在頭部、offer 加在尾部的方向差異。"
+    "雙端佇列（Deque）頭尾兩端都能新增與刪除，用環形陣列或雙向鏈結串列實作，四個端點操作都是 O(1)；Java 用 ArrayDeque 的 offerFirst/offerLast/pollFirst/pollLast，並留意 push 加在頭部、offer 加在尾部的方向差異。",
+    "用鏈結串列實作佇列：頭節點當佇列首（只刪除）、尾節點當佇列尾（只新增），靠 front 與 rear 兩個參考讓入列出列都是 O(1)；必須尾進頭出，因為單向鏈結串列刪尾要 O(n)；實務上仍優先用 ArrayDeque。"
   ],
   "completed_topics": [
     {
