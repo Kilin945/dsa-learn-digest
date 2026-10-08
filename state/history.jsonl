@@ -38,3 +38,4 @@
 {"date": "2026-10-05", "topic": "Queue 佇列與 Deque：先進先出、環形佇列與雙端佇列", "step": 2, "summary": "用陣列實作佇列時以 front 與 size 記錄狀態、rear = front + size;為避免 front 一路右移浪費空間,用 % capacity 讓 index 繞回開頭成為環形佇列,並用 size 區分空與滿,入列出列皆 O(1)。"}
 {"date": "2026-10-06", "topic": "Queue 佇列與 Deque：先進先出、環形佇列與雙端佇列", "step": 3, "summary": "雙端佇列（Deque）頭尾兩端都能新增與刪除，用環形陣列或雙向鏈結串列實作，四個端點操作都是 O(1)；Java 用 ArrayDeque 的 offerFirst/offerLast/pollFirst/pollLast，並留意 push 加在頭部、offer 加在尾部的方向差異。"}
 {"date": "2026-10-07", "topic": "Queue 佇列與 Deque：先進先出、環形佇列與雙端佇列", "step": 4, "summary": "用鏈結串列實作佇列：頭節點當佇列首（只刪除）、尾節點當佇列尾（只新增），靠 front 與 rear 兩個參考讓入列出列都是 O(1)；必須尾進頭出，因為單向鏈結串列刪尾要 O(n)；實務上仍優先用 ArrayDeque。"}
+{"date": "2026-10-08", "topic": "Queue 佇列與 Deque：先進先出、環形佇列與雙端佇列", "step": 5, "summary": "佇列與雙端佇列不管用陣列或鏈結串列實作，頭尾操作都是 O(1)；實務統一用 ArrayDeque，型別宣告表達意圖（Queue 排隊、Deque 兩端進出），典型應用是先來先處理的情境，並以 LeetCode 933 練習用佇列清掉過期資料。"}
