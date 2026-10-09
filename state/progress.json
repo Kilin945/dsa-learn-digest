@@ -1,7 +1,9 @@
 {
   "current_index": 10,
-  "step": 1,
-  "covered": [],
+  "step": 2,
+  "covered": [
+    "雜湊表用雜湊函式把 key 算成雜湊值，再對容量取模得到陣列索引（桶），所以查找不用逐一比對，平均 O(1)；O(1) 指步數不隨資料量增加，但有雜湊衝突的前提要處理，並以 LeetCode 1 Two Sum 練習用 HashMap 把找搭檔降成 O(n)。"
+  ],
   "completed_topics": [
     {
       "topic": "Big-O 複雜度：怎麼估一段程式的快慢",
