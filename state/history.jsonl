@@ -44,3 +44,4 @@
 {"date": "2026-10-11", "topic": "HashMap / HashSet：O(1) 查找的原理與代價", "step": 3, "summary": "雜湊表用負載因子（元素數 ÷ 桶數）判斷桶是否不夠用，Java 預設超過 0.75 就把容量翻倍並 rehash（所有資料重算索引搬家）；單次擴容 O(n)，但攤銷後每次 put 仍是 O(1)，已知資料量時可預留容量避免反覆擴容。"}
 {"date": "2026-10-12", "topic": "HashMap / HashSet：O(1) 查找的原理與代價", "step": 4, "summary": "自訂物件當 HashMap/HashSet 的 key 時，hashCode() 決定放哪個桶、equals() 決定桶內認不認得同一個；合約是 equals 相等則 hashCode 必須相等，且 key 放進去後不能再改影響雜湊值的欄位，否則查不到。"}
 {"date": "2026-10-13", "topic": "HashMap / HashSet：O(1) 查找的原理與代價", "step": 5, "summary": "HashSet 就是只存 key、沒有 value 的 HashMap（Java 內部真的包著一個 HashMap），專門以平均 O(1) 回答「有沒有」與去重，並用 LeetCode 217 練習用 add 的回傳值找重複。"}
+{"date": "2026-10-14", "topic": "HashMap / HashSet：O(1) 查找的原理與代價", "step": 6, "summary": "用 HashMap 當頻率表（key 是東西、value 是次數），以 getOrDefault 或 merge 掃一輪統計每種元素出現幾次，時間 O(n)、空間 O(k)；並用 LeetCode 387 練習先統計再依原順序回查。"}
