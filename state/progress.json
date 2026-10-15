@@ -1,13 +1,14 @@
 {
   "current_index": 10,
-  "step": 7,
+  "step": 8,
   "covered": [
     "雜湊表用雜湊函式把 key 算成雜湊值，再對容量取模得到陣列索引（桶），所以查找不用逐一比對，平均 O(1)；O(1) 指步數不隨資料量增加，但有雜湊衝突的前提要處理，並以 LeetCode 1 Two Sum 練習用 HashMap 把找搭檔降成 O(n)。",
     "不同的 key 必然會撞進同一個桶（雜湊衝突），Java 用鏈結法把撞在一起的資料串成串列，查找成本變成 O(1 + 鏈長)：分散得好平均 O(1)，全部撞在一起最壞 O(n)；找到桶後還要用 equals 比對 key。",
     "雜湊表用負載因子（元素數 ÷ 桶數）判斷桶是否不夠用，Java 預設超過 0.75 就把容量翻倍並 rehash（所有資料重算索引搬家）；單次擴容 O(n)，但攤銷後每次 put 仍是 O(1)，已知資料量時可預留容量避免反覆擴容。",
     "自訂物件當 HashMap/HashSet 的 key 時，hashCode() 決定放哪個桶、equals() 決定桶內認不認得同一個；合約是 equals 相等則 hashCode 必須相等，且 key 放進去後不能再改影響雜湊值的欄位，否則查不到。",
     "HashSet 就是只存 key、沒有 value 的 HashMap（Java 內部真的包著一個 HashMap），專門以平均 O(1) 回答「有沒有」與去重，並用 LeetCode 217 練習用 add 的回傳值找重複。",
-    "用 HashMap 當頻率表（key 是東西、value 是次數），以 getOrDefault 或 merge 掃一輪統計每種元素出現幾次，時間 O(n)、空間 O(k)；並用 LeetCode 387 練習先統計再依原順序回查。"
+    "用 HashMap 當頻率表（key 是東西、value 是次數），以 getOrDefault 或 merge 掃一輪統計每種元素出現幾次，時間 O(n)、空間 O(k)；並用 LeetCode 387 練習先統計再依原順序回查。",
+    "同一個桶的鏈太長時，Java 8 會在鏈長達 8 且桶數至少 64 時把串列樹化成紅黑樹，最壞情況從 O(n) 降到 O(log n)；但 key 需可比較、hashCode 仍要分散，樹化只是保底，並以 LeetCode 49 練習設計 key 做分組。"
   ],
   "completed_topics": [
     {
