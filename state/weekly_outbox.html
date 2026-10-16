@@ -1,54 +1,58 @@
 <div style="max-width:680px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans TC',sans-serif;color:#333;line-height:1.7;font-size:15px;">
 
-<div style="border-left:6px solid #8a6bd8;padding:8px 14px;margin-bottom:16px;font-size:18px;font-weight:bold;color:#6b3bf6;">📗 每週回顧 · DSA · 2026-10-09</div>
-
-<div style="background:#f1ecfb;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 8px 0;">這週我們從<b>堆疊</b>收尾，花了五天學<b>佇列與雙端佇列</b>，今天剛開始<b>雜湊表</b>。下面 7 題請先自己想，想完再看信末的解答。前 4 題是概念與應用題，不用寫程式；後 3 題是實作與複雜度題。</p>
-<p style="margin:0;font-size:13px;color:#6b3bf6;">名詞小提醒：<b>O(1)</b> 的意思是「步數不會隨資料變多而變多」；<b>O(n)</b> 是「資料變多少倍，步數就大約多少倍」。</p>
+<div style="border-left:6px solid #c56bb0;padding:8px 14px;background:#f9edf6;border-radius:6px;margin-bottom:16px;">
+<span style="font-size:18px;font-weight:bold;color:#b04b9b;">📗 每週回顧 · DSA · 2026-10-16</span>
 </div>
 
-<div style="background:#f1ecfb;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 6px 0;"><b style="color:#6b3bf6;">Q1（概念）</b> 堆疊（Stack）是「後進先出」：最後放進去的東西最先拿出來。請各舉一個生活或軟體中的例子，說明「後進先出」和「先進先出」（佇列 Queue，先排隊的先處理）分別適合什麼情境。</p>
+<div style="background:#f9edf6;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
+<p style="margin:0 0 6px 0;color:#b04b9b;font-weight:bold;">這週的主題：HashMap / HashSet</p>
+<p style="margin:0;">這週都在學「雜湊表（Hash Table）」：一種把資料依照它的「編號」直接放進對應格子，讓你不用一個一個翻找的結構。Java 裡的 HashMap（存「鍵→值」配對的表）與 HashSet（只存「鍵」、用來問「有沒有」的集合）就是它的實作。下面的題目請先自己想，再往下看解答。小提醒：「O(1)」意思是不管資料多少，花的時間大致固定；「O(n)」是資料越多、時間等比例變長；「O(log n)」是資料變很多時，時間只慢慢增加一點。</p>
 </div>
 
-<div style="background:#f1ecfb;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 6px 0;"><b style="color:#6b3bf6;">Q2（概念）</b> 客服系統有一堆客人在等回覆，規定「先來的先處理」。你會選堆疊還是佇列？如果選錯了，客人會遇到什麼問題？</p>
+<div style="background:#f9edf6;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
+<p style="margin:0 0 10px 0;color:#b04b9b;font-weight:bold;">🧠 回想題</p>
+
+<p style="margin:0 0 12px 0;"><b>Q1（概念與應用）</b>　你要做一個功能：「使用者輸入手機號碼，立刻告訴他這個號碼註冊過了沒」，註冊名單有一百萬筆。你會選 HashSet 還是「把名單放進清單、一個一個比對」？為什麼？</p>
+
+<p style="margin:0 0 12px 0;"><b>Q2（概念與應用）</b>　所謂「雜湊衝突」是什麼意思？如果衝突特別嚴重（大量資料全撞進同一格），HashMap 的查找速度會發生什麼事？</p>
+
+<p style="margin:0 0 12px 0;"><b>Q3（概念與應用）</b>　HashMap 裡裝的資料越來越多，Java 會在「裝到某個比例」時自動把格子數量加倍並重新安排所有資料（稱為 rehash，重新計算每筆資料該放哪格）。這個比例叫什麼、預設是多少？如果你事先就知道要放大約十萬筆，有什麼做法可以減少這個麻煩？</p>
+
+<p style="margin:0 0 12px 0;"><b>Q4（概念與應用）</b>　你想統計一篇文章裡每個單字出現幾次，該用 HashMap 還是 HashSet？key 和 value 各放什麼？</p>
+
+<p style="margin:0 0 12px 0;"><b>Q5（概念與應用）</b>　你做了一個「客戶」物件當 HashMap 的 key，放進去之後，有人把客戶的「身分證字號」欄位改掉了（這個欄位參與雜湊計算）。接下來用這個客戶去查，會發生什麼事？為什麼？</p>
+
+<p style="margin:0 0 12px 0;"><b>Q6（概念與應用）</b>　三種需求各該選哪一種 Map？(a) 只要查得快、順序不重要　(b) 要照「放進去的順序」或「最近用過的順序」走訪，例如做快取　(c) 要照 key 由小到大排序，或查「某個範圍內的資料」。（選項：HashMap、LinkedHashMap、TreeMap）</p>
+
+<p style="margin:0 0 12px 0;"><b>Q7（實作與複雜度）</b>　Java 8 之後，同一格裡的串列太長會變成「紅黑樹」（一種會自動保持平衡的樹狀結構）。請問：(1) 樹化的兩個條件是什麼？(2) 最壞情況的時間從什麼變成什麼？(3) 為什麼說「樹化只是保底」，不能靠它取代好的 hashCode？</p>
+
+<p style="margin:0 0 12px 0;"><b>Q8（實作與複雜度）</b>　看這段程式，寫出輸出結果，並說明時間與空間複雜度（用 n 代表陣列長度、k 代表不同元素種類數）：<br>
+<span style="font-family:Menlo,Consolas,monospace;font-size:13px;background:#fff;padding:6px 10px;border-radius:6px;display:inline-block;margin-top:4px;">
+int[] a = {3, 1, 3, 2, 1, 3};<br>
+Map&lt;Integer,Integer&gt; m = new HashMap&lt;&gt;();<br>
+for (int x : a) m.merge(x, 1, Integer::sum);<br>
+System.out.println(m.get(3) + " " + m.get(2));
+</span></p>
 </div>
 
-<div style="background:#f1ecfb;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 6px 0;"><b style="color:#6b3bf6;">Q3（概念）</b> 雙端佇列（Deque）是頭、尾兩端都能新增與刪除的佇列。它和一般佇列比，多了什麼能力？請想一個「只用一般佇列做不到、或很彆扭」的情境。另外，Java 實務上我們這週一再建議用哪一個類別來實作佇列與雙端佇列？</p>
+<div style="background:#f9edf6;border-radius:10px;padding:14px 18px;">
+<p style="margin:0 0 10px 0;color:#b04b9b;font-weight:bold;">—— 解答 ——</p>
+
+<p style="margin:0 0 10px 0;"><b>A1</b>　選 HashSet。它平均 O(1)，一百萬筆也幾乎是瞬間回答；清單逐筆比對是 O(n)，最壞要翻一百萬次，使用者變多就會越來越慢。</p>
+
+<p style="margin:0 0 10px 0;"><b>A2</b>　衝突＝兩個不同的 key 算出同一個格子（桶）。Java 用「鏈結法」，把撞在一起的資料串成一串。查找成本是 O(1＋鏈長)：分散得好平均 O(1)；全撞在同一格，最壞退化成 O(n)，像在清單裡慢慢找。找到格子後還要用 equals 確認是不是同一個 key。</p>
+
+<p style="margin:0 0 10px 0;"><b>A3</b>　叫「負載因子」（元素數 ÷ 格子數），Java 預設 0.75，超過就容量加倍並 rehash。單次擴容是 O(n)，但平均分攤到每次 put 仍是 O(1)（稱「攤銷」）。已知約十萬筆時，建立 HashMap 時就預留足夠容量（例如 new HashMap&lt;&gt;(150000)，讓十萬 ÷ 容量不超過 0.75），就能避免反覆擴容。</p>
+
+<p style="margin:0 0 10px 0;"><b>A4</b>　用 HashMap：key 放單字、value 放出現次數。HashSet 只能回答「有沒有」，記不了次數。這就是「頻率表」，掃一輪即可，時間 O(n)、空間 O(k)。</p>
+
+<p style="margin:0 0 10px 0;"><b>A5</b>　很可能查不到。hashCode 決定放哪一格，欄位改了之後 hashCode 變了，查找會去「新的格子」找，但資料還躺在「舊的格子」。所以 key 放進去後，不能再改會影響雜湊值的欄位。（合約：equals 相等則 hashCode 必須相等。）</p>
+
+<p style="margin:0 0 10px 0;"><b>A6</b>　(a) HashMap；(b) LinkedHashMap（多一條雙向串列記錄順序，仍平均 O(1)，可做 LRU 快取，即「淘汰最久沒用的」）；(c) TreeMap（紅黑樹，O(log n)，可排序、可查區間）。HashMap 的走訪順序依格子順序，不保證。</p>
+
+<p style="margin:0 0 10px 0;"><b>A7</b>　(1) 同一格的鏈長達 8，且總格子數至少 64。(2) 最壞從 O(n) 降為 O(log n)。(3) 樹化要求 key 可比較才有效，而且它只是救急；若 hashCode 本身分散不好，大量資料仍擠在少數格子，整體還是慢，所以好的 hashCode 才是根本。</p>
+
+<p style="margin:0 0 4px 0;"><b>A8</b>　輸出 <span style="font-family:Menlo,Consolas,monospace;">3 1</span>（3 出現 3 次、2 出現 1 次）。掃一輪 n 個元素、每次 merge 平均 O(1)，時間 O(n)；表中只存 k 種元素，空間 O(k)。</p>
 </div>
-
-<div style="background:#f1ecfb;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 6px 0;"><b style="color:#6b3bf6;">Q4（概念）</b> 雜湊表（HashMap）號稱「查找平均 O(1)」。用你自己的話說：為什麼它不用一個一個比對就找得到資料？另外，「平均」這兩個字暗示了什麼前提？如果這個前提被破壞，查找會發生什麼事？</p>
-</div>
-
-<div style="background:#f1ecfb;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 6px 0;"><b style="color:#6b3bf6;">Q5（實作）</b> 環形佇列（用陣列做的佇列，尾端滿了就繞回開頭）：假設容量 capacity = 5，目前 front = 3、size = 4。請問 rear（下一個要放入元素的位置）的 index 是多少？公式是什麼？再入列一個元素後，size 變成多少？此時佇列是空、是滿、還是都不是？</p>
-</div>
-
-<div style="background:#f1ecfb;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 6px 0;"><b style="color:#6b3bf6;">Q6（實作）</b> 追蹤程式（Java，<code>ArrayDeque&lt;Integer&gt; d = new ArrayDeque&lt;&gt;();</code>）：<br>
-<code>d.offerLast(1); d.offerLast(2); d.push(3); d.offerFirst(4); d.pollLast(); d.pollFirst();</code><br>
-執行完後，<code>d.peekFirst()</code> 會回傳什麼？<br>提示：push 加在頭部，offer 加在尾部。</p>
-</div>
-
-<div style="background:#f1ecfb;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 6px 0;"><b style="color:#6b3bf6;">Q7（實作）</b> LeetCode 1 Two Sum：給一個整數陣列和目標值 target，找出兩個數加起來等於 target 的位置。(a) 不用 HashMap、用兩層迴圈的做法，時間複雜度是多少？(b) 改用 HashMap 一邊走訪一邊找「搭檔」（target − 目前的數），時間複雜度降成多少？它用什麼換來這個速度？</p>
-</div>
-
-<div style="border-left:6px solid #8a6bd8;padding:8px 14px;margin:24px 0 12px 0;font-size:17px;font-weight:bold;color:#6b3bf6;">—— 解答 ——</div>
-
-<div style="background:#f1ecfb;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 8px 0;"><b>A1</b> 後進先出：瀏覽器的「上一頁」（最近開的頁面最先退回）、括號配對、復原（Undo）。先進先出：排隊買票、客服進線、列印工作排程。判斷方式：想「最近的先處理」用堆疊，想「公平、按順序」用佇列。</p>
-<p style="margin:0 0 8px 0;"><b>A2</b> 選佇列。若用堆疊，最後來的客人會先被服務，先來的客人可能一直被插隊、等不到，這就違反「先來先處理」。</p>
-<p style="margin:0 0 8px 0;"><b>A3</b> 多出「兩端都能進出」的能力。例如：想從尾端撤銷最後一筆、同時從前端處理最舊一筆；或「最近的優先、也保留排隊」的混合情境。一般佇列只能尾進頭出。Java 實務統一用 <code>ArrayDeque</code>，用 Queue 或 Deque 型別宣告來表達意圖。</p>
-<p style="margin:0 0 8px 0;"><b>A4</b> 雜湊函式（把 key 算成一個數字的公式）先算出雜湊值，再對容量取模得到陣列的位置（桶），直接跳過去，不用逐一比對。「平均」的前提是衝突（不同 key 算到同一個桶）不多。若大量衝突，同一個桶裡的東西要一個個比，查找就會退化變慢，最糟接近 O(n)。</p>
-<p style="margin:0 0 8px 0;"><b>A5</b> rear = (front + size) % capacity = (3 + 4) % 5 = 2。入列後 size = 5，等於 capacity，所以是「滿」。（空是 size = 0。這就是用 size 區分空與滿的好處。）</p>
-<p style="margin:0 0 8px 0;"><b>A6</b> 逐步：offerLast(1) → [1]；offerLast(2) → [1,2]；push(3) 加頭 → [3,1,2]；offerFirst(4) → [4,3,1,2]；pollLast() 拿掉 2 → [4,3,1]；pollFirst() 拿掉 4 → [3,1]。peekFirst() 回傳 <b>3</b>。</p>
-<p style="margin:0;"><b>A7</b> (a) 兩層迴圈 O(n²)。(b) HashMap 做法 O(n)：只走訪一次，每次查「搭檔」平均 O(1)。代價是多用額外記憶體（空間 O(n)）存已看過的數，這是「用空間換時間」。</p>
-</div>
-
-<p style="font-size:13px;color:#6b3bf6;margin:12px 0 0 0;">答不出來的題目不用緊張，回頭翻對應那天的信再試一次，這就是在加深記憶。明天見！</p>
 
 </div>
