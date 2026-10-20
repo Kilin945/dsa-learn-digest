@@ -50,3 +50,4 @@
 {"date": "2026-10-17", "topic": "HashMap / HashSet：O(1) 查找的原理與代價", "step": 9, "summary": "Java 的 HashMap 用「h ^ (h >>> 16) 擴散後再 & (n-1)」取代取模來算桶索引，這只在容量是 2 的次方時等同 h % n，所以容量永遠被補成 2 的次方。"}
 {"date": "2026-10-18", "topic": "HashMap / HashSet：O(1) 查找的原理與代價", "step": 10, "summary": "開放定址法是解決雜湊衝突的另一種做法：資料全放在陣列本身，桶被佔了就用線性探查往後找空格，查找遇空格才停；代價是會聚集、負載因子要壓低，且刪除必須放墓碑而不能清成空。"}
 {"date": "2026-10-19", "topic": "HashMap / HashSet：O(1) 查找的原理與代價", "step": 11, "summary": "好的雜湊函式要確定、快、分佈均勻；Java 的 String.hashCode 用 h = 31×h + 字元 讓每個字元與位置都影響結果，但 hashCode 相同不代表 equals 相同，最終仍靠 equals 認 key。"}
+{"date": "2026-10-20", "topic": "HashMap / HashSet：O(1) 查找的原理與代價", "step": 12, "summary": "HashMap/HashSet 主題收尾：雜湊表把「找」換成「算」得到平均 O(1)，代價是額外空間、衝突處理、擴容與 key 的紀律；只問有沒有用 HashSet、對照或計數用 HashMap、要順序用 LinkedHashMap、要排序或區間用 TreeMap，並以 LeetCode 128 練習用 HashSet 只從連續段起點往後數。"}
