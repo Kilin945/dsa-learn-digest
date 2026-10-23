@@ -53,3 +53,4 @@
 {"date": "2026-10-20", "topic": "HashMap / HashSet：O(1) 查找的原理與代價", "step": 12, "summary": "HashMap/HashSet 主題收尾：雜湊表把「找」換成「算」得到平均 O(1)，代價是額外空間、衝突處理、擴容與 key 的紀律；只問有沒有用 HashSet、對照或計數用 HashMap、要順序用 LinkedHashMap、要排序或區間用 TreeMap，並以 LeetCode 128 練習用 HashSet 只從連續段起點往後數。"}
 {"date": "2026-10-21", "topic": "雜湊函式與負載因子：hashCode、擴容與 rehash", "step": 1, "summary": "雜湊函式把 key 算成整數再取餘數得到桶編號；不同 key 要均勻散開才有平均 O(1)，全擠同一桶會退化成 O(n)；相等的物件 hashCode 必須相同。"}
 {"date": "2026-10-22", "topic": "雜湊函式與負載因子：hashCode、擴容與 rehash", "step": 2, "summary": "負載因子 = 元素數 ÷ 桶數，超過門檻（Java 預設 0.75）就把桶數翻倍擴容；桶數變了所以每個 key 都要 rehash 重新分桶；單次擴容是 O(n)，但攤還後每次操作仍是 O(1)。"}
+{"date": "2026-10-23", "topic": "雜湊函式與負載因子：hashCode、擴容與 rehash", "step": 3, "summary": "好的雜湊函式要確定、快速、且均勻分佈；只加總字元不看順序會讓字母相同的字串全撞同桶，Java 的 String.hashCode 用每步乘 31 讓位置影響結果，但衝突只能減少不能消除。"}
