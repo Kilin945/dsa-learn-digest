@@ -1,58 +1,76 @@
 <div style="max-width:680px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans TC',sans-serif;color:#333;line-height:1.7;font-size:15px;">
 
-<div style="border-left:6px solid #c56bb0;padding:8px 14px;background:#f9edf6;border-radius:6px;margin-bottom:16px;">
-<span style="font-size:18px;font-weight:bold;color:#b04b9b;">📗 每週回顧 · DSA · 2026-10-16</span>
+<div style="border-left:6px solid #6b72d6;background:#edeefb;padding:12px 16px;border-radius:8px;margin-bottom:16px;">
+<span style="font-size:17px;font-weight:bold;color:#5159c9;">📗 每週回顧 · DSA · 2026-10-23</span>
 </div>
 
-<div style="background:#f9edf6;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
-<p style="margin:0 0 6px 0;color:#b04b9b;font-weight:bold;">這週的主題：HashMap / HashSet</p>
-<p style="margin:0;">這週都在學「雜湊表（Hash Table）」：一種把資料依照它的「編號」直接放進對應格子，讓你不用一個一個翻找的結構。Java 裡的 HashMap（存「鍵→值」配對的表）與 HashSet（只存「鍵」、用來問「有沒有」的集合）就是它的實作。下面的題目請先自己想，再往下看解答。小提醒：「O(1)」意思是不管資料多少，花的時間大致固定；「O(n)」是資料越多、時間等比例變長；「O(log n)」是資料變很多時，時間只慢慢增加一點。</p>
+<div style="background:#edeefb;border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+本週主題：<b>雜湊表（Hash Table）</b>——一種把「找東西」改成「算位置」的資料結構。<br>
+先自己想答案，再往下翻到「—— 解答 ——」對照。想不出來沒關係，先寫下猜測，對照時記憶最深。
 </div>
 
-<div style="background:#f9edf6;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
-<p style="margin:0 0 10px 0;color:#b04b9b;font-weight:bold;">🧠 回想題</p>
-
-<p style="margin:0 0 12px 0;"><b>Q1（概念與應用）</b>　你要做一個功能：「使用者輸入手機號碼，立刻告訴他這個號碼註冊過了沒」，註冊名單有一百萬筆。你會選 HashSet 還是「把名單放進清單、一個一個比對」？為什麼？</p>
-
-<p style="margin:0 0 12px 0;"><b>Q2（概念與應用）</b>　所謂「雜湊衝突」是什麼意思？如果衝突特別嚴重（大量資料全撞進同一格），HashMap 的查找速度會發生什麼事？</p>
-
-<p style="margin:0 0 12px 0;"><b>Q3（概念與應用）</b>　HashMap 裡裝的資料越來越多，Java 會在「裝到某個比例」時自動把格子數量加倍並重新安排所有資料（稱為 rehash，重新計算每筆資料該放哪格）。這個比例叫什麼、預設是多少？如果你事先就知道要放大約十萬筆，有什麼做法可以減少這個麻煩？</p>
-
-<p style="margin:0 0 12px 0;"><b>Q4（概念與應用）</b>　你想統計一篇文章裡每個單字出現幾次，該用 HashMap 還是 HashSet？key 和 value 各放什麼？</p>
-
-<p style="margin:0 0 12px 0;"><b>Q5（概念與應用）</b>　你做了一個「客戶」物件當 HashMap 的 key，放進去之後，有人把客戶的「身分證字號」欄位改掉了（這個欄位參與雜湊計算）。接下來用這個客戶去查，會發生什麼事？為什麼？</p>
-
-<p style="margin:0 0 12px 0;"><b>Q6（概念與應用）</b>　三種需求各該選哪一種 Map？(a) 只要查得快、順序不重要　(b) 要照「放進去的順序」或「最近用過的順序」走訪，例如做快取　(c) 要照 key 由小到大排序，或查「某個範圍內的資料」。（選項：HashMap、LinkedHashMap、TreeMap）</p>
-
-<p style="margin:0 0 12px 0;"><b>Q7（實作與複雜度）</b>　Java 8 之後，同一格裡的串列太長會變成「紅黑樹」（一種會自動保持平衡的樹狀結構）。請問：(1) 樹化的兩個條件是什麼？(2) 最壞情況的時間從什麼變成什麼？(3) 為什麼說「樹化只是保底」，不能靠它取代好的 hashCode？</p>
-
-<p style="margin:0 0 12px 0;"><b>Q8（實作與複雜度）</b>　看這段程式，寫出輸出結果，並說明時間與空間複雜度（用 n 代表陣列長度、k 代表不同元素種類數）：<br>
-<span style="font-family:Menlo,Consolas,monospace;font-size:13px;background:#fff;padding:6px 10px;border-radius:6px;display:inline-block;margin-top:4px;">
-int[] a = {3, 1, 3, 2, 1, 3};<br>
-Map&lt;Integer,Integer&gt; m = new HashMap&lt;&gt;();<br>
-for (int x : a) m.merge(x, 1, Integer::sum);<br>
-System.out.println(m.get(3) + " " + m.get(2));
-</span></p>
+<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+<b style="color:#5159c9;">Q1（概念與應用）</b><br>
+雜湊表（Hash Table）把資料的「鑰匙」（key）用一個公式算成「桶子編號」（桶 = 陣列裡的一格，用來放資料），之後想找資料，直接算一次就知道去哪格。請用你自己的話說：為什麼這樣平均來說比「從頭一個一個找」快？它換來速度的代價是什麼？
 </div>
 
-<div style="background:#f9edf6;border-radius:10px;padding:14px 18px;">
-<p style="margin:0 0 10px 0;color:#b04b9b;font-weight:bold;">—— 解答 ——</p>
-
-<p style="margin:0 0 10px 0;"><b>A1</b>　選 HashSet。它平均 O(1)，一百萬筆也幾乎是瞬間回答；清單逐筆比對是 O(n)，最壞要翻一百萬次，使用者變多就會越來越慢。</p>
-
-<p style="margin:0 0 10px 0;"><b>A2</b>　衝突＝兩個不同的 key 算出同一個格子（桶）。Java 用「鏈結法」，把撞在一起的資料串成一串。查找成本是 O(1＋鏈長)：分散得好平均 O(1)；全撞在同一格，最壞退化成 O(n)，像在清單裡慢慢找。找到格子後還要用 equals 確認是不是同一個 key。</p>
-
-<p style="margin:0 0 10px 0;"><b>A3</b>　叫「負載因子」（元素數 ÷ 格子數），Java 預設 0.75，超過就容量加倍並 rehash。單次擴容是 O(n)，但平均分攤到每次 put 仍是 O(1)（稱「攤銷」）。已知約十萬筆時，建立 HashMap 時就預留足夠容量（例如 new HashMap&lt;&gt;(150000)，讓十萬 ÷ 容量不超過 0.75），就能避免反覆擴容。</p>
-
-<p style="margin:0 0 10px 0;"><b>A4</b>　用 HashMap：key 放單字、value 放出現次數。HashSet 只能回答「有沒有」，記不了次數。這就是「頻率表」，掃一輪即可，時間 O(n)、空間 O(k)。</p>
-
-<p style="margin:0 0 10px 0;"><b>A5</b>　很可能查不到。hashCode 決定放哪一格，欄位改了之後 hashCode 變了，查找會去「新的格子」找，但資料還躺在「舊的格子」。所以 key 放進去後，不能再改會影響雜湊值的欄位。（合約：equals 相等則 hashCode 必須相等。）</p>
-
-<p style="margin:0 0 10px 0;"><b>A6</b>　(a) HashMap；(b) LinkedHashMap（多一條雙向串列記錄順序，仍平均 O(1)，可做 LRU 快取，即「淘汰最久沒用的」）；(c) TreeMap（紅黑樹，O(log n)，可排序、可查區間）。HashMap 的走訪順序依格子順序，不保證。</p>
-
-<p style="margin:0 0 10px 0;"><b>A7</b>　(1) 同一格的鏈長達 8，且總格子數至少 64。(2) 最壞從 O(n) 降為 O(log n)。(3) 樹化要求 key 可比較才有效，而且它只是救急；若 hashCode 本身分散不好，大量資料仍擠在少數格子，整體還是慢，所以好的 hashCode 才是根本。</p>
-
-<p style="margin:0 0 4px 0;"><b>A8</b>　輸出 <span style="font-family:Menlo,Consolas,monospace;">3 1</span>（3 出現 3 次、2 出現 1 次）。掃一輪 n 個元素、每次 merge 平均 O(1)，時間 O(n)；表中只存 k 種元素，空間 O(k)。</p>
+<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+<b style="color:#5159c9;">Q2（概念與應用）</b><br>
+你要處理三件事：(a) 只想知道「這個帳號有沒有註冊過」；(b) 要統計每個關鍵字出現幾次；(c) 要依「加入的先後順序」列出所有項目。Java 裡有 HashSet（只存鑰匙、用來判斷有沒有）、HashMap（鑰匙配一個值）、LinkedHashMap（會記住加入順序的 HashMap）、TreeMap（鑰匙會自動排好序、可查區間）。這三件事各該選誰？如果第四件事是「找出 100～200 之間的所有編號」，又該選誰？
 </div>
+
+<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+<b style="color:#5159c9;">Q3（概念與應用）</b><br>
+「衝突」（collision）是指兩個不同的鑰匙被算到同一個桶子。如果一個設計很差的雜湊函式讓大部分資料都擠進同一個桶，查找會變得怎樣？用「一間只開一個窗口的銀行」類比說說看。
+</div>
+
+<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+<b style="color:#5159c9;">Q4（概念與應用）</b><br>
+有人寫了一個雜湊函式：「把字串每個字元的編號加總」。請問「listen」和「silent」這兩個字（字母一樣、順序不同）會怎樣？這個做法在什麼情況下會讓系統越來越慢？Java 的 String.hashCode 是怎麼避開這個問題的？
+</div>
+
+<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+<b style="color:#5159c9;">Q5（概念與應用）</b><br>
+「負載因子」（load factor）= 元素數 ÷ 桶子數，代表桶子有多擠。Java 預設門檻是 0.75，超過就會自動擴容。請說明：(a) 為什麼不等到桶子全滿才擴？(b) 擴容時為什麼「每一筆資料都要重新算位置」？(c) 偶爾發生一次很慢的擴容，為什麼整體還是說每次操作平均 O(1)？（O(1) = 不管資料多少，花的時間大致不變。）
+</div>
+
+<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+<b style="color:#5159c9;">Q6（實作與複雜度）</b><br>
+Java 的 HashMap 算桶子編號時，用的是 <code>(h ^ (h &gt;&gt;&gt; 16)) &amp; (n - 1)</code>，而不是 <code>h % n</code>（h 是 hashCode，n 是桶數）。(a) 這個寫法什麼條件下才等同取餘數？(b) 因此 HashMap 怎麼處理你指定的容量？(c) 先把 h 與「自己右移 16 位」做 XOR（^，相同為 0、不同為 1）有什麼好處？
+</div>
+
+<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+<b style="color:#5159c9;">Q7（實作與複雜度）</b><br>
+開放定址法（open addressing，衝突時不外掛串列，而是在陣列裡往後找空格）搭配線性探查（一格一格往後看）。桶數 8，雜湊函式 <code>h(key) = key % 8</code>，依序插入 3、11、19，再刪除 11，最後查找 19。(a) 三個鑰匙各放在哪格？(b) 若刪除 11 時直接把那格清成「空」，查 19 會發生什麼事？(c) 正確做法是什麼？
+</div>
+
+<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+<b style="color:#5159c9;">Q8（實作與複雜度）</b><br>
+LeetCode 128「最長連續序列」：給一組無序整數，求最長的連續數字段長度（例如 [100,4,200,1,3,2] 答案是 4，因為 1,2,3,4），要求 O(n)。(a) 把所有數字放進 HashSet 後，為什麼只從「連續段的起點」（即 x-1 不在集合裡的數）往後數？(b) 為什麼這樣總時間是 O(n) 而不是 O(n²)？(c) 對這個例子追蹤：哪些數字會被當成起點？
+</div>
+
+<div style="margin:24px 0 12px;text-align:center;color:#5159c9;font-weight:bold;font-size:16px;">—— 解答 ——</div>
+
+<div style="background:#edeefb;border-radius:10px;padding:14px 16px;font-size:14px;">
+
+<b>Q1</b>　一個一個找，資料越多越慢；雜湊表是直接「算」出位置，不管多少筆，平均只算一次，所以平均 O(1)。代價：要多花空間（桶子要留空位）、要處理衝突、要擴容，而且 key 要守紀律（見 Q4、本週 hashCode／equals 的規則：<b>相等的物件 hashCode 必須相同</b>，且 key 放進去後內容不能亂改）。<br><br>
+
+<b>Q2</b>　(a) HashSet；(b) HashMap（鑰匙＝關鍵字，值＝次數）；(c) LinkedHashMap；第四件「找區間」選 TreeMap，因為雜湊表只擅長「精確找某一個」，不保留大小順序。<br><br>
+
+<b>Q3</b>　全擠一個桶＝所有人排同一個窗口，查找得一個個比對，退化成 O(n)（資料越多越慢），雜湊表的優勢就沒了。<br><br>
+
+<b>Q4</b>　「listen」和「silent」字母相同，加總一樣 → 算出同一個桶，撞在一起。字母組成相近的資料很多時（例如大量換位字），全擠同桶，查找退化成 O(n)。String.hashCode 用 <code>h = 31×h + 字元</code>，每走一步先乘 31，所以「位置」也會影響結果，換位後數字不同。但要記得：衝突只能減少、不能消除；hashCode 相同也不代表 equals 相同，最後仍靠 equals 確認是不是同一個 key。<br><br>
+
+<b>Q5</b>　(a) 桶子越滿衝突越多，速度就掉，所以要留空位，在 75% 左右就擴。(b) 桶數變了（例如 16→32），公式用的 n 變了，同一個 key 算出的桶子編號也可能不同，所以每筆都要重新分桶（rehash）。(c) 一次擴容雖是 O(n)，但每次擴容桶數翻倍，擴容很少發生；把成本平均分攤到每次插入，每次只多一點點，這叫「攤還」（amortized）分析，結果仍是 O(1)。<br><br>
+
+<b>Q6</b>　(a) 只有 n 是 2 的次方時，<code>&amp; (n-1)</code> 才等同 <code>% n</code>（例如 n=16，n-1 的二進位是 1111，剛好留下最低 4 位）。(b) 所以 HashMap 會把你給的容量補成「最接近的 2 的次方」（例如指定 10 → 16）。(c) 只留低位時，高位的資訊會被丟掉；先把高 16 位混進低 16 位，高位不同的 key 也能分散開，減少衝突。<br><br>
+
+<b>Q7</b>　(a) 3%8=3 → 放第 3 格；11%8=3 被佔，往後 → 第 4 格；19%8=3，3、4 都被佔 → 第 5 格。(b) 若把第 4 格清成「空」，查 19 時從第 3 格看到不是，再看第 4 格是空 → 誤以為「不存在」就停了，但 19 其實在第 5 格，查不到。(c) 刪除時放「墓碑」（tombstone，標記「這裡曾有資料，繼續往後找」），查找遇墓碑要繼續，遇真正的空格才停。<br><br>
+
+<b>Q8</b>　(a) 若 x-1 在集合裡，x 就不是起點，從它數會重複走別人已走過的路；只從起點數，每一段連續數字只會被數一次。(b) 每個數字最多被「當起點判斷」一次、被「往後數」一次，總共約 2n 次、每次集合查找平均 O(1)，所以 O(n)；若每個數都往後數則可能 O(n²)。(c) 集合 {100,4,200,1,3,2}：100（99 不在）、200（199 不在）、1（0 不在）是起點；4、3、2 的前一個都在，不是起點。從 1 數 1→2→3→4 長度 4；100 長 1；200 長 1；答案 4。
+
+</div>
+
+<div style="margin-top:16px;color:#5159c9;font-size:13px;text-align:center;">這週你已經把「雜湊表怎麼運作、為什麼快、什麼時候會變慢」整條線走完了，下週繼續。</div>
 
 </div>
