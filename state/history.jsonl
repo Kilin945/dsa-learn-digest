@@ -56,3 +56,4 @@
 {"date": "2026-10-23", "topic": "雜湊函式與負載因子：hashCode、擴容與 rehash", "step": 3, "summary": "好的雜湊函式要確定、快速、且均勻分佈；只加總字元不看順序會讓字母相同的字串全撞同桶，Java 的 String.hashCode 用每步乘 31 讓位置影響結果，但衝突只能減少不能消除。"}
 {"date": "2026-10-24", "topic": "雜湊函式與負載因子：hashCode、擴容與 rehash", "step": 4, "summary": "Java HashMap 桶數取 2 的次方，用 (n-1) & hash 的位元遮罩取代取餘數（快、也不會出現負數），但遮罩只看低位元，所以先用 h ^ (h >>> 16) 把高位元混進低位元；桶數不是 2 的次方就不能這樣用，擴容翻倍時每個元素只看多出來的那一個位元決定去留。"}
 {"date": "2026-10-25", "topic": "雜湊函式與負載因子：hashCode、擴容與 rehash", "step": 5, "summary": "衝突無法完全避免，所以 Java 8 的 HashMap 在單一桶的串列長到 8 且桶數至少 64 時改用紅黑樹，把最差情況從 O(n) 降到 O(log n)；但 hash 相同又不能比較大小的 key 仍會退化，樹化只是保險，hashCode 還是要寫好，也可防範 hash flooding 攻擊。"}
+{"date": "2026-10-26", "topic": "雜湊函式與負載因子：hashCode、擴容與 rehash", "step": 6, "summary": "事先知道要放 n 筆時，把 HashMap 初始容量設成 n ÷ 0.75 再加 1，就能省掉一路擴容與 rehash 的搬家成本；容量參數是桶數不是元素數，也不要開過大浪費記憶體。"}
