@@ -1,7 +1,9 @@
 {
   "current_index": 12,
-  "step": 1,
-  "covered": [],
+  "step": 2,
+  "covered": [
+    "雜湊衝突（不同 key 算出同一個桶）因 key 比桶多而必然發生；鏈式位址把每個桶改成一條鏈結串列，衝突的鍵值對排在同一條串列，速度取決於最長那條鏈有多長。"
+  ],
   "completed_topics": [
     {
       "topic": "Big-O 複雜度：怎麼估一段程式的快慢",
