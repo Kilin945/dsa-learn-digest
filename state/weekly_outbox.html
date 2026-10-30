@@ -1,76 +1,49 @@
-<div style="max-width:680px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans TC',sans-serif;color:#333;line-height:1.7;font-size:15px;">
+<div style="max-width:680px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC','Microsoft JhengHei',sans-serif;color:#222;line-height:1.7;font-size:15px;">
 
-<div style="border-left:6px solid #6b72d6;background:#edeefb;padding:12px 16px;border-radius:8px;margin-bottom:16px;">
-<span style="font-size:17px;font-weight:bold;color:#5159c9;">📗 每週回顧 · DSA · 2026-10-23</span>
+<div style="border-left:6px solid #2bb0a6;padding:10px 14px;margin-bottom:16px;font-size:18px;font-weight:bold;color:#0f9b9b;">📗 每週回顧 · DSA · 2026-10-30</div>
+
+<div style="background:#e8f6f5;border-radius:10px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 6px 0;">這週我們都在學同一件事：<b>雜湊表（hash table，一種用「key 算出位置」來快速存取資料的結構）</b>怎麼處理「兩筆資料搶同一個位置」的問題，還有它怎麼維持速度。下面 7 題請先自己想，再看最後的解答。前 4 題用日常語言就能答；後 3 題需要一點程式與複雜度的概念。</p>
 </div>
 
-<div style="background:#edeefb;border-radius:10px;padding:14px 16px;margin-bottom:16px;">
-本週主題：<b>雜湊表（Hash Table）</b>——一種把「找東西」改成「算位置」的資料結構。<br>
-先自己想答案，再往下翻到「—— 解答 ——」對照。想不出來沒關係，先寫下猜測，對照時記憶最深。
+<div style="background:#e8f6f5;border-radius:10px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 8px 0;font-weight:bold;color:#0f9b9b;">Part 1 · 概念與應用題（人人可答）</p>
+
+<p style="margin:0 0 10px 0;"><b>Q1.</b> 想像一棟有 16 個信箱的公寓，要塞進 100 封信。為什麼「兩封信被分到同一個信箱」（這叫<b>雜湊衝突 hash collision</b>）是一定會發生、不是誰寫錯了？</p>
+
+<p style="margin:0 0 10px 0;"><b>Q2.</b> 處理衝突有兩大類做法：<b>鏈結法（chaining）</b>與<b>開放定址（open addressing）</b>。請用白話說明各自遇到衝突時怎麼做。</p>
+
+<p style="margin:0 0 10px 0;"><b>Q3.</b> <b>負載因子（load factor）</b>＝ 放了幾筆 ÷ 有幾個桶子。它在衡量什麼？Java 的 HashMap 預設超過多少會「擴容」？擴容後桶子變多少？為什麼要這樣做？</p>
+
+<p style="margin:0 0 10px 0;"><b>Q4.</b> 你要把剛好 1000 筆資料一次放進 HashMap。如果什麼都不設定，會發生什麼事讓程式變慢？有什麼辦法預防？另外，把容量開成 100 萬又有什麼壞處？</p>
 </div>
 
-<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
-<b style="color:#5159c9;">Q1（概念與應用）</b><br>
-雜湊表（Hash Table）把資料的「鑰匙」（key）用一個公式算成「桶子編號」（桶 = 陣列裡的一格，用來放資料），之後想找資料，直接算一次就知道去哪格。請用你自己的話說：為什麼這樣平均來說比「從頭一個一個找」快？它換來速度的代價是什麼？
+<div style="background:#e8f6f5;border-radius:10px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 8px 0;font-weight:bold;color:#0f9b9b;">Part 2 · 實作與複雜度題（偏工程）</p>
+
+<p style="margin:0 0 10px 0;"><b>Q5.</b> 開放定址（衝突時往後一格一格找空位，叫<b>線性探查 linear probing</b>）裡，桶子 3、4、5 都有資料。現在把桶 4 的資料刪掉，如果直接把桶 4 改回「空」，之後查桶 5 的那個 key 會發生什麼事？正確的做法是什麼？</p>
+
+<p style="margin:0 0 10px 0;"><b>Q6.</b> Java HashMap 的桶數固定取 2 的次方（例如 16）。請說明：(a) 為什麼可以用 <code>(n-1) &amp; hash</code> 取代 <code>hash % n</code>？(b) 為什麼還要先做 <code>h ^ (h &gt;&gt;&gt; 16)</code>？(c) 擴容成 32 時，一個元素要不要搬家，只看哪一個位元？</p>
+
+<p style="margin:0 0 10px 0;"><b>Q7.</b> (a) Java 8 的 HashMap 在什麼條件下會把一條鏈結串列改成紅黑樹（一種自動保持平衡的搜尋樹）？最壞查詢時間從什麼變成什麼？(b) 為什麼 hashCode 相同、又不能互相比大小的 key 仍會讓它退化？(c) 擴容單次 O(n)，為什麼每次 put 的<b>攤銷（amortized，把偶爾一次的大成本平均分攤到每次操作）</b>成本仍是 O(1)？</p>
 </div>
 
-<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
-<b style="color:#5159c9;">Q2（概念與應用）</b><br>
-你要處理三件事：(a) 只想知道「這個帳號有沒有註冊過」；(b) 要統計每個關鍵字出現幾次；(c) 要依「加入的先後順序」列出所有項目。Java 裡有 HashSet（只存鑰匙、用來判斷有沒有）、HashMap（鑰匙配一個值）、LinkedHashMap（會記住加入順序的 HashMap）、TreeMap（鑰匙會自動排好序、可查區間）。這三件事各該選誰？如果第四件事是「找出 100～200 之間的所有編號」，又該選誰？
+<div style="background:#e8f6f5;border-radius:10px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 10px 0;font-weight:bold;color:#0f9b9b;">—— 解答 ——</p>
+
+<p style="margin:0 0 8px 0;"><b>A1.</b> 因為 key 的可能數量遠多於桶子數（鴿籠原理：100 封信放 16 個信箱，至少有信箱裝 7 封以上）。衝突是數學上必然，不是 bug，所以重點是「發生後怎麼處理」。</p>
+
+<p style="margin:0 0 8px 0;"><b>A2.</b> 鏈結法：每個桶子後面掛一條<b>鏈結串列（linked list，一個接一個的清單）</b>，衝突的資料排在同一條後面。開放定址：不掛清單，這格被佔了就往後找下一個空格放。前者速度看「最長那條鏈」，後者要小心資料擠成一團。</p>
+
+<p style="margin:0 0 8px 0;"><b>A3.</b> 它衡量雜湊表有多擁擠，越擁擠衝突越多、越慢。Java 預設門檻 0.75，超過就把桶數翻倍，並重新計算每個 key 該去哪個桶（rehash）。目的是把擁擠程度壓回去，維持平均 O(1)。</p>
+
+<p style="margin:0 0 8px 0;"><b>A4.</b> 不設定會從小容量開始，一路擴容、一路搬家（rehash），浪費時間。預防：初始容量設 n ÷ 0.75 + 1（約 1335），一次到位。注意容量參數是「桶數」不是「元素數」。開 100 萬則白白佔用大量記憶體。</p>
+
+<p style="margin:0 0 8px 0;"><b>A5.</b> 直接清成空：查桶 5 的 key 時，從它的雜湊位置往後找，走到被清空的桶 4 就停，誤判「不存在」，但資料其實在桶 5。正確做法是放<b>墓碑（tombstone，標記「這裡曾有資料，繼續往後找」）</b>。另外線性探查會有「聚集」現象，連續被佔的格子越來越長。</p>
+
+<p style="margin:0 0 8px 0;"><b>A6.</b> (a) n 是 2 的次方時，n-1 的二進位全是 1，AND 運算等於取 hash 的低位元，等同取餘數但更快，也不會出現負數。(b) 遮罩只看低位元，高位元的差異會被忽略，所以先把高 16 位元混進低位元，讓分布更均勻。(c) 翻倍後多出一個位元：該位元是 0 留在原桶，是 1 就搬到「原桶號 + 舊桶數」。</p>
+
+<p style="margin:0 0 8px 0;"><b>A7.</b> (a) 單一桶的鏈長到 8，且桶數至少 64，改成紅黑樹；最壞從 O(n) 降到 O(log n)。(b) 樹需要比大小才能排序；hash 相同又比不出大小，就只能逐一比對，退化回接近 O(n)。所以樹只是保險，hashCode 仍要寫好（這也有助防範 hash flooding：刻意製造大量衝突的攻擊）。(c) 每次擴容翻倍，前面所有插入的搬家成本加總約 2n，平均到 n 次 put，每次只多出常數成本，所以攤銷 O(1)。</p>
 </div>
-
-<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
-<b style="color:#5159c9;">Q3（概念與應用）</b><br>
-「衝突」（collision）是指兩個不同的鑰匙被算到同一個桶子。如果一個設計很差的雜湊函式讓大部分資料都擠進同一個桶，查找會變得怎樣？用「一間只開一個窗口的銀行」類比說說看。
-</div>
-
-<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
-<b style="color:#5159c9;">Q4（概念與應用）</b><br>
-有人寫了一個雜湊函式：「把字串每個字元的編號加總」。請問「listen」和「silent」這兩個字（字母一樣、順序不同）會怎樣？這個做法在什麼情況下會讓系統越來越慢？Java 的 String.hashCode 是怎麼避開這個問題的？
-</div>
-
-<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
-<b style="color:#5159c9;">Q5（概念與應用）</b><br>
-「負載因子」（load factor）= 元素數 ÷ 桶子數，代表桶子有多擠。Java 預設門檻是 0.75，超過就會自動擴容。請說明：(a) 為什麼不等到桶子全滿才擴？(b) 擴容時為什麼「每一筆資料都要重新算位置」？(c) 偶爾發生一次很慢的擴容，為什麼整體還是說每次操作平均 O(1)？（O(1) = 不管資料多少，花的時間大致不變。）
-</div>
-
-<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
-<b style="color:#5159c9;">Q6（實作與複雜度）</b><br>
-Java 的 HashMap 算桶子編號時，用的是 <code>(h ^ (h &gt;&gt;&gt; 16)) &amp; (n - 1)</code>，而不是 <code>h % n</code>（h 是 hashCode，n 是桶數）。(a) 這個寫法什麼條件下才等同取餘數？(b) 因此 HashMap 怎麼處理你指定的容量？(c) 先把 h 與「自己右移 16 位」做 XOR（^，相同為 0、不同為 1）有什麼好處？
-</div>
-
-<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
-<b style="color:#5159c9;">Q7（實作與複雜度）</b><br>
-開放定址法（open addressing，衝突時不外掛串列，而是在陣列裡往後找空格）搭配線性探查（一格一格往後看）。桶數 8，雜湊函式 <code>h(key) = key % 8</code>，依序插入 3、11、19，再刪除 11，最後查找 19。(a) 三個鑰匙各放在哪格？(b) 若刪除 11 時直接把那格清成「空」，查 19 會發生什麼事？(c) 正確做法是什麼？
-</div>
-
-<div style="background:#ffffff;border:1px solid #d9dbf3;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
-<b style="color:#5159c9;">Q8（實作與複雜度）</b><br>
-LeetCode 128「最長連續序列」：給一組無序整數，求最長的連續數字段長度（例如 [100,4,200,1,3,2] 答案是 4，因為 1,2,3,4），要求 O(n)。(a) 把所有數字放進 HashSet 後，為什麼只從「連續段的起點」（即 x-1 不在集合裡的數）往後數？(b) 為什麼這樣總時間是 O(n) 而不是 O(n²)？(c) 對這個例子追蹤：哪些數字會被當成起點？
-</div>
-
-<div style="margin:24px 0 12px;text-align:center;color:#5159c9;font-weight:bold;font-size:16px;">—— 解答 ——</div>
-
-<div style="background:#edeefb;border-radius:10px;padding:14px 16px;font-size:14px;">
-
-<b>Q1</b>　一個一個找，資料越多越慢；雜湊表是直接「算」出位置，不管多少筆，平均只算一次，所以平均 O(1)。代價：要多花空間（桶子要留空位）、要處理衝突、要擴容，而且 key 要守紀律（見 Q4、本週 hashCode／equals 的規則：<b>相等的物件 hashCode 必須相同</b>，且 key 放進去後內容不能亂改）。<br><br>
-
-<b>Q2</b>　(a) HashSet；(b) HashMap（鑰匙＝關鍵字，值＝次數）；(c) LinkedHashMap；第四件「找區間」選 TreeMap，因為雜湊表只擅長「精確找某一個」，不保留大小順序。<br><br>
-
-<b>Q3</b>　全擠一個桶＝所有人排同一個窗口，查找得一個個比對，退化成 O(n)（資料越多越慢），雜湊表的優勢就沒了。<br><br>
-
-<b>Q4</b>　「listen」和「silent」字母相同，加總一樣 → 算出同一個桶，撞在一起。字母組成相近的資料很多時（例如大量換位字），全擠同桶，查找退化成 O(n)。String.hashCode 用 <code>h = 31×h + 字元</code>，每走一步先乘 31，所以「位置」也會影響結果，換位後數字不同。但要記得：衝突只能減少、不能消除；hashCode 相同也不代表 equals 相同，最後仍靠 equals 確認是不是同一個 key。<br><br>
-
-<b>Q5</b>　(a) 桶子越滿衝突越多，速度就掉，所以要留空位，在 75% 左右就擴。(b) 桶數變了（例如 16→32），公式用的 n 變了，同一個 key 算出的桶子編號也可能不同，所以每筆都要重新分桶（rehash）。(c) 一次擴容雖是 O(n)，但每次擴容桶數翻倍，擴容很少發生；把成本平均分攤到每次插入，每次只多一點點，這叫「攤還」（amortized）分析，結果仍是 O(1)。<br><br>
-
-<b>Q6</b>　(a) 只有 n 是 2 的次方時，<code>&amp; (n-1)</code> 才等同 <code>% n</code>（例如 n=16，n-1 的二進位是 1111，剛好留下最低 4 位）。(b) 所以 HashMap 會把你給的容量補成「最接近的 2 的次方」（例如指定 10 → 16）。(c) 只留低位時，高位的資訊會被丟掉；先把高 16 位混進低 16 位，高位不同的 key 也能分散開，減少衝突。<br><br>
-
-<b>Q7</b>　(a) 3%8=3 → 放第 3 格；11%8=3 被佔，往後 → 第 4 格；19%8=3，3、4 都被佔 → 第 5 格。(b) 若把第 4 格清成「空」，查 19 時從第 3 格看到不是，再看第 4 格是空 → 誤以為「不存在」就停了，但 19 其實在第 5 格，查不到。(c) 刪除時放「墓碑」（tombstone，標記「這裡曾有資料，繼續往後找」），查找遇墓碑要繼續，遇真正的空格才停。<br><br>
-
-<b>Q8</b>　(a) 若 x-1 在集合裡，x 就不是起點，從它數會重複走別人已走過的路；只從起點數，每一段連續數字只會被數一次。(b) 每個數字最多被「當起點判斷」一次、被「往後數」一次，總共約 2n 次、每次集合查找平均 O(1)，所以 O(n)；若每個數都往後數則可能 O(n²)。(c) 集合 {100,4,200,1,3,2}：100（99 不在）、200（199 不在）、1（0 不在）是起點；4、3、2 的前一個都在，不是起點。從 1 數 1→2→3→4 長度 4；100 長 1；200 長 1；答案 4。
-
-</div>
-
-<div style="margin-top:16px;color:#5159c9;font-size:13px;text-align:center;">這週你已經把「雜湊表怎麼運作、為什麼快、什麼時候會變慢」整條線走完了，下週繼續。</div>
 
 </div>
