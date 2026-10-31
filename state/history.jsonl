@@ -61,3 +61,4 @@
 {"date": "2026-10-28", "topic": "雜湊衝突：鏈結法 chaining 與開放定址 open addressing", "step": 2, "summary": "開放定址不外掛串列，衝突時用線性探查往後找空桶；查詢遇到空桶才代表不存在，所以刪除要用墓碑標記而不能清成空桶，且線性探查會有聚集現象。"}
 {"date": "2026-10-29", "topic": "雜湊衝突：鏈結法 chaining 與開放定址 open addressing", "step": 3, "summary": "負載因子 = 筆數 ÷ 桶數，代表雜湊表的擁擠程度；超過門檻（Java HashMap 預設 0.75）就翻倍擴容並重算每個 key 的桶號，單次 O(n)，攤銷後每次 put 仍是 O(1)。"}
 {"date": "2026-10-30", "topic": "雜湊衝突：鏈結法 chaining 與開放定址 open addressing", "step": 4, "summary": "鏈結法的速度取決於最長那條鏈；Java HashMap 在單鏈長度到 8 且桶數至少 64 時把它樹化成紅黑樹，最壞情況從 O(n) 降到 O(log n)，但平常的 O(1) 靠的是均勻分布與負載因子，樹只是保險。"}
+{"date": "2026-10-31", "topic": "雜湊衝突：鏈結法 chaining 與開放定址 open addressing", "step": 5, "summary": "鏈結法把衝突掛在桶外（刪除簡單、負載因子可超過 1、較耗記憶體），開放定址把衝突擠在桶內（省記憶體、連續讀取，但要墓碑、對擁擠敏感、負載因子不能超過 1）；Java HashMap 選鏈結法加樹化。"}
