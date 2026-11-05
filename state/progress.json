@@ -1,7 +1,9 @@
 {
   "current_index": 14,
-  "step": 1,
-  "covered": [],
+  "step": 2,
+  "covered": [
+    "走訪就是讓二元樹每個節點恰好被看一次；分成 BFS（層序，靠佇列一層一層）與 DFS（前/中/後序）兩大家族，今天學 BFS：用佇列、每輪先記下 size 就能分層，時間 O(n)、空間 O(n)。"
+  ],
   "completed_topics": [
     {
       "topic": "Big-O 複雜度：怎麼估一段程式的快慢",
