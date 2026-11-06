@@ -1,49 +1,66 @@
-<div style="max-width:680px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC','Microsoft JhengHei',sans-serif;color:#222;line-height:1.7;font-size:15px;">
+<div style="max-width:680px;margin:0 auto;font-family:-apple-system,'Helvetica Neue',Arial,'PingFang TC','Microsoft JhengHei',sans-serif;background:#eef4ff;padding:16px;color:#333;line-height:1.7;font-size:15px;">
 
-<div style="border-left:6px solid #2bb0a6;padding:10px 14px;margin-bottom:16px;font-size:18px;font-weight:bold;color:#0f9b9b;">📗 每週回顧 · DSA · 2026-10-30</div>
-
-<div style="background:#e8f6f5;border-radius:10px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 6px 0;">這週我們都在學同一件事：<b>雜湊表（hash table，一種用「key 算出位置」來快速存取資料的結構）</b>怎麼處理「兩筆資料搶同一個位置」的問題，還有它怎麼維持速度。下面 7 題請先自己想，再看最後的解答。前 4 題用日常語言就能答；後 3 題需要一點程式與複雜度的概念。</p>
+<div style="border-left:6px solid #5b8def;padding:8px 14px;background:#ffffff;border-radius:8px;margin-bottom:16px;">
+<span style="font-size:18px;font-weight:bold;color:#3b6cf6;">📗 每週回顧 · DSA · 2026-11-06</span>
 </div>
 
-<div style="background:#e8f6f5;border-radius:10px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 8px 0;font-weight:bold;color:#0f9b9b;">Part 1 · 概念與應用題（人人可答）</p>
-
-<p style="margin:0 0 10px 0;"><b>Q1.</b> 想像一棟有 16 個信箱的公寓，要塞進 100 封信。為什麼「兩封信被分到同一個信箱」（這叫<b>雜湊衝突 hash collision</b>）是一定會發生、不是誰寫錯了？</p>
-
-<p style="margin:0 0 10px 0;"><b>Q2.</b> 處理衝突有兩大類做法：<b>鏈結法（chaining）</b>與<b>開放定址（open addressing）</b>。請用白話說明各自遇到衝突時怎麼做。</p>
-
-<p style="margin:0 0 10px 0;"><b>Q3.</b> <b>負載因子（load factor）</b>＝ 放了幾筆 ÷ 有幾個桶子。它在衡量什麼？Java 的 HashMap 預設超過多少會「擴容」？擴容後桶子變多少？為什麼要這樣做？</p>
-
-<p style="margin:0 0 10px 0;"><b>Q4.</b> 你要把剛好 1000 筆資料一次放進 HashMap。如果什麼都不設定，會發生什麼事讓程式變慢？有什麼辦法預防？另外，把容量開成 100 萬又有什麼壞處？</p>
+<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 8px 0;">這週我們學了兩大塊：<b>雜湊衝突的兩種處理法</b>、<b>二元樹</b>（基礎、形狀、走訪）。下面 7 題請先自己想，再看信末解答。前 4 題是概念與應用題（不用寫程式），後 3 題是實作與複雜度題。</p>
+<p style="margin:0;color:#555;font-size:13px;">小提醒：<b>二元樹</b>＝每個節點最多有左、右兩個子節點的資料結構；<b>雜湊表</b>＝用「鑰匙算出位置」來快速存取資料的表格，一個位置叫一個「桶」；<b>衝突</b>＝兩筆資料算出同一個桶。</p>
 </div>
 
-<div style="background:#e8f6f5;border-radius:10px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 8px 0;font-weight:bold;color:#0f9b9b;">Part 2 · 實作與複雜度題（偏工程）</p>
-
-<p style="margin:0 0 10px 0;"><b>Q5.</b> 開放定址（衝突時往後一格一格找空位，叫<b>線性探查 linear probing</b>）裡，桶子 3、4、5 都有資料。現在把桶 4 的資料刪掉，如果直接把桶 4 改回「空」，之後查桶 5 的那個 key 會發生什麼事？正確的做法是什麼？</p>
-
-<p style="margin:0 0 10px 0;"><b>Q6.</b> Java HashMap 的桶數固定取 2 的次方（例如 16）。請說明：(a) 為什麼可以用 <code>(n-1) &amp; hash</code> 取代 <code>hash % n</code>？(b) 為什麼還要先做 <code>h ^ (h &gt;&gt;&gt; 16)</code>？(c) 擴容成 32 時，一個元素要不要搬家，只看哪一個位元？</p>
-
-<p style="margin:0 0 10px 0;"><b>Q7.</b> (a) Java 8 的 HashMap 在什麼條件下會把一條鏈結串列改成紅黑樹（一種自動保持平衡的搜尋樹）？最壞查詢時間從什麼變成什麼？(b) 為什麼 hashCode 相同、又不能互相比大小的 key 仍會讓它退化？(c) 擴容單次 O(n)，為什麼每次 put 的<b>攤銷（amortized，把偶爾一次的大成本平均分攤到每次操作）</b>成本仍是 O(1)？</p>
+<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 6px 0;font-weight:bold;color:#3b6cf6;">Q1（概念）</p>
+<p style="margin:0;">兩筆資料被分到同一個桶（衝突）時，「鏈結法」和「開放定址」各是怎麼處理的？請用生活比喻說明（例如：同一格置物櫃放不下時怎麼辦）。</p>
 </div>
 
-<div style="background:#e8f6f5;border-radius:10px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 10px 0;font-weight:bold;color:#0f9b9b;">—— 解答 ——</p>
+<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 6px 0;font-weight:bold;color:#3b6cf6;">Q2（概念）</p>
+<p style="margin:0;">你要選一種衝突處理法：資料常常被刪除，而且資料量很難預估、可能比桶數還多。該選哪一種？為什麼？另一種在這個情境會出什麼問題？（提示：<b>負載因子</b>＝資料筆數 ÷ 桶數，代表表格有多擠。）</p>
+</div>
 
-<p style="margin:0 0 8px 0;"><b>A1.</b> 因為 key 的可能數量遠多於桶子數（鴿籠原理：100 封信放 16 個信箱，至少有信箱裝 7 封以上）。衝突是數學上必然，不是 bug，所以重點是「發生後怎麼處理」。</p>
+<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 6px 0;font-weight:bold;color:#3b6cf6;">Q3（概念）</p>
+<p style="margin:0;">想把公司的組織圖、或「是／否」決策流程，存成二元樹。為什麼說二元樹的「形狀」會決定查找快不快？什麼樣的形狀最快、什麼樣的形狀最糟？「平衡二元樹」是用來防止什麼事？</p>
+</div>
 
-<p style="margin:0 0 8px 0;"><b>A2.</b> 鏈結法：每個桶子後面掛一條<b>鏈結串列（linked list，一個接一個的清單）</b>，衝突的資料排在同一條後面。開放定址：不掛清單，這格被佔了就往後找下一個空格放。前者速度看「最長那條鏈」，後者要小心資料擠成一團。</p>
+<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 6px 0;font-weight:bold;color:#3b6cf6;">Q4（概念）</p>
+<p style="margin:0;">情境 A：你要「一層一層」列出組織圖，先印所有主管，再印所有直屬部下。情境 B：你要「一路走到底」，先把某條線的人看完才換下一條。這兩個情境分別該用 BFS（層序走訪）還是 DFS（深度優先走訪）？BFS 靠什麼工具（資料結構）來幫忙？</p>
+</div>
 
-<p style="margin:0 0 8px 0;"><b>A3.</b> 它衡量雜湊表有多擁擠，越擁擠衝突越多、越慢。Java 預設門檻 0.75，超過就把桶數翻倍，並重新計算每個 key 該去哪個桶（rehash）。目的是把擁擠程度壓回去，維持平均 O(1)。</p>
+<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 6px 0;font-weight:bold;color:#3b6cf6;">Q5（實作）</p>
+<p style="margin:0;">完美二元樹以「層序」存進陣列（陣列＝一排編了號的格子，編號從 0 開始）。索引 i 的左子、右子、父節點索引各是多少？請算出索引 5 的父節點與它的兩個子節點索引。</p>
+</div>
 
-<p style="margin:0 0 8px 0;"><b>A4.</b> 不設定會從小容量開始，一路擴容、一路搬家（rehash），浪費時間。預防：初始容量設 n ÷ 0.75 + 1（約 1335），一次到位。注意容量參數是「桶數」不是「元素數」。開 100 萬則白白佔用大量記憶體。</p>
+<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 6px 0;font-weight:bold;color:#3b6cf6;">Q6（實作）</p>
+<p style="margin:0 0 8px 0;">有一棵樹：根是 1，1 的左子是 2、右子是 3，2 的左子是 4、右子是 5，3 沒有子節點。請分別寫出前序、中序、後序走訪的結果。（前序＝先訪問當前節點再左再右；中序＝左、當前、右；後序＝左、右、當前。）</p>
+<p style="margin:0;">另外，這棵樹若以層序存進陣列，需要把空位寫成 null，請寫出完整陣列。</p>
+</div>
 
-<p style="margin:0 0 8px 0;"><b>A5.</b> 直接清成空：查桶 5 的 key 時，從它的雜湊位置往後找，走到被清空的桶 4 就停，誤判「不存在」，但資料其實在桶 5。正確做法是放<b>墓碑（tombstone，標記「這裡曾有資料，繼續往後找」）</b>。另外線性探查會有「聚集」現象，連續被佔的格子越來越長。</p>
+<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 6px 0;font-weight:bold;color:#3b6cf6;">Q7（實作與複雜度）</p>
+<p style="margin:0;">(a) BFS 分層時，為什麼每一輪開始要先記下佇列目前的 size？(b) BFS 與遞迴 DFS 的時間複雜度各是多少？空間複雜度在「最壞情況」下各由什麼決定？(c) 一棵有 n 個節點、退化成一條線（每個節點只有一個子節點）的樹，遞迴 DFS 的空間是多少？</p>
+</div>
 
-<p style="margin:0 0 8px 0;"><b>A6.</b> (a) n 是 2 的次方時，n-1 的二進位全是 1，AND 運算等於取 hash 的低位元，等同取餘數但更快，也不會出現負數。(b) 遮罩只看低位元，高位元的差異會被忽略，所以先把高 16 位元混進低位元，讓分布更均勻。(c) 翻倍後多出一個位元：該位元是 0 留在原桶，是 1 就搬到「原桶號 + 舊桶數」。</p>
+<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-top:20px;">
+<p style="margin:0 0 10px 0;font-weight:bold;font-size:16px;color:#3b6cf6;">—— 解答 ——</p>
 
-<p style="margin:0 0 8px 0;"><b>A7.</b> (a) 單一桶的鏈長到 8，且桶數至少 64，改成紅黑樹；最壞從 O(n) 降到 O(log n)。(b) 樹需要比大小才能排序；hash 相同又比不出大小，就只能逐一比對，退化回接近 O(n)。所以樹只是保險，hashCode 仍要寫好（這也有助防範 hash flooding：刻意製造大量衝突的攻擊）。(c) 每次擴容翻倍，前面所有插入的搬家成本加總約 2n，平均到 n 次 put，每次只多出常數成本，所以攤銷 O(1)。</p>
+<p style="margin:0 0 10px 0;"><b>Q1：</b>鏈結法＝同一個桶後面再「掛一串」（像同一格置物櫃用掛鉤串著多件東西），衝突的資料都留在該桶外面串起來。開放定址＝這格被占了就往旁邊找空格（像停車位滿了就往下一個空位停），所有資料都擠在桶內。</p>
+
+<p style="margin:0 0 10px 0;"><b>Q2：</b>選鏈結法。刪除只要從串中拿掉一筆即可；負載因子可以超過 1（資料比桶多也行，只是串變長）。開放定址刪除時要留「墓碑」（標記「這裡以前有東西」，避免後面的搜尋斷掉），而且負載因子不能超過 1、越擠越慢，資料量難預估時容易塞爆。</p>
+
+<p style="margin:0 0 10px 0;"><b>Q3：</b>形狀決定要走幾步。完美樹（每層都填滿）高度約 log n，走到底很快；最糟是退化成一條線（像鏈結串列），高度變 n，查找變 O(n)。平衡二元樹要求每個節點左右子樹高度差不超過 1，用來防止退化。</p>
+
+<p style="margin:0 0 10px 0;"><b>Q4：</b>A 用 BFS（一層一層），靠「佇列」（先進先出的排隊，像排隊買票）來做。B 用 DFS（先走到盡頭再回頭）。</p>
+
+<p style="margin:0 0 10px 0;"><b>Q5：</b>左子 2i+1、右子 2i+2、父 (i−1)/2（取整數）。i=5：左子 11、右子 12、父 (5−1)/2=2。</p>
+
+<p style="margin:0 0 10px 0;"><b>Q6：</b>前序：1,2,4,5,3；中序：4,2,5,1,3；後序：4,5,2,3,1。層序陣列：[1, 2, 3, 4, 5]（這棵樹是完全二元樹，空位都在尾端，所以可以不存；若 3 有子節點缺失在中間則要寫 null）。補充：索引 5、6 是 3 的子節點位置，若要明確表示就是 [1,2,3,4,5,null,null]，尾端的 null 可省略。</p>
+
+<p style="margin:0 0 10px 0;"><b>Q7：</b>(a) 因為佇列在處理過程中會不斷加入下一層的節點，先記下 size 才知道「這一輪該處理幾個」＝剛好一層，才能分層。(b) 兩者時間都是 O(n)（每個節點只看一次）。BFS 最壞空間取決於「最寬那一層的節點數」，最壞 O(n)；遞迴 DFS 最壞空間取決於「樹高」（遞迴呼叫堆疊深度）。(c) 退化成一條線時樹高＝n，所以遞迴 DFS 空間是 O(n)。</p>
 </div>
 
 </div>
