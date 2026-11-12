@@ -1,7 +1,9 @@
 {
   "current_index": 16,
-  "step": 1,
-  "covered": [],
+  "step": 2,
+  "covered": [
+    "BST 的速度取決於樹高，插入或刪除都可能讓它退化成鏈結串列；AVL 樹用平衡因子（左高減右高）要求每個節點都在 -1 到 1 之間，失衡時靠旋轉修復。"
+  ],
   "completed_topics": [
     {
       "topic": "Big-O 複雜度：怎麼估一段程式的快慢",
