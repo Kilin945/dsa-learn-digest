@@ -1,66 +1,56 @@
-<div style="max-width:680px;margin:0 auto;font-family:-apple-system,'Helvetica Neue',Arial,'PingFang TC','Microsoft JhengHei',sans-serif;background:#eef4ff;padding:16px;color:#333;line-height:1.7;font-size:15px;">
+<div style="max-width:680px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans TC',sans-serif;color:#333;font-size:15px;line-height:1.7;">
 
-<div style="border-left:6px solid #5b8def;padding:8px 14px;background:#ffffff;border-radius:8px;margin-bottom:16px;">
-<span style="font-size:18px;font-weight:bold;color:#3b6cf6;">📗 每週回顧 · DSA · 2026-11-06</span>
+<div style="border-left:6px solid #3f97c9;padding:6px 12px;margin-bottom:14px;font-size:18px;font-weight:bold;color:#2b7fb0;">📗 每週回顧 · DSA · 2026-11-13</div>
+
+<div style="background:#e8f4fb;border-radius:10px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 8px 0;"><b>這週我們學了什麼？</b>這週圍繞同一條主線：<b>樹</b>（一種像家族圖的資料結構，每個節點最多有兩個孩子，叫「二元樹」）。從「怎麼把樹上的每個節點走過一遍」，到「把資料排好放進樹裡找得快」（二元搜尋樹，簡稱 BST），再到「樹歪了怎麼扶正」（AVL 樹與旋轉）。</p>
+<p style="margin:0;">先不要往下看解答，試著在心裡或紙上回答每一題，再對答案。想不出來也沒關係，卡住的地方就是最值得複習的地方。</p>
 </div>
 
-<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 8px 0;">這週我們學了兩大塊：<b>雜湊衝突的兩種處理法</b>、<b>二元樹</b>（基礎、形狀、走訪）。下面 7 題請先自己想，再看信末解答。前 4 題是概念與應用題（不用寫程式），後 3 題是實作與複雜度題。</p>
-<p style="margin:0;color:#555;font-size:13px;">小提醒：<b>二元樹</b>＝每個節點最多有左、右兩個子節點的資料結構；<b>雜湊表</b>＝用「鑰匙算出位置」來快速存取資料的表格，一個位置叫一個「桶」；<b>衝突</b>＝兩筆資料算出同一個桶。</p>
+<div style="background:#e8f4fb;border-radius:10px;padding:16px 18px;margin-bottom:14px;">
+<div style="font-weight:bold;color:#2b7fb0;margin-bottom:10px;">✍️ 回想題</div>
+
+<p style="margin:0 0 12px 0;"><b>Q1（概念與應用）</b>「走訪」就是把樹上每個節點都拜訪一次。<b>DFS</b>（深度優先：一條路走到底再回頭）和 <b>BFS</b>（廣度優先：一層一層往下走，要用「佇列」，也就是先進先出的排隊隊伍）各適合什麼情境？請各舉一個：「我想知道每一層有哪些節點」和「我想算整棵子樹的某個結果」，分別該用哪一種？</p>
+
+<p style="margin:0 0 12px 0;"><b>Q2（概念與應用）</b>二元搜尋樹（BST）規定的大小關係是什麼？有人說「只要每個節點比它的左孩子大、比右孩子小就是 BST」，這句話哪裡不夠嚴謹？</p>
+
+<p style="margin:0 0 12px 0;"><b>Q3（概念與應用）</b>你手上有一批資料，想「由小到大」輸出，又不想另外做排序。如果把它們放進 BST，要用哪種走訪方式？為什麼這樣就剛好是排好的？</p>
+
+<p style="margin:0 0 12px 0;"><b>Q4（概念與應用）</b>小明把 1、2、3、4、5、6、7 依這個順序一個一個插入一棵空的 BST。這棵樹會長成什麼樣子？之後查詢一個數字會發生什麼事？用在資料量一百萬筆的系統上，會有什麼後果？</p>
+
+<p style="margin:0 0 12px 0;"><b>Q5（概念與應用）</b>AVL 樹是一種「會自己維持平衡」的 BST。它用什麼規則判斷一個節點「太歪了」？它犧牲了什麼、換來了什麼？（提示：想想插入時多做的事，以及查詢的速度保證。）</p>
+
+<p style="margin:0 0 12px 0;"><b>Q6（實作與複雜度）</b>遞迴版 DFS 和迭代版 DFS（自己準備一個堆疊，也就是「後進先出」的容器）都是時間 O(n)。迭代版在「前序」走訪時，為什麼要先推右孩子、再推左孩子？另外，遞迴版在什麼情況下會出事、出什麼事？</p>
+
+<p style="margin:0 0 12px 0;"><b>Q7（實作與複雜度）</b>刪除 BST 中一個「有兩個孩子」的節點時，要用誰來頂替它？這個替身怎麼找？BST 的插入／刪除成本為什麼寫成 O(h) 而不是 O(log n)？h 是什麼？</p>
+
+<p style="margin:0 0 12px 0;"><b>Q8（實作與複雜度）</b>某節點 node 左邊太重，要做右旋。令 child = node.left，grand_child = child.right。請寫出右旋要改的三個指標（用 Java 或偽碼皆可），並回答：整個操作的時間複雜度是多少？旋轉前後的中序走訪結果會變嗎？</p>
 </div>
 
-<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 6px 0;font-weight:bold;color:#3b6cf6;">Q1（概念）</p>
-<p style="margin:0;">兩筆資料被分到同一個桶（衝突）時，「鏈結法」和「開放定址」各是怎麼處理的？請用生活比喻說明（例如：同一格置物櫃放不下時怎麼辦）。</p>
+<div style="background:#e8f4fb;border-radius:10px;padding:16px 18px;margin-bottom:14px;">
+<div style="font-weight:bold;color:#2b7fb0;margin-bottom:10px;">—— 解答 ——</div>
+
+<p style="margin:0 0 10px 0;"><b>A1</b>要「每一層」的資訊 → 用 BFS（例如逐層列印、找最短層數）；要「整棵子樹」的結果（例如算子樹高度、總和）→ 用 DFS。兩者走完整棵樹都是 O(n)，差別在於「走的順序」符不符合你的問題形狀。</p>
+
+<p style="margin:0 0 10px 0;"><b>A2</b>規定是「<b>整串</b>左子樹的所有節點 &lt; 根 &lt; <b>整串</b>右子樹的所有節點」，不是只跟父子比。只比父子的話，可能出現「右孩子的左孩子」比祖先還小的情況，這樣就不是合法 BST，查詢會找錯方向。</p>
+
+<p style="margin:0 0 10px 0;"><b>A3</b>用<b>中序走訪</b>（左 → 根 → 右）。因為左邊整串都比根小、右邊整串都比根大，先走完左、再訪問根、最後走右，輸出自然是升序。成本 O(n)，不用額外排序。</p>
+
+<p style="margin:0 0 10px 0;"><b>A4</b>每次新數字都比現有的都大，所以都掛在最右邊，樹會變成一條斜斜的「鏈」，長得像鏈結串列。查詢要從頭一個個比，變成 O(n)。資料一百萬筆時，每次查詢最壞要走約一百萬步，而不是約 20 步，系統會明顯變慢。</p>
+
+<p style="margin:0 0 10px 0;"><b>A5</b>規則是「平衡因子」（左子樹高度 − 右子樹高度）必須落在 −1 到 1 之間，超出就是失衡，要用旋轉修復。代價是插入／刪除時要多做檢查與旋轉；換來的是樹高永遠維持在 O(log n)，查詢、插入、刪除都有穩定的 O(log n) 保證，不會被插入順序拖垮。</p>
+
+<p style="margin:0 0 10px 0;"><b>A6</b>堆疊是後進先出，右孩子先推入、左孩子後推入，下一個彈出的就是左孩子，所以會先走左邊，路線跟遞迴一模一樣（根 → 左 → 右）。遞迴版背後用「呼叫堆疊」記著每一層；樹很深（例如退化成一條鏈）時，呼叫堆疊會爆掉，丟出 <code>StackOverflowError</code>。迭代版把堆疊放在堆積記憶體（heap）自己管，可以避開這個問題。空間都是 O(h)。</p>
+
+<p style="margin:0 0 10px 0;"><b>A7</b>用「右子樹中最小的節點」（也就是中序後繼，中序走訪的下一個）來頂替：先走到右孩子，再一路往左走到底就是它。這個替身比左邊全部都大、比右邊其他都小，BST 規則仍成立。成本是 O(h)，h 是<b>樹高</b>（從根到最深葉子的層數）；樹平衡時 h ≈ log n，退化時 h = n，所以不能直接寫成 O(log n)。</p>
+
+<p style="margin:0 0 10px 0;"><b>A8</b>三個指標：<br>
+① <code>child.right = node;</code>（node 降為 child 的右孩子）<br>
+② <code>node.left = grand_child;</code>（grand_child 改掛到 node 左邊）<br>
+③ 把原本指向 node 的那條線（父節點的指標，或樹根）改指向 child。<br>
+只動固定幾個指標，時間 O(1)。中序走訪順序<b>不會變</b>（grand_child 仍然夾在 child 與 node 之間），所以旋轉後仍是合法的 BST。</p>
 </div>
 
-<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 6px 0;font-weight:bold;color:#3b6cf6;">Q2（概念）</p>
-<p style="margin:0;">你要選一種衝突處理法：資料常常被刪除，而且資料量很難預估、可能比桶數還多。該選哪一種？為什麼？另一種在這個情境會出什麼問題？（提示：<b>負載因子</b>＝資料筆數 ÷ 桶數，代表表格有多擠。）</p>
-</div>
-
-<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 6px 0;font-weight:bold;color:#3b6cf6;">Q3（概念）</p>
-<p style="margin:0;">想把公司的組織圖、或「是／否」決策流程，存成二元樹。為什麼說二元樹的「形狀」會決定查找快不快？什麼樣的形狀最快、什麼樣的形狀最糟？「平衡二元樹」是用來防止什麼事？</p>
-</div>
-
-<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 6px 0;font-weight:bold;color:#3b6cf6;">Q4（概念）</p>
-<p style="margin:0;">情境 A：你要「一層一層」列出組織圖，先印所有主管，再印所有直屬部下。情境 B：你要「一路走到底」，先把某條線的人看完才換下一條。這兩個情境分別該用 BFS（層序走訪）還是 DFS（深度優先走訪）？BFS 靠什麼工具（資料結構）來幫忙？</p>
-</div>
-
-<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 6px 0;font-weight:bold;color:#3b6cf6;">Q5（實作）</p>
-<p style="margin:0;">完美二元樹以「層序」存進陣列（陣列＝一排編了號的格子，編號從 0 開始）。索引 i 的左子、右子、父節點索引各是多少？請算出索引 5 的父節點與它的兩個子節點索引。</p>
-</div>
-
-<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 6px 0;font-weight:bold;color:#3b6cf6;">Q6（實作）</p>
-<p style="margin:0 0 8px 0;">有一棵樹：根是 1，1 的左子是 2、右子是 3，2 的左子是 4、右子是 5，3 沒有子節點。請分別寫出前序、中序、後序走訪的結果。（前序＝先訪問當前節點再左再右；中序＝左、當前、右；後序＝左、右、當前。）</p>
-<p style="margin:0;">另外，這棵樹若以層序存進陣列，需要把空位寫成 null，請寫出完整陣列。</p>
-</div>
-
-<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
-<p style="margin:0 0 6px 0;font-weight:bold;color:#3b6cf6;">Q7（實作與複雜度）</p>
-<p style="margin:0;">(a) BFS 分層時，為什麼每一輪開始要先記下佇列目前的 size？(b) BFS 與遞迴 DFS 的時間複雜度各是多少？空間複雜度在「最壞情況」下各由什麼決定？(c) 一棵有 n 個節點、退化成一條線（每個節點只有一個子節點）的樹，遞迴 DFS 的空間是多少？</p>
-</div>
-
-<div style="background:#ffffff;border-radius:12px;padding:16px 18px;margin-top:20px;">
-<p style="margin:0 0 10px 0;font-weight:bold;font-size:16px;color:#3b6cf6;">—— 解答 ——</p>
-
-<p style="margin:0 0 10px 0;"><b>Q1：</b>鏈結法＝同一個桶後面再「掛一串」（像同一格置物櫃用掛鉤串著多件東西），衝突的資料都留在該桶外面串起來。開放定址＝這格被占了就往旁邊找空格（像停車位滿了就往下一個空位停），所有資料都擠在桶內。</p>
-
-<p style="margin:0 0 10px 0;"><b>Q2：</b>選鏈結法。刪除只要從串中拿掉一筆即可；負載因子可以超過 1（資料比桶多也行，只是串變長）。開放定址刪除時要留「墓碑」（標記「這裡以前有東西」，避免後面的搜尋斷掉），而且負載因子不能超過 1、越擠越慢，資料量難預估時容易塞爆。</p>
-
-<p style="margin:0 0 10px 0;"><b>Q3：</b>形狀決定要走幾步。完美樹（每層都填滿）高度約 log n，走到底很快；最糟是退化成一條線（像鏈結串列），高度變 n，查找變 O(n)。平衡二元樹要求每個節點左右子樹高度差不超過 1，用來防止退化。</p>
-
-<p style="margin:0 0 10px 0;"><b>Q4：</b>A 用 BFS（一層一層），靠「佇列」（先進先出的排隊，像排隊買票）來做。B 用 DFS（先走到盡頭再回頭）。</p>
-
-<p style="margin:0 0 10px 0;"><b>Q5：</b>左子 2i+1、右子 2i+2、父 (i−1)/2（取整數）。i=5：左子 11、右子 12、父 (5−1)/2=2。</p>
-
-<p style="margin:0 0 10px 0;"><b>Q6：</b>前序：1,2,4,5,3；中序：4,2,5,1,3；後序：4,5,2,3,1。層序陣列：[1, 2, 3, 4, 5]（這棵樹是完全二元樹，空位都在尾端，所以可以不存；若 3 有子節點缺失在中間則要寫 null）。補充：索引 5、6 是 3 的子節點位置，若要明確表示就是 [1,2,3,4,5,null,null]，尾端的 null 可省略。</p>
-
-<p style="margin:0 0 10px 0;"><b>Q7：</b>(a) 因為佇列在處理過程中會不斷加入下一層的節點，先記下 size 才知道「這一輪該處理幾個」＝剛好一層，才能分層。(b) 兩者時間都是 O(n)（每個節點只看一次）。BFS 最壞空間取決於「最寬那一層的節點數」，最壞 O(n)；遞迴 DFS 最壞空間取決於「樹高」（遞迴呼叫堆疊深度）。(c) 退化成一條線時樹高＝n，所以遞迴 DFS 空間是 O(n)。</p>
-</div>
+<div style="color:#2b7fb0;font-size:13px;padding:4px 6px;">🌱 這週的主線：走訪 → 有序 → 會退化 → 用旋轉救回來。下週繼續加油！</div>
 
 </div>
