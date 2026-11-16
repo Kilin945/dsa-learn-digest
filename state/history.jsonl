@@ -77,3 +77,4 @@
 {"date": "2026-11-13", "topic": "平衡樹 AVL：BST 為什麼會退化、旋轉怎麼救回來", "step": 2, "summary": "右旋用來修復左邊太重的失衡：左子節點 child 升為新根，失衡節點 node 降為它的右子節點，child 原本的右子節點 grand_child 改掛成 node 的左子節點；只改幾個指標是 O(1)，且中序走訪順序不變，所以仍是合法的 BST。"}
 {"date": "2026-11-14", "topic": "平衡樹 AVL：BST 為什麼會退化、旋轉怎麼救回來", "step": 3, "summary": "左旋用來修復右邊太重的失衡，是右旋的鏡像：右子節點 child 升為新根，失衡節點 node 降為它的左子節點，child 原本的左子節點 grand_child 改掛成 node 的右子節點；只改幾個指標是 O(1)，中序順序不變。"}
 {"date": "2026-11-15", "topic": "平衡樹 AVL：BST 為什麼會退化、旋轉怎麼救回來", "step": 4, "summary": "單旋轉修不好時要用雙旋轉：node 左重但 child 右重就先對 child 左旋再對 node 右旋（LR），鏡像情況為先右後左（RL）；靠 node 與 child 的平衡因子決定四種旋轉之一。"}
+{"date": "2026-11-16", "topic": "平衡樹 AVL：BST 為什麼會退化、旋轉怎麼救回來", "step": 5, "summary": "把四種旋轉收進 rebalance：先看 node 平衡因子判斷往哪邊修，再看 child 決定單旋或雙旋；插入時在遞迴回程每層先更新高度再 rebalance，整體 O(log n)。"}
