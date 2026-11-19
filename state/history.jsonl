@@ -80,3 +80,4 @@
 {"date": "2026-11-16", "topic": "平衡樹 AVL：BST 為什麼會退化、旋轉怎麼救回來", "step": 5, "summary": "把四種旋轉收進 rebalance：先看 node 平衡因子判斷往哪邊修，再看 child 決定單旋或雙旋；插入時在遞迴回程每層先更新高度再 rebalance，整體 O(log n)。"}
 {"date": "2026-11-17", "topic": "平衡樹 AVL：BST 為什麼會退化、旋轉怎麼救回來", "step": 6, "summary": "AVL 刪除 = 普通 BST 刪除（葉節點、單子節點、雙子節點用後繼節點頂替）加上回程每層 updateHeight 再 rebalance；刪除可能連鎖失衡一路到根，但總成本仍是 O(log n)，且 child 平衡因子為 0 時要用單旋轉。"}
 {"date": "2026-11-18", "topic": "平衡樹 AVL：BST 為什麼會退化、旋轉怎麼救回來", "step": 7, "summary": "AVL 收尾：BST 速度取決於樹高，AVL 用平衡因子（左高減右高，須在 -1 到 1）監控，失衡時用四種旋轉（右旋、左旋、LR、RL）在 O(1) 內修復且不改中序順序，插入與刪除回程逐層 updateHeight 加 rebalance，整體 O(log n)。"}
+{"date": "2026-11-19", "topic": "樹的經典題型：深度、直徑、最近共同祖先 LCA", "step": 1, "summary": "樹的最大深度：depth(node) = 1 + max(depth(左), depth(右))，空樹為 0，每個節點造訪一次 O(n)，遞迴堆疊空間 O(h)。"}

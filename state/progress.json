@@ -1,7 +1,9 @@
 {
   "current_index": 17,
-  "step": 1,
-  "covered": [],
+  "step": 2,
+  "covered": [
+    "樹的最大深度：depth(node) = 1 + max(depth(左), depth(右))，空樹為 0，每個節點造訪一次 O(n)，遞迴堆疊空間 O(h)。"
+  ],
   "completed_topics": [
     {
       "topic": "Big-O 複雜度：怎麼估一段程式的快慢",
