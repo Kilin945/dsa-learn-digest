@@ -1,7 +1,9 @@
 {
   "current_index": 18,
-  "step": 1,
-  "covered": [],
+  "step": 2,
+  "covered": [
+    "堆積是「完全二元樹＋父子大小規則」，用陣列儲存並以 2i+1、2i+2、(i-1)/2 找孩子與父親；根永遠是最大（或最小）值，但整體並未排序；Java PriorityQueue 預設是小頂堆積；#1046 用大頂堆積反覆取最重石頭。"
+  ],
   "completed_topics": [
     {
       "topic": "Big-O 複雜度：怎麼估一段程式的快慢",
