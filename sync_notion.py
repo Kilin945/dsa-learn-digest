@@ -124,7 +124,11 @@ def rich_text(text):
             out.append(_rt(text[pos:m.start()]))
         tok = m.group(0)
         if tok.startswith("**"):
-            out.append(_rt(tok[2:-2], bold=True))
+            # 粗體裡面也可能有連結或行內碼（`**LeetCode：[#706 …](url)（Easy）**`），
+            # 先照一般文字拆，再把每一段都標成粗體；不拆的話連結會變成死字。
+            for piece in rich_text(tok[2:-2]):
+                piece.setdefault("annotations", {})["bold"] = True
+                out.append(piece)
         elif tok.startswith("`"):
             out.append(_rt(tok[1:-1], code=True))
         elif tok.startswith("<"):

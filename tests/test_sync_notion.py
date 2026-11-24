@@ -200,3 +200,10 @@ def test_child_exists_matches_same_date():
     children = [_para("p1"), _page("c1", "2026-11-24 · 舊標題")]
     assert sn.child_exists(children, "2026-11-24 · 新標題", "2026-11-24")
     assert not sn.child_exists(children, "2026-11-25 · x", "2026-11-25")
+
+
+def test_link_inside_bold_stays_clickable_and_bold():
+    rich = sn.rich_text("**LeetCode：[#706 Design HashMap](https://leetcode.com/problems/design-hashmap/)（Easy）**")
+    assert _links(rich) == [("#706 Design HashMap", "https://leetcode.com/problems/design-hashmap/")]
+    assert all(r.get("annotations", {}).get("bold") for r in rich)
+    assert "".join(r["text"]["content"] for r in rich) == "LeetCode：#706 Design HashMap（Easy）"
