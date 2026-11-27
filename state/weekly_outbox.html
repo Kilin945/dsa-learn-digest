@@ -1,52 +1,57 @@
-<div style="max-width:680px;margin:0 auto;background:#fbf3e3;padding:20px;font-family:-apple-system,'PingFang TC','Microsoft JhengHei',sans-serif;font-size:15px;line-height:1.7;color:#333;">
+<div style="max-width:680px;margin:0 auto;font-family:-apple-system,'Segoe UI','Noto Sans TC',Arial,sans-serif;font-size:15px;line-height:1.75;color:#333;">
 
-<div style="border-left:6px solid #d99b3f;padding:6px 12px;margin-bottom:18px;font-size:18px;font-weight:bold;color:#b9791f;">📗 每週回顧 · DSA · 2026-11-20</div>
-
-<div style="background:#ffffff;border-radius:10px;padding:16px 18px;margin-bottom:16px;">
-<p style="margin:0 0 8px 0;">這週學了兩個主題：<b>AVL 平衡樹</b>（11/14～11/18）和<b>樹的經典題型</b>（11/19～11/20，深度與直徑）。下面 7 題先自己想一想，不要偷看信末的解答。前 4 題不用寫程式，只憑讀過的內容就答得出來；後 3 題要碰到程式細節和複雜度。</p>
-<p style="margin:0;font-size:13px;color:#777;">名詞小提醒：<b>節點</b> = 樹上的一個點；<b>樹高</b> = 從根往下最長的那條路有幾層；<b>O(log n)</b> = 資料變 2 倍，步驟只多一步，很快；<b>O(n)</b> = 資料變 2 倍，步驟也跟著變 2 倍。</p>
+<div style="border-left:6px solid #4caf72;padding:8px 14px;margin-bottom:14px;background:#ffffff;">
+<span style="font-size:18px;font-weight:bold;color:#1e9e57;">📗 每週回顧 · DSA · 2026-11-27</span>
 </div>
 
-<div style="background:#ffffff;border-radius:10px;padding:16px 18px;margin-bottom:16px;">
-<p style="margin:0 0 6px 0;font-weight:bold;color:#b9791f;">Part 1 · 概念與應用題（不用寫程式）</p>
-
-<p style="margin:10px 0 0 0;"><b>Q1.</b> <b>二元搜尋樹（BST）</b>是「左邊的值都比自己小、右邊的值都比自己大」的樹，查找時每次可以排除一半的資料。如果有人把 1、2、3、4、5…… 依序一個一個放進普通 BST，樹會變成什麼形狀？查找速度會從多快變成多慢？這就是為什麼需要 AVL。</p>
-
-<p style="margin:10px 0 0 0;"><b>Q2.</b> AVL 用<b>平衡因子</b>（= 左子樹高度 減 右子樹高度）來監控樹有沒有歪掉。請問平衡因子允許的範圍是多少？某個節點的平衡因子變成 2 或 −2 時，代表什麼意思、AVL 會做什麼事？</p>
-
-<p style="margin:10px 0 0 0;"><b>Q3.</b> <b>旋轉</b>是「只調整少數幾條連接線，就把偏重的一邊拉回來」的動作。請問旋轉修好樹之後，節點由小到大的排列順序（中序）會不會被弄亂？這個特性為什麼重要？另外，旋轉本身要花多少時間？</p>
-
-<p style="margin:10px 0 0 0;"><b>Q4.</b> 假設你是產品端，要在「訂單編號」資料上做大量的查找，同時資料會不斷新增、刪除。什麼情況下你會選 AVL 這類平衡樹，而不是普通 BST？選了 AVL 要付出什麼代價？</p>
+<div style="background:#ecf7ef;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 8px 0;">這週學了兩大塊：<b>樹的經典題型</b>（深度、直徑、最近共同祖先）和 <b>堆積 Heap／PriorityQueue（優先佇列）</b>。下面 7 題把整週串起來，先自己想一想再看解答。前 4 題是概念與應用題，只憑讀過的信就答得出來，不用寫程式。後 3 題是實作與複雜度題，偏向工程師視角。</p>
+<p style="margin:0;color:#1e9e57;">小提醒：<b>複雜度</b>指「資料變多時，程式要花多少步驟」。O(n) 表示步驟數跟資料量成正比，O(log n) 表示資料翻倍時只多做一步左右，O(n log k) 表示每筆資料要多花 log k 步。</p>
 </div>
 
-<div style="background:#ffffff;border-radius:10px;padding:16px 18px;margin-bottom:16px;">
-<p style="margin:0 0 6px 0;font-weight:bold;color:#b9791f;">Part 2 · 實作與複雜度題</p>
+<div style="background:#ecf7ef;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 6px 0;font-weight:bold;color:#1e9e57;">🧠 第一部分：概念與應用題</p>
 
-<p style="margin:10px 0 0 0;"><b>Q5.</b> 某個節點 node 左邊太重（平衡因子 &gt; 1），但它的左子節點 child 是右邊比較重。只做一次右旋能修好嗎？應該用哪一種旋轉組合？再說說：如果 child 的平衡因子剛好是 0（刪除時可能發生），要用單旋還是雙旋？</p>
+<p style="margin:10px 0 4px 0;"><b>Q1（淺）</b> 堆積（Heap）是一種「完全二元樹＋父子大小規則」的資料結構，可以想成一棵每層都盡量填滿的家族樹。同事說：「堆積就是排好序的資料，把它整個印出來就是由小到大。」這句話對嗎？堆積到底保證了什麼？它適合用在什麼情境？</p>
 
-<p style="margin:10px 0 0 0;"><b>Q6.</b> 寫出「樹的最大深度」的遞迴公式（空樹回傳多少？）。再追蹤這棵樹：根是 1，左子節點 2、右子節點 3，節點 2 底下再接一個左子節點 4，節點 4 底下再接一個左子節點 5。最大深度是多少？時間複雜度與遞迴堆疊的空間複雜度各是多少？（提示：空間跟樹高 h 有關。）</p>
+<p style="margin:10px 0 4px 0;"><b>Q2</b> 客服系統要隨時知道「目前最緊急的那張工單」，新工單會不斷進來，處理完一張就移除一張。你會選「每次新增後把全部工單重新排序」，還是「用堆積」？各自在工單量變很大時會怎樣？</p>
 
-<p style="margin:10px 0 0 0;"><b>Q7.</b> 「樹的直徑」是樹上任兩個節點之間最長路徑的邊數。承接 Q6 的那棵樹，直徑是多少？另外，為什麼不能只算「經過根節點」的那一條路，而要在每個節點都算一次「左深度 + 右深度」再取最大值？遞迴函式回傳的值和用來更新答案的值，各是什麼？</p>
+<p style="margin:10px 0 4px 0;"><b>Q3</b> 你要從一億筆銷售紀錄中找出「金額最大的 10 筆」（這類問題叫 Top-K）。這週說要用「大小固定為 k 的<b>小頂堆積</b>」（堆積頂是最小值的堆積）。為什麼找「最大的」要用「最小值在頂端」的堆積？如果誤用大頂堆積（頂端是最大值）把所有資料都放進去，會有什麼問題？</p>
+
+<p style="margin:10px 0 4px 0;"><b>Q4</b> 公司組織圖其實是一棵樹。主管想知道「小明和小華往上追，最近的共同主管是誰」，這是這週的哪一個題型（英文縮寫 LCA，中文叫最近共同祖先）？它的做法是從上往下找，還是從下往上回報？這週的深度、直徑、LCA 三題，共通的思考套路是什麼？</p>
 </div>
 
-<div style="background:#ffffff;border-radius:10px;padding:16px 18px;margin-bottom:16px;">
-<p style="margin:0 0 8px 0;font-weight:bold;color:#b9791f;font-size:16px;">—— 解答 ——</p>
+<div style="background:#ecf7ef;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+<p style="margin:0 0 6px 0;font-weight:bold;color:#1e9e57;">🛠 第二部分：實作與複雜度題</p>
 
-<p style="margin:8px 0 0 0;"><b>A1.</b> 每個新值都比前面大，全部掛在右邊，樹變成一條斜斜的長鏈（像鏈結串列）。查找從 O(log n) 退化成 O(n)，等於一個一個從頭找。</p>
+<p style="margin:10px 0 4px 0;"><b>Q5</b> 你手上已經有 100 萬筆資料，要變成堆積。做法 A 是一筆一筆 offer（放入）進 PriorityQueue，做法 B 是 <code>new PriorityQueue&lt;&gt;(collection)</code> 一次建好。兩者的總時間複雜度各是多少？B 是從哪個位置開始、往哪個方向處理的？若資料有 10 個，起點的陣列索引是多少？</p>
 
-<p style="margin:8px 0 0 0;"><b>A2.</b> 範圍是 −1 到 1。出現 2 或 −2 就是「某一邊太重、失衡」，AVL 會用旋轉（右旋、左旋、LR、RL 四種之一）把它修回來。</p>
+<p style="margin:10px 0 4px 0;"><b>Q6</b> 有一個小頂堆積，用陣列存成 <code>[2, 4, 3, 8, 5]</code>。現在 offer 一個 <code>1</code> 進去。請寫出每一步「上浮」（新元素往上跟父親比、比較小就交換）的過程，以及最後的陣列。提示：索引 i 的父親在 (i-1)/2。</p>
 
-<p style="margin:8px 0 0 0;"><b>A3.</b> 不會亂。中序順序不變，所以旋轉後仍然是合法的 BST，查找規則還能用。旋轉只改幾個指標，是 O(1)。</p>
-
-<p style="margin:8px 0 0 0;"><b>A4.</b> 資料量大、查找很頻繁、又會持續新增刪除，而且擔心資料依序進來造成退化時，選 AVL，因為它保證最壞情況也是 O(log n)。代價是每次新增、刪除後要多做更新高度與旋轉的維護工作，程式也更複雜。</p>
-
-<p style="margin:8px 0 0 0;"><b>A5.</b> 不能，只右旋修不好。要用 LR：先對 child 左旋，再對 node 右旋。child 平衡因子為 0 時，用單旋就能修好（刪除時的特殊情況）。</p>
-
-<p style="margin:8px 0 0 0;"><b>A6.</b> depth(node) = 1 + max(depth(左), depth(右))，空樹為 0。這棵樹最長的路是 1→2→4→5，最大深度 = 4。時間 O(n)（每個節點只造訪一次），空間 O(h)（遞迴堆疊最深等於樹高）。</p>
-
-<p style="margin:8px 0 0 0;"><b>A7.</b> 直徑 = 3 條邊（路徑 5→4→2→1→3 是 4 條邊？請注意：節點 5 到節點 3 為 5→4→2→1→3，共 4 條邊）。逐點計算：節點 1 的左深度 = 3（2→4→5 這條鏈）、右深度 = 1，總和 4，所以直徑 = 4。需要每個節點都算的原因是最長路徑不一定經過根；只看根會漏掉藏在某個子樹裡的更長路徑。遞迴回傳的是「單邊深度」（1 + max(左, 右)，給上一層用），用來更新全域答案的是「左深度 + 右深度」。時間 O(n)、空間 O(h)。</p>
+<p style="margin:10px 0 4px 0;"><b>Q7（深）</b> 有人把比較器（Comparator，決定誰排前面的規則）寫成 <code>(a, b) -&gt; a - b</code>。請用 <code>a = 2_000_000_000</code>、<code>b = -2_000_000_000</code> 說明哪裡會出事，並寫出正確寫法。接著回到 #347（前 k 個高頻元素）：用 HashMap 數次數、再用大小為 k 的小頂堆積守前 k 名，設有 n 個元素、不同的值最多 m 種，整體時間複雜度是多少？</p>
 </div>
 
-<p style="margin:12px 0 0 0;font-size:13px;color:#777;text-align:center;">答對幾題不是重點，卡住的那題就是這週最值得回頭看的地方。明天見 🌱</p>
+<div style="background:#ffffff;border:2px dashed #4caf72;border-radius:12px;padding:16px 18px;">
+<p style="margin:0 0 8px 0;font-weight:bold;color:#1e9e57;font-size:16px;">—— 解答 ——</p>
+
+<p style="margin:8px 0;"><b>A1</b> 不對。堆積只保證「<b>根（最上面那個）永遠是最大或最小</b>」，以及「每個父親都比它的孩子大（或小）」。其他位置之間沒有排好序，所以陣列直接印出來不會是由小到大。它適合「不斷加入、每次只想快速拿到目前最大／最小那一個」的情境，例如任務排程、最重石頭（#1046）。Java 的 PriorityQueue 預設是小頂堆積。</p>
+
+<p style="margin:8px 0;"><b>A2</b> 用堆積。每次新增後重排整份資料大約要 O(n log n)，工單越多越慢。堆積的新增和取出最緊急那張都只走一條樹高的路，是 O(log n)，量大時差距很明顯。堆積也不會浪費力氣把「還輪不到的工單」都排好。</p>
+
+<p style="margin:8px 0;"><b>A3</b> 小頂堆積的頂端是「目前前 k 名裡最小的那個」，也就是進榜門檻。新資料比門檻大才換進去（poll 掉最小的、offer 新的），其餘直接丟掉，所以堆積永遠只有 k 個，空間 O(k)，時間 O(n log k)。如果用大頂堆積裝全部資料，空間要 O(n)，一億筆會吃光記憶體，而且最終只要 10 筆，大部分工作都白做。</p>
+
+<p style="margin:8px 0;"><b>A4</b> 這是 LCA。做法是<b>從下往上回報</b>，用後序走訪（先處理左右子樹、最後才處理自己）。碰到 p 或 q 就回傳自己；左右兩邊都回報「有找到」，當前節點就是 LCA；只有一邊有找到，就把那一邊的結果往上傳。共通套路是先想清楚兩件事：<b>回傳給父節點什麼</b>，以及<b>要不要更新全域答案</b>（例如直徑就是邊回傳高度、邊更新最大值）。這三題的時間都是 O(n)，空間 O(h)（h 是樹高）。#110 還用 -1 當哨兵值（特殊標記），一趟就同時算出高度並判斷是否平衡。</p>
+
+<p style="margin:8px 0;"><b>A5</b> A 是 O(n log n)，B 是 O(n)。B 叫建堆積（build heap）：從<b>最後一個非葉節點</b>（索引 n/2-1）開始，由後往前逐一「下沉」（跟較大或較小的孩子交換往下移）。10 個元素時起點是 10/2-1 = 4。O(n) 成立的原因是：大部分節點靠近底部，下沉的距離很短。</p>
+
+<p style="margin:8px 0;"><b>A6</b> 初始 <code>[2,4,3,8,5]</code>，先把 1 放到最後：<code>[2,4,3,8,5,1]</code>，1 在索引 5。<br>
+第 1 步：父親索引 (5-1)/2 = 2，值是 3。因為 3 &gt; 1，交換，得 <code>[2,4,1,8,5,3]</code>。<br>
+第 2 步：1 現在在索引 2，父親索引 0，值是 2。因為 2 &gt; 1，交換，得 <code>[1,4,2,8,5,3]</code>。<br>
+第 3 步：1 已在根，停止。最終答案 <b><code>[1,4,2,8,5,3]</code></b>。最多只走一條樹高，所以是 O(log n)。</p>
+
+<p style="margin:8px 0;"><b>A7</b> a - b = 2_000_000_000 - (-2_000_000_000) = 4_000_000_000，超過 int 的上限約 2.147 億（21 億多），發生<b>溢位</b>（數字超出範圍後繞回另一端），結果變成約 -294,967,296。比較器會誤判 a 比 b 小，排序順序就錯了。正確寫法是 <code>Integer.compare(a, b)</code>（或 <code>Comparator.comparingInt</code>）。#347 的複雜度：HashMap 數次數是 O(n)，之後對 m 種不同的值逐一進堆積、堆積大小 k，是 O(m log k)，因為 m ≤ n，整體寫成 <b>O(n log k)</b>。</p>
+</div>
+
+<p style="margin:14px 4px 0 4px;color:#1e9e57;font-size:13px;">想一想：這週的樹和堆積看起來不同，但都在練同一件事，就是「每一步只保留下一步需要的資訊」。下週見！</p>
 
 </div>
