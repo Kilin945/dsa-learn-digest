@@ -89,3 +89,4 @@
 {"date": "2026-11-25", "topic": "Heap / PriorityQueue：完全二元樹、上浮下沉與 Top-K", "step": 3, "summary": "Top-K 問題（找最大的 k 個）用大小固定為 k 的小頂堆積：堆積頂是門檻，新元素比它大才換進去，時間 O(n log k)、空間 O(k)；#215 用 offer 後超過 k 就 poll，最後 peek 即第 k 大。"}
 {"date": "2026-11-26", "topic": "Heap / PriorityQueue：完全二元樹、上浮下沉與 Top-K", "step": 4, "summary": "建堆積（build heap）：已有整包資料時，從最後一個非葉節點 n/2-1 由後往前逐一下沉，總時間 O(n)，比逐筆 offer 的 O(n log n) 快；Java 用 new PriorityQueue<>(collection) 即是這種做法；#2208 用建構子一次建堆積再反覆減半最大值。"}
 {"date": "2026-11-27", "topic": "Heap / PriorityQueue：完全二元樹、上浮下沉與 Top-K", "step": 5, "summary": "堆積不認得「大」，是靠 Comparator 決定誰排第一；用 Integer.compare 寫比較器避免相減溢位；#347 用 HashMap 數次數加依次數比的小頂堆積守前 k 名，時間 O(n log k)。"}
+{"date": "2026-11-28", "topic": "圖的表示法：鄰接矩陣與鄰接表的取捨", "step": 1, "summary": "圖有鄰接矩陣（n×n 表格，查單一條邊 O(1)、空間 O(n²)）與鄰接表（每個頂點一條鄰居串列，空間約 O(n+m)）兩種存法；稀疏圖選鄰接表，邊密且常查邊才考慮矩陣；#1971 先把邊清單建成鄰接表再走訪。"}
